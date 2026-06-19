@@ -1,0 +1,901 @@
+ /* ========================= */
+/* RESET & BASE              */
+/* ========================= */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  background: #fff;
+  color: #222;
+  overflow-x: hidden;
+}
+
+a {
+  color: white;
+  text-decoration: none;
+}
+
+img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+/* ========================= */
+/* NAVBAR                    */
+/* ========================= */
+.navbar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background: #1b1526;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 40px;
+  z-index: 999;
+}
+
+.logo {
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.nav-links {
+  display: flex;
+  gap: 30px;
+}
+
+.nav-links a {
+  color: white;
+  text-decoration: none;
+  font-size: 14px;
+  transition: 0.3s;
+}
+
+.nav-links a:hover {
+  color: #ffb400;
+}
+
+
+
+.Morador {
+  width: 200px;
+  padding: 10px;
+  background: #ecca08;
+  color: white;
+  font-size: 13px;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px, 2px, 3px, 3px;
+  cursor: pointer;
+
+
+}
+
+
+
+
+
+/* ========================= */
+/* TELA PRINCIPAL (HERO)     */
+/* ========================= */
+.principal {
+  height: 100vh;
+  background:
+    linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+    url("../img/Condominio.jpg");
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: white;
+}
+
+.principal h1 {
+  font-size: 60px;
+  max-width: 900px;
+  line-height: 1.2;
+}
+
+.principal p {
+  margin-top: 20px;
+  font-size: 18px;
+  opacity: 0.8;
+}
+
+/* ========================= */
+/* TESTIMONIAL               */
+/* ========================= */
+.testimonial {
+  padding: 100px 20px;
+  background: #f5f5f5;
+  display: flex;
+  justify-content: center;
+}
+
+.testimonial-card {
+  background: white;
+  padding: 40px;
+  max-width: 700px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  border-left: 5px solid #ffb400;
+  transition: 0.5s;
+}
+
+.testimonial-card img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  margin-top: 20px;
+}
+
+/* ========================= */
+/* SOLUTIONS (NÚMEROS)       */
+/* ========================= */
+.solutions {
+  padding: 100px 40px;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 30px;
+}
+
+.card {
+  padding: 40px;
+  color: white;
+  transition: 0.5s;
+}
+
+.card:hover {
+  transform: translateY(-10px);
+}
+
+.card.dark {
+  background: #1b1526;
+}
+
+.card.gold {
+  background: #3a2d05;
+}
+
+.card.yellow {
+  background: #ffb400;
+  color: black;
+}
+
+/* ========================= */
+/* BANNER                    */
+/* ========================= */
+.banner {
+  background: #ffb400;
+  color: black;
+  text-align: center;
+  padding: 80px 20px;
+  font-size: 40px;
+  font-weight: 600;
+}
+
+.banner .png {
+  height: 400px;
+  width: 50%;
+}
+
+/* ========================= */
+/* SERVICES (SERVIÇOS)       */
+/* ========================= */
+.services {
+  padding: 100px 40px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+}
+
+.service {
+  background: white;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+  transition: 0.4s;
+}
+
+.service:hover {
+  transform: translateY(-10px);
+}
+
+.service img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.service-content {
+  padding: 20px;
+}
+
+.btn {
+  background: #ffb400;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+/* ========================= */
+/* CTA (CHAMADA À AÇÃO)      */
+/* ========================= */
+.cta {
+  padding: 100px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 40px;
+}
+
+.cta img {
+  width: 250px;
+  border-radius: 20px;
+}
+
+.Cor {
+  color: #ffb400;
+}
+
+h2 {
+  height: 20px;
+  width: 350px;
+  margin-bottom: 30px;
+  padding: 6px;
+  text-align: center;
+  flex: auto;
+  color: black;
+}
+
+/* ========================= */
+/* COMPARTIMENTOS (SCROLL)   */
+/* ========================= */
+main {
+  overflow: hidden;
+  display: flex;
+}
+
+article {
+  display: flex;
+  gap: 20px;
+  width: max-content;
+}
+
+main:hover article {
+  animation-play-state: paused;
+}
+
+figure {
+  margin: 0;
+  min-width: 280px;
+  height: 200px;
+  border-radius: 18px;
+  overflow: hidden;
+  position: relative;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+figure:hover img {
+  transform: scale(1.1);
+}
+
+figcaption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 12px;
+  color: #fff;
+  font-weight: bold;
+  background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);
+}
+
+/* ========================= */
+/* AREA DOS COMPARTIMENTOS   */
+/* ========================= */
+.area-compartimentos {
+  padding: 80px 20px;
+  background: #f5f5f5;
+}
+
+.titulo-compartimentos {
+  text-align: center;
+  font-size: 32px;
+  margin-bottom: 40px;
+  font-weight: 600;
+}
+
+.container-rolagem {
+  overflow: hidden;
+  position: relative;
+}
+
+.trilho-rolagem {
+  display: flex;
+  gap: 25px;
+}
+
+.quadrinho {
+  min-width: 260px;
+  height: 180px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-weight: 600;
+  font-size: 18px;
+  transition: 0.4s;
+  cursor: pointer;
+}
+
+.quadrinho:hover {
+  transform: scale(1.08);
+}
+
+.nome-compartimento {
+  font-size: 20px;
+  margin-top: 10px;
+}
+
+/* ========================= */
+/* MAPA                      */
+/* ========================= */
+.mapa {
+  position: relative;
+  width: 100%;
+  height: 380px;
+}
+
+.mapa iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* ========================= */
+/* CARD SOBRE O MAPA         */
+/* ========================= */
+.card-info {
+  position: absolute;
+  bottom: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 85%;
+  background: white;
+  display: flex;
+  justify-content: space-between;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  gap: 40px;
+}
+
+.card-info div {
+  flex: 1;
+}
+
+.card-info h4 {
+  font-size: 14px;
+  color: #444;
+  margin-bottom: 5px;
+  font-weight: 600;
+}
+
+.card-info p {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 15px;
+}
+
+/* ========================= */
+/* FOOTER                    */
+/* ========================= */
+.footer {
+  background: #1b1526;
+  color: white;
+  padding: 60px 40px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+}
+
+.footer a {
+  color: #ffb400;
+  text-decoration: none;
+  display: block;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+/* ========================= */
+/* CHAT FLUTUANTE            */
+/* ========================= */
+
+/* Botão de abrir */
+.chat-toggle {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 60px;
+  height: 60px;
+  background: #ffb400;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 24px rgba(255,180,0,0.5);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.chat-toggle:hover {
+  transform: scale(1.1);
+  box-shadow: 0 10px 30px rgba(255,180,0,0.6);
+}
+
+.chat-toggle svg {
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+/* Bolinha de notificação */
+.chat-badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 14px;
+  height: 14px;
+  background: #e74c3c;
+  border-radius: 50%;
+  border: 2px solid #fff;
+}
+
+/* Janela do chat */
+.chat-window {
+  position: fixed;
+  bottom: 105px;
+  right: 30px;
+  width: 360px;
+  max-height: 500px;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+  display: flex;
+  flex-direction: column;
+  z-index: 9998;
+  overflow: hidden;
+  transform: scale(0.85) translateY(20px);
+  opacity: 0;
+  pointer-events: none;
+  transform-origin: bottom right;
+  transition: transform 0.3s cubic-bezier(.34,1.56,.64,1), opacity 0.25s ease;
+}
+
+.chat-window.aberto {
+  transform: scale(1) translateY(0);
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* Cabeçalho */
+.chat-header {
+  background: #1b1526;
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.chat-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #ffb400;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.chat-info h4 {
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.chat-info span {
+  color: #ffb400;
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.chat-fechar {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: #aaa;
+  font-size: 22px;
+  cursor: pointer;
+  width: auto;
+  padding: 0;
+  line-height: 1;
+  transition: color 0.2s;
+}
+
+.chat-fechar:hover {
+  color: #fff;
+}
+
+/* Área de mensagens */
+.chat-mensagens {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: #f7f7f9;
+  scrollbar-width: thin;
+  scrollbar-color: #ddd transparent;
+}
+
+/* Bolha de mensagem */
+.msg {
+  max-width: 80%;
+  padding: 11px 14px;
+  border-radius: 14px;
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+
+.msg.bot {
+  background: #fff;
+  color: #222;
+  align-self: flex-start;
+  border-bottom-left-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+}
+
+.msg.user {
+  background: #ffb400;
+  color: #1b1526;
+  align-self: flex-end;
+  border-bottom-right-radius: 4px;
+  font-weight: 500;
+}
+
+/* Opções rápidas */
+.chat-opcoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.opcao-btn {
+  background: #fff;
+  border: 1.5px solid #ffb400;
+  color: #1b1526;
+  padding: 7px 13px;
+  border-radius: 20px;
+  font-size: 12.5px;
+  cursor: pointer;
+  width: auto;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+  transition: 0.2s;
+}
+
+.opcao-btn:hover {
+  background: #ffb400;
+  color: #1b1526;
+}
+
+/* Indicador de digitação */
+.typing {
+  display: flex;
+  gap: 5px;
+  padding: 12px 14px;
+  background: #fff;
+  border-radius: 14px;
+  border-bottom-left-radius: 4px;
+  align-self: flex-start;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+}
+
+.typing span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #ccc;
+}
+
+.typing span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.typing span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+/* Área de input */
+.chat-input-area {
+  display: flex;
+  gap: 8px;
+  padding: 12px 14px;
+  background: #fff;
+  border-top: 1px solid #eee;
+  align-items: center;
+}
+
+.chat-input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 22px;
+  font-size: 13.5px;
+  font-family: 'Poppins', sans-serif;
+  outline: none;
+  transition: 0.2s;
+  resize: none;
+  background: #fafafa;
+}
+
+.chat-input:focus {
+  border-color: #ffb400;
+  background: #fff;
+}
+
+.chat-send {
+  width: 40px;
+  height: 40px;
+  background: #ffb400;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: 0.2s;
+  padding: 0;
+}
+
+.chat-send:hover {
+  background: #1b1526;
+  transform: scale(1.08);
+}
+
+/* ========================= */
+/* ANIMAÇÕES & KEYFRAMES     */
+/* ========================= */
+
+/* Entrada do hero */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.principal h1 {
+  animation: fadeUp 1.5s ease;
+}
+
+/* Reveal ao rolar */
+.reveal {
+  opacity: 0;
+  transform: translateY(60px);
+  transition: 1s;
+}
+
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Scroll infinito dos compartimentos */
+@keyframes scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
+article {
+  animation: scroll 30s linear infinite;
+}
+
+/* Bolinha pulsante do chat */
+@keyframes pulsar {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.3); }
+}
+
+.chat-badge {
+  animation: pulsar 1.5s infinite;
+}
+
+/* Entrada de mensagem */
+@keyframes entrarMsg {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.msg {
+  animation: entrarMsg 0.3s ease;
+}
+
+/* Indicador de digitação */
+@keyframes typing {
+  0%, 60%, 100% { transform: translateY(0); background: #ccc; }
+  30%           { transform: translateY(-6px); background: #ffb400; }
+}
+
+.typing span {
+  animation: typing 1.2s infinite;
+}
+
+/* ========================= */
+/* RESPONSIVO — TABLET       */
+/* ========================= */
+@media (max-width: 900px) {
+  .solutions {
+    grid-template-columns: 1fr;
+  }
+
+  .services {
+    grid-template-columns: 1fr;
+  }
+
+  .cta {
+    flex-direction: column;
+  }
+
+  .footer {
+    grid-template-columns: 1fr;
+  }
+
+  .principal h1 {
+    font-size: 40px;
+  }
+}
+
+/* ========================= */
+/* RESPONSIVO — MOBILE       */
+/* ========================= */
+@media (max-width: 768px) {
+  figure {
+    min-width: 220px;
+    height: 160px;
+  }
+
+  .quadrinho {
+    min-width: 200px;
+  }
+
+  .linha {
+    flex-direction: column;
+  }
+
+  .formulario {
+    margin-top: 60px;
+    padding: 30px 20px;
+  }
+
+  .card-info {
+    flex-direction: column;
+    bottom: -100px;
+    width: 90%;
+  }
+
+  .text {
+    font-size: 50px;
+  }
+}
+
+/* ========================= */
+/* RESPONSIVO — CHAT PEQUENO */
+/* ========================= */
+@media (max-width: 480px) {
+  .chat-window {
+    width: calc(100vw - 30px);
+    right: 15px;
+    bottom: 90px;
+  }
+
+  .chat-toggle {
+    right: 15px;
+    bottom: 20px;
+  }
+}
+/* ========================= */
+/* RESPONSIVO — TABLET       */
+/* ========================= */
+@media (max-width: 900px) {
+  .solutions {
+    grid-template-columns: 1fr;
+  }
+
+  .services {
+    grid-template-columns: 1fr;
+  }
+
+  .cta {
+    flex-direction: column;
+  }
+
+  .footer {
+    grid-template-columns: 1fr;
+  }
+
+  .principal h1 {
+    font-size: 40px;
+  }
+}
+
+/* ========================= */
+/* RESPONSIVO — MOBILE       */
+/* ========================= */
+@media (max-width: 768px) {
+  figure {
+    min-width: 220px;
+    height: 160px;
+  }
+
+  .quadrinho {
+    min-width: 200px;
+  }
+
+  .linha {
+    flex-direction: column;
+  }
+
+  .formulario {
+    margin-top: 60px;
+    padding: 30px 20px;
+  }
+
+  .card-info {
+    flex-direction: column;
+    bottom: -100px;
+    width: 90%;
+  }
+
+  .text {
+    font-size: 50px;
+  }
+}
+
+/* ========================= */
+/* RESPONSIVO — CHAT PEQUENO */
+/* ========================= */
+@media (max-width: 480px) {
+  .chat-window {
+    width: calc(100vw - 30px);
+    right: 15px;
+    bottom: 90px;
+  }
+
+  .chat-toggle {
+    right: 15px;
+    bottom: 20px;
+  }
+}

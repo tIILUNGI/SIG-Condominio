@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Condomínio Nosso Zimbo - Gestão de Pagamentos</title>
+<link rel="stylesheet" href="Css/index.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+<!-- NAVBAR -->
+<div class="navbar">
+    <div class="logo">Condomínio Nosso Zimbo</div>
+    <div class="nav-links">
+        <a href="index.html">Início</a>
+        <a href="sobre.html">Sobre nós</a>
+        <a href="login.html">Login</a>
+        <a href="morador-gest.html">Pagamentos</a>
+    </div>
+</div>
+
+<section class="principal">
+    <div>
+        <h1 class="text">Gestão de Pagamentos</h1>
+        <p>Aqui pode gerenciar as suas mensalidades e ver histórico de pagamentos.</p>
+    </div>
+</section>
+
+<section style="padding:2rem; max-width:1200px; margin:0 auto;">
+    <h2>Histórico de Mensalidades</h2>
+    <table class="data-table" style="width:100%; margin-top:1rem;">
+        <thead>
+            <tr>
+                <th>Mês</th>
+                <th>Ano</th>
+                <th>Valor</th>
+                <th>Serviço</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Janeiro</td>
+                <td>2025</td>
+                <td>140.000,00 Kz</td>
+                <td>Quota Condominal</td>
+                <td><span style="color:green; font-weight:bold;">Pago</span></td>
+            </tr>
+            <tr>
+                <td>Fevereiro</td>
+                <td>2025</td>
+                <td>140.000,00 Kz</td>
+                <td>Quota Condominal</td>
+                <td><span style="color:red; font-weight:bold;">Pendente</span></td>
+            </tr>
+            <tr>
+                <td>Março</td>
+                <td>2025</td>
+                <td>140.000,00 Kz</td>
+                <td>Quota Condominal</td>
+                <td><span style="color:red; font-weight:bold;">Pendente</span></td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <h2 style="margin-top:2rem;">Pagar Mensalidade</h2>
+    <form action="pagar.php" method="POST" style="margin-top:1rem;">
+        <div class="form-group">
+            <label>Selecione a Mês a pagar:</label>
+            <select name="id" required>
+                <option value="">-- Selecione --</option>
+                <option value="1">Janeiro 2025 - 140.000,00 Kz</option>
+                <option value="2">Fevereiro 2025 - 140.000,00 Kz</option>
+                <option value="3">Março 2025 - 140.000,00 Kz</option>
+            </select>
+        </div>
+        <button type="submit" name="pagar" class="btn-primary" style="margin-top:1rem;">Pagar Agora</button>
+    </form>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+    <div>
+        <h3>Links úteis</h3>
+        <a href="#">Início</a>
+        <a href="#">Sobre nós</a>
+        <a href="#">Serviços</a>
+        <a href="#">Contato</a>
+    </div>
+    <div>
+        <h3>Sobre nós</h3>
+        <p>Damos-te a melhor experiência de conforto, inovação e Segurança.</p>
+    </div>
+    <div>
+        <h3>Contato</h3>
+        <p>Email: contato@condominionossozimbo.com</p>
+        <p>Telefone: +244 931 612 489</p>
+    </div>
+</footer>
+<script src="javascript/index.js"></script>
+</body>
+</html>

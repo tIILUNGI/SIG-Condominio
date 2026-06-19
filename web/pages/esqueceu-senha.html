@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="Css/login.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<title>Recuperar Senha</title>
+<style>
+.recover-container {
+    max-width: 400px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background: var(--dark3);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+}
+.recover-container h2 {
+    color: var(--gold);
+    margin-bottom: 1rem;
+}
+.recover-container input[type="email"] {
+    width: 100%;
+    padding: 12px;
+    margin: 1rem 0;
+    background: var(--dark4);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+}
+.recover-container button {
+    width: 100%;
+    padding: 12px;
+    background: var(--gold);
+    border: none;
+    border-radius: 8px;
+    color: #000;
+    font-weight: 600;
+    cursor: pointer;
+}
+.back-link {
+    display: inline-block;
+    margin-top: 1rem;
+    color: var(--gold);
+    text-decoration: none;
+}
+</style>
+</head>
+<body>
+<main id="portal">
+  <section>
+    <form action="processa-recuperacao.php" method="POST" class="recover-container" onsubmit="return validarRecuperacao(this);">
+      <h2><i class="fa-solid fa-key"></i> Recuperar Senha</h2>
+      <p style="color:var(--text-muted); font-size:0.9rem;">Digite seu email ou número de BI para recuperar o acesso</p>
+      
+      <input type="text" name="identificador" placeholder="Email ou Nº do BI" required oninvalid="this.setCustomValidity('Preencha este campo')" oninput="this.setCustomValidity('')">
+      
+      <button type="submit">Enviar Link de Recuperação</button>
+      
+      <a href="login.html" class="back-link"><i class="fa-solid fa-arrow-left"></i> Voltar ao Login</a>
+    </form>
+  </section>
+</main>
+
+<script>
+function validarRecuperacao(form) {
+    const identificador = form.identificador.value.trim();
+    if (!identificador) {
+        alert('Por favor, preencha o email ou número do BI');
+        form.identificador.focus();
+        return false;
+    }
+    return true;
+}
+</script>
+</body>
+</html>

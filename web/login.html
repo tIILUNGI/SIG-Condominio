@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="css/login.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portal do Condomínio</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+<main id="portal">
+  <!-- ANIMAÇÃO 3D -->
+  <aside>
+    <div class="cubo c1">
+      <div class="face frente"></div>
+      <div class="face tras"></div>
+      <div class="face direita"></div>
+      <div class="face esquerda"></div>
+      <div class="face cima"></div>
+      <div class="face baixo"></div>
+    </div>
+
+    <div class="cubo c2">
+      <div class="face frente"></div>
+      <div class="face tras"></div>
+      <div class="face direita"></div>
+      <div class="face esquerda"></div>
+      <div class="face cima"></div>
+      <div class="face baixo"></div>
+    </div>
+
+    <div class="cubo c3">
+      <div class="face frente"></div>
+      <div class="face tras"></div>
+      <div class="face direita"></div>
+      <div class="face esquerda"></div>
+      <div class="face cima"></div>
+      <div class="face baixo"></div>
+    </div>
+  </aside>
+
+  <!-- FORMULÁRIOS -->
+  <section>
+
+    <form action="api/loginmorador.php" method="POST" id="morador" onsubmit="return validarLogin(this);">
+      <h2>Acesso de Moradores</h2>
+      <div id="msg-erro" class="msg-erro" style="display:none;"></div>
+      <input type="text" name="numbi" placeholder="Número do BI" required pattern="[A-Za-z0-9]{9,20}" oninvalid="this.setCustomValidity('Digite o número do BI (9-20 caracteres)')" oninput="this.setCustomValidity('')">
+      <input type="password" name="senha" placeholder="Senha" required minlength="6" oninvalid="this.setCustomValidity('A senha deve ter pelo menos 6 caracteres')" oninput="this.setCustomValidity('')">
+      <button type="submit">Entrar</button>
+      <div class="form-links">
+        <a href="pages/esqueceu-senha.html" class="forgot-link">Esqueceu a senha?</a>
+        <a href="Visitante/visitante.html" class="register-link">Cadastrar-se</a>
+      </div>
+      <p class="toggle" onclick="alternar()">Sou Funcionário →</p>
+      <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Voltar ao Início</a>
+    </form>
+
+
+    <form action="api/loginfuncionario.php" method="POST" id="funcionario" style="display:none;" onsubmit="return validarLogin(this);">
+      <h2>Acesso de Funcionários</h2>
+      <div id="msg-erro-func" class="msg-erro" style="display:none;"></div>
+      <input type="text" name="numbi" placeholder="Número do BI" required pattern="[A-Za-z0-9]{9,20}" oninvalid="this.setCustomValidity('Digite o número do BI (9-20 caracteres)')" oninput="this.setCustomValidity('')">
+      <input type="password" name="senha" placeholder="Senha" required minlength="6" oninvalid="this.setCustomValidity('A senha deve ter pelo menos 6 caracteres')" oninput="this.setCustomValidity('')">
+      <button type="submit">Entrar</button>
+      <div id="processando" style="display:none;">
+        <div class="loader"></div>
+        <p>Processando acesso...</p>
+      </div>
+      <div class="form-links">
+        <a href="pages/esqueceu-senha.html" class="forgot-link">Esqueceu a senha?</a>
+      </div>
+      <p class="toggle" onclick="alternar()">← Sou Morador</p>
+      <a href="index.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Voltar ao Início</a>
+    </form>
+
+  </section>
+</main>
+<section id="bem-vindo"></section>
+
+<script>
+function validarLogin(form) {
+    const numbi = form.numbi.value.trim();
+    const senha = form.senha.value;
+    if (!numbi) { alert('Por favor, preencha o número do BI'); form.numbi.focus(); return false; }
+    if (!/^[A-Za-z0-9]{9,20}$/.test(numbi)) { alert('O número do BI deve conter 9 a 20 caracteres alfanuméricos'); form.numbi.focus(); return false; }
+    if (!senha || senha.length < 6) { alert('A senha deve ter pelo menos 6 caracteres'); form.senha.focus(); return false; }
+    return true;
+}
+
+function alternar() {
+    const main = document.getElementById('portal');
+    main.classList.toggle('active');
+    
+    // Tweak para mobile: garantir que o display mude após a animação se necessário
+    const morador = document.getElementById('morador');
+    const funcionario = document.getElementById('funcionario');
+    
+    if (main.classList.contains('active')) {
+        setTimeout(() => { funcionario.style.display = 'flex'; morador.style.display = 'none'; }, 200);
+    } else {
+        setTimeout(() => { morador.style.display = 'flex'; funcionario.style.display = 'none'; }, 200);
+    }
+}
+
+// Inicializar displays para evitar saltos
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('morador').style.display = 'flex';
+    document.getElementById('funcionario').style.display = 'none';
+});
+
+// Mostrar erros vindos do PHP via query string
+const erros = {
+    credenciais: 'Número do BI ou senha incorrectos.',
+    campos: 'Preencha todos os campos.',
+    db: 'Erro de conexão. Tente novamente.',
+    suspenso: 'Esta conta está suspensa. Contacte a administração.',
+    acesso: 'Acesso negado. Faça login primeiro.',
+    duplicado: 'Já existe uma conta com este BI ou email.',
+    email: 'Email inválido.',
+    senha_fraca: 'A senha deve ter pelo menos 6 caracteres.',
+    campos_reg: 'Preencha todos os campos do registo.',
+    bd: 'Erro ao guardar. Tente novamente.',
+};
+const params = new URLSearchParams(window.location.search);
+const err = params.get('erro');
+if (err && erros[err]) {
+    const elId = document.getElementById('portal').classList.contains('active') ? 'msg-erro-func' : 'msg-erro';
+    const el = document.getElementById(elId);
+    if (el) { el.textContent = erros[err]; el.style.display = 'block'; }
+}
+if (params.get('ok') === 'registado') {
+    ['msg-erro','msg-erro-func'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) { el.textContent = '✓ Registo efectuado com sucesso! Faça login.'; el.style.display = 'block'; el.style.color = '#4caf7d'; }
+    });
+}
+if (params.get('ok') === 'logout') {
+    ['msg-erro','msg-erro-func'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) { el.textContent = 'Sessão terminada com sucesso.'; el.style.display = 'block'; el.style.color = '#ccc'; }
+    });
+}
+</script>
+
+<style>
+.back-btn {
+    display: inline-block;
+    margin-top: 1rem;
+    padding: 8px 16px;
+    background: var(--dark4);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: all 0.3s;
+}
+.back-btn:hover {
+    background: var(--gold);
+    color: #000;
+}
+.form-links {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+}
+.forgot-link, .register-link {
+    font-size: 0.8rem;
+    color: var(--gold);
+    text-decoration: none;
+}
+.forgot-link:hover, .register-link:hover {
+    text-decoration: underline;
+}
+</style>
+</body>
+</html>
