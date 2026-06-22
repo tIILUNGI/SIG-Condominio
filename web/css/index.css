@@ -826,6 +826,222 @@ article {
     bottom: 20px;
   }
 }
+
+/* ========================= */
+/* LUXURY EXPERIENCE         */
+/* ========================= */
+.luxury-experience {
+  background: #1b1526;
+  color: white;
+  padding: 120px 40px;
+  overflow: hidden;
+  position: relative;
+}
+
+.luxury-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 80px;
+}
+
+.luxury-subtitle {
+  color: #ffb400;
+  font-weight: 600;
+  letter-spacing: 2px;
+  font-size: 14px;
+  display: block;
+  margin-bottom: 20px;
+}
+
+.luxury-title {
+  font-size: 56px;
+  line-height: 1.1;
+  margin-bottom: 30px;
+  color: #fff;
+  width: auto !important;
+  height: auto !important;
+  text-align: left !important;
+  padding: 0 !important;
+}
+
+.luxury-description {
+  font-size: 18px;
+  opacity: 0.8;
+  margin-bottom: 50px;
+  line-height: 1.6;
+}
+
+.luxury-features {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  margin-bottom: 50px;
+}
+
+.luxury-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.luxury-icon-box {
+  background: rgba(255, 180, 0, 0.1);
+  padding: 12px;
+  border-radius: 12px;
+  color: #ffb400;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.luxury-icon-box svg {
+  width: 24px;
+  height: 24px;
+}
+
+.luxury-text h4 {
+  font-size: 18px;
+  margin-bottom: 5px;
+}
+
+.luxury-text p {
+  font-size: 14px;
+  opacity: 0.6;
+}
+
+.luxury-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 15px;
+  background: #ffb400;
+  color: #1b1526;
+  padding: 18px 35px;
+  border-radius: 50px;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+.luxury-btn:hover {
+  background: #fff;
+  transform: translateY(-5px);
+  color: #1b1526;
+}
+
+.luxury-btn svg {
+  width: 20px;
+  height: 20px;
+  transition: transform 0.3s;
+}
+
+.luxury-btn:hover svg {
+  transform: translateX(5px);
+}
+
+.luxury-visuals {
+  position: relative;
+  height: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.luxury-image-wrapper {
+  position: absolute;
+  border-radius: 30px;
+  overflow: hidden;
+  box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+  transition: transform 0.1s ease-out;
+}
+
+.main-img {
+  width: 350px;
+  height: 500px;
+  z-index: 2;
+}
+
+.float-img-1 {
+  width: 200px;
+  height: 250px;
+  top: 50px;
+  right: 0;
+  z-index: 3;
+}
+
+.float-img-2 {
+  width: 180px;
+  height: 240px;
+  bottom: 50px;
+  left: 0;
+  z-index: 1;
+}
+
+.luxury-glass-card {
+  position: absolute;
+  top: 60%;
+  right: -20px;
+  background: rgba(255, 255, 255, 0.1);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  padding: 30px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  z-index: 4;
+  transition: transform 0.1s ease-out;
+}
+
+.luxury-glass-card span {
+  color: #ffb400;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 2px;
+}
+
+.luxury-glass-card h3 {
+  font-size: 24px;
+  margin-top: 10px;
+  color: #fff;
+}
+
+@media (max-width: 1100px) {
+  .luxury-container {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  
+  .luxury-title {
+    text-align: center !important;
+  }
+  
+  .luxury-item {
+    justify-content: center;
+  }
+  
+  .luxury-visuals {
+    height: 500px;
+    margin-top: 50px;
+  }
+  
+  .main-img {
+    width: 280px;
+    height: 400px;
+  }
+  
+  .float-img-1 {
+    width: 150px;
+    height: 200px;
+  }
+  
+  .float-img-2 {
+    width: 140px;
+    height: 180px;
+  }
+}
 /* ========================= */
 /* RESPONSIVO — TABLET       */
 /* ========================= */

@@ -116,3 +116,34 @@ if (chatToggle && chatWindow && chatFechar && chatMensagens && chatInput && chat
     if (e.key === "Enter") enviarMensagem();
   });
 }
+
+/* ========================= */
+/* LUXURY PARALLAX           */
+/* ========================= */
+const luxuryVisuals = document.getElementById('luxuryParallax');
+if (luxuryVisuals) {
+  const images = luxuryVisuals.querySelectorAll('.luxury-image-wrapper, .luxury-glass-card');
+  
+  luxuryVisuals.addEventListener('mousemove', (e) => {
+    const { width, height } = luxuryVisuals.getBoundingClientRect();
+    const centerX = width / 2;
+    const centerY = height / 2;
+    
+    const mouseX = e.offsetX - centerX;
+    const mouseY = e.offsetY - centerY;
+    
+    images.forEach(img => {
+      const speed = img.getAttribute('data-speed') || 0.5;
+      const x = (mouseX * speed) / 25;
+      const y = (mouseY * speed) / 25;
+      
+      img.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+    });
+  });
+  
+  luxuryVisuals.addEventListener('mouseleave', () => {
+    images.forEach(img => {
+      img.style.transform = `translate3d(0, 0, 0)`;
+    });
+  });
+}
