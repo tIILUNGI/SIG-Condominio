@@ -35,9 +35,9 @@ if (!$conexao) {
 
 // Buscar morador por BI
 $stmt = $conexao->prepare("
-    SELECT id, nome, email, numbI, senha_hash, estado_conta 
+    SELECT id, nome, email, numbi, senha_hash, estado_conta 
     FROM morador 
-    WHERE numbI = ?
+    WHERE numbi = ?
     LIMIT 1
 ");
 $stmt->bind_param("s", $numbi);
@@ -53,7 +53,7 @@ if ($res->num_rows > 0) {
     error_log("ID: " . $morador['id']);
     error_log("Nome: " . $morador['nome']);
     error_log("Email: " . $morador['email']);
-    error_log("BI: " . $morador['numbI']);
+    error_log("BI: " . $morador['numbi']);
     error_log("Status: " . $morador['estado_conta']);
     error_log("Hash da senha: " . $morador['senha_hash']);
     
@@ -82,7 +82,7 @@ if ($res->num_rows > 0) {
         $_SESSION['id'] = $morador['id'];
         $_SESSION['nome'] = $morador['nome'];
         $_SESSION['email'] = $morador['email'];
-        $_SESSION['numbi'] = $morador['numbI'];
+        $_SESSION['numbi'] = $morador['numbi'];
         
         // Atualizar último login
         $upd = $conexao->prepare("UPDATE morador SET ultimo_login = NOW() WHERE id = ?");

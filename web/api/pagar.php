@@ -21,14 +21,23 @@ $stmt->bind_param("i", $id_mens);
 if ($stmt->execute()) {
     // Registar pagamento
     $id_morador = intval($_SESSION['id'] ?? 0);
-    $valor = floatval($_POST['valor'] ?? 0);
+    // Compatibilidade: a UI atual pode não enviar valor/metodo/referencia.
+    // Buscar o valor da mensalidade e registar o pagamento como confirmado.
+    $mens = $conexao->prepare("SELECT valor FROM mensalidade WHERE id = ? AND id_morador = ? LIMIT 1");
+    $mens->bind_param("ii", $id_mens, $id_morador);
+    $mens->execute();
+    $r = $mens->get_result();
+    $row = $r->fetch_assoc();
+    $mens->close();
+
+    $valor = floatval($_POST['valor'] ?? ($row['valor'] ?? 0));
     $metodo = $_POST['metodo'] ?? 'Transferência';
     $referencia = trim($_POST['referencia'] ?? '');
 
     if ($id_morador && $valor > 0) {
         $ins = $conexao->prepare(
             "INSERT INTO mensalidade_pagamento (id_mensalidade, valor_pago, metodo, referencia, estado)
-             VALUES (?, ?, ?, ?, 'pendente')"
+             VALUES (?, ?, ?, ?, 'confirmado')"
         );
         $ins->bind_param("idss", $id_mens, $valor, $metodo, $referencia);
         $ins->execute();

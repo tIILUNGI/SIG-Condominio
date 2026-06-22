@@ -6,120 +6,137 @@ if (!isset($_SESSION['tipo']) || $_SESSION['tipo'] !== 'morador') {
 }
 include("../api/conexao.php");
 
-$morador_id = $_SESSION['id'];
+$morador_id = (int)$_SESSION['id'];
 
-// Buscar mensalidades
-$stmt = $conexao->prepare("
-    SELECT m.*, a.numero as apartamento, bl.letra as bloco
-    FROM mensalidade m
-    LEFT JOIN apartamento a ON m.id_apartamento = a.id
-    LEFT JOIN bloco bl ON a.id_bloco = bl.id
-    WHERE m.id_morador = ?
-    ORDER BY m.ano DESC, m.mes DESC
-");
+$stmt = $conexao->prepare(
+    "SELECT m.*, a.numero as apartamento, bl.letra as bloco
+     FROM mensalidade m
+     LEFT JOIN apartamento a ON m.id_apartamento = a.id
+     LEFT JOIN bloco bl ON a.id_bloco = bl.id
+     WHERE m.id_morador = ?
+     ORDER BY m.ano DESC, m.mes DESC"
+);
 $stmt->bind_param("i", $morador_id);
 $stmt->execute();
 $mensalidades = $stmt->get_result();
 
-// Calcular totais
 $total_pendente = 0;
 $total_pago = 0;
 while ($row = $mensalidades->fetch_assoc()) {
-    if ($row['estado'] == 'pendente' || $row['estado'] == 'atrasado') {
-        $total_pendente += $row['valor'];
-    } else if ($row['estado'] == 'pago') {
-        $total_pago += $row['valor'];
+    if ($row['estado'] === 'pendente' || $row['estado'] === 'atrasado') {
+        $total_pendente += (float)$row['valor'];
+    } elseif ($row['estado'] === 'pago') {
+        $total_pago += (float)$row['valor'];
     }
 }
-$mensalidades->data_seek(0); // Resetar o pointer
+$mensalidades->data_seek(0);
+
+$nome = $_SESSION['nome'] ?? 'Morador';
 ?>
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-AO">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minhas Mensalidades</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f2f5; padding: 20px; }
-        .container { max-width: 1000px; margin: 0 auto; }
-        .card { background: white; padding: 25px; border-radius: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        .btn { padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; text-decoration: none; display: inline-block; }
-        .btn-back { background: #95a5a6; color: white; }
-        .btn-back:hover { background: #7f8c8d; }
-        .btn-pagar { background: #27ae60; color: white; font-size: 13px; }
-        .btn-pagar:hover { background: #219a52; }
-        table { width: 100%; border-collapse: collapse; }
-        th { text-align: left; padding: 12px; background: #2c3e50; color: white; }
-        td { padding: 12px; border-bottom: 1px solid #eee; }
-        .status-pendente { color: #e74c3c; font-weight: 600; }
-        .status-pago { color: #27ae60; font-weight: 600; }
-        .status-atrasado { color: #c0392b; font-weight: 600; }
-        .status-dispensado { color: #95a5a6; }
-        .meses { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); 
-            gap: 10px; 
-            margin-top: 15px;
-        }
-        .mes-item {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 8px;
-            text-align: center;
-            border: 2px solid transparent;
-        }
-        .mes-item.pago { border-color: #27ae60; }
-        .mes-item.pendente { border-color: #e74c3c; }
-        .mes-item .valor { font-size: 18px; font-weight: 700; }
-        .total-box { 
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            gap: 20px; 
-            margin: 15px 0;
-        }
-        .total-item { 
-            background: #f8f9fa; 
-            padding: 15px; 
-            border-radius: 8px; 
-            text-align: center;
-        }
-        .total-item .valor { font-size: 24px; font-weight: 700; }
-        .total-item.pendente .valor { color: #e74c3c; }
-        .total-item.pago .valor { color: #27ae60; }
-    </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nosso Zimbo — Mensalidades</title>
+    <link rel="stylesheet" href="../Css/nosso-zimbo-admin.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
 <body>
-    <div class="container">
-        <div class="card">
-            <h2><i class="fas fa-credit-card"></i> Minhas Mensalidades</h2>
-            <a href="dashboard_morador.php" class="btn btn-back" style="margin-top:10px;">
-                <i class="fas fa-arrow-left"></i> Voltar
-            </a>
+
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+        <div class="brand-icon"><i class="fa-solid fa-building-columns"></i></div>
+        <div>
+            <p class="brand-name">Nosso Zimbo</p>
+            <p class="brand-sub">Mensalidades</p>
+        </div>
+    </div>
+    <nav class="sidebar-nav">
+        <p class="nav-section">Menu Principal</p>
+        <button class="nav-item" onclick="window.location.href='dashboard_morador.php'">
+            <i class="fa-solid fa-gauge-high"></i><span>Dashboard</span>
+        </button>
+        <button class="nav-item" onclick="window.location.href='minhas_ocorrencias.php'">
+            <i class="fa-solid fa-exclamation-triangle"></i><span>Ocorrências</span>
+        </button>
+        <button class="nav-item active" onclick="window.location.href='minhas_mensalidades.php'">
+            <i class="fa-solid fa-credit-card"></i><span>Mensalidades</span>
+        </button>
+        <button class="nav-item" onclick="window.location.href='comunicacao.php'">
+            <i class="fa-solid fa-comments"></i><span>Comunicação</span>
+        </button>
+        <button class="nav-item" onclick="window.location.href='areas_comuns.php'">
+            <i class="fa-solid fa-calendar-check"></i><span>Áreas Comuns</span>
+        </button>
+        <button class="nav-item" onclick="window.location.href='visitas.php'">
+            <i class="fa-solid fa-user-plus"></i><span>Visitas</span>
+        </button>
+        <p class="nav-section">Configurações</p>
+        <button class="nav-item" onclick="window.location.href='meu_perfil.php'">
+            <i class="fa-solid fa-user"></i><span>Meu Perfil</span>
+        </button>
+    </nav>
+    <div class="sidebar-footer">
+        <div class="avatar-admin"><?php echo strtoupper(substr($nome, 0, 2)); ?></div>
+        <div style="flex:1;">
+            <p class="af-name"><?php echo htmlspecialchars($nome); ?></p>
+            <p class="af-role">Morador</p>
+        </div>
+        <a href="../api/logout.php" title="Sair" style="color:var(--text-muted); font-size:1rem;">
+            <i class="fa-solid fa-right-from-bracket"></i>
+        </a>
+    </div>
+</aside>
+
+<main class="main-content">
+    <header class="topbar">
+        <button class="menu-toggle" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
+        <span class="topbar-title"><i class="fa-solid fa-credit-card"></i> Nosso Zimbo — Mensalidades</span>
+        <div class="topbar-right">
+            <div class="clock-display" id="clock-display"></div>
+            <div class="avatar-admin" style="width:34px;height:34px;background:#f0c040;color:#000;">
+                <?php echo strtoupper(substr($nome, 0, 2)); ?>
+            </div>
+        </div>
+    </header>
+
+    <section class="tab-section active" id="tab-mensalidades">
+        <div class="page-header">
+            <h1 class="page-title">Mensalidades</h1>
+            <p class="page-sub">Pagar e acompanhar o histórico</p>
         </div>
 
-        <!-- Resumo -->
-        <div class="card">
-            <h3>📊 Resumo Financeiro</h3>
-            <div class="total-box">
-                <div class="total-item pendente">
-                    <div style="font-size:14px; color:#888;">Pendente</div>
-                    <div class="valor">Kz <?php echo number_format($total_pendente, 2); ?></div>
+        <div class="card" style="margin-top:20px;">
+            <div class="card-head">
+                <p class="card-title"><i class="fa-solid fa-chart-line"></i> Resumo Financeiro</p>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+                <div class="stat-card red" style="margin:0;">
+                    <div class="stat-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
+                    <p class="stat-label">Pendente</p>
+                    <p class="stat-value">Kz <?php echo number_format($total_pendente, 2); ?></p>
+                    <p class="stat-hint">A aguardar pagamento</p>
                 </div>
-                <div class="total-item pago">
-                    <div style="font-size:14px; color:#888;">Pago</div>
-                    <div class="valor">Kz <?php echo number_format($total_pago, 2); ?></div>
+                <div class="stat-card green" style="margin:0;">
+                    <div class="stat-icon"><i class="fa-solid fa-circle-check"></i></div>
+                    <p class="stat-label">Pago</p>
+                    <p class="stat-value">Kz <?php echo number_format($total_pago, 2); ?></p>
+                    <p class="stat-hint">Pagamentos confirmados</p>
                 </div>
             </div>
         </div>
 
-        <!-- Lista -->
-        <div class="card">
-            <h3>📋 Histórico de Mensalidades</h3>
-            
-            <?php if ($mensalidades->num_rows > 0): ?>
-                <table>
+        <div class="card" style="margin-top:20px;">
+            <div class="card-head">
+                <p class="card-title"><i class="fa-solid fa-file-invoice"></i> Histórico de Mensalidades</p>
+            </div>
+
+            <div style="overflow-x:auto;">
+                <table class="data-table" style="width:100%;">
                     <thead>
                         <tr>
                             <th>Mês/Ano</th>
@@ -132,48 +149,75 @@ $mensalidades->data_seek(0); // Resetar o pointer
                         </tr>
                     </thead>
                     <tbody>
-                        <?php while ($m = $mensalidades->fetch_assoc()): 
-                            $nome_mes = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
-                            $mes = $nome_mes[$m['mes'] - 1];
-                            $status_class = 'status-' . $m['estado'];
-                            $pode_pagar = ($m['estado'] == 'pendente' || $m['estado'] == 'atrasado');
-                        ?>
+                    <?php
+                    $nome_mes = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+                    if ($mensalidades->num_rows > 0):
+                        while ($m = $mensalidades->fetch_assoc()):
+                            $mes_idx = (int)$m['mes'] - 1;
+                            $mes_txt = $nome_mes[$mes_idx] ?? ('M' . $m['mes']);
+                            $pode_pagar = ($m['estado'] === 'pendente' || $m['estado'] === 'atrasado');
+                            $status = strtoupper($m['estado']);
+                    ?>
                         <tr>
-                            <td><?php echo $mes . '/' . $m['ano']; ?></td>
-                            <td><?php echo $m['bloco'] . '-' . $m['apartamento']; ?></td>
-                            <td><?php echo $m['servico']; ?></td>
-                            <td><strong>Kz <?php echo number_format($m['valor'], 2); ?></strong></td>
-                            <td><?php echo date('d/m/Y', strtotime($m['vencimento'])); ?></td>
-                            <td class="<?php echo $status_class; ?>">
-                                <?php echo strtoupper($m['estado']); ?>
+                            <td><?php echo htmlspecialchars($mes_txt . '/' . $m['ano']); ?></td>
+                            <td><?php echo htmlspecialchars(($m['bloco'] ?? '') . '-' . ($m['apartamento'] ?? '')); ?></td>
+                            <td><?php echo htmlspecialchars($m['servico']); ?></td>
+                            <td><strong>Kz <?php echo number_format((float)$m['valor'], 2); ?></strong></td>
+                            <td><?php echo $m['vencimento'] ? date('d/m/Y', strtotime($m['vencimento'])) : '—'; ?></td>
+                            <td>
+                                <span class="badge-info" style="background:rgba(100,149,237,.15);color:#6495ed;border:1px solid rgba(100,149,237,.3);padding:2px 8px;border-radius:6px;font-weight:700;">
+                                    <?php echo htmlspecialchars($status); ?>
+                                </span>
                             </td>
                             <td>
                                 <?php if ($pode_pagar): ?>
-                                    <button class="btn btn-pagar" onclick="pagar(<?php echo $m['id']; ?>)">
+                                    <button class="btn btn-pagar" onclick="pagar(<?php echo (int)$m['id']; ?>)">
                                         <i class="fas fa-check"></i> Pagar
                                     </button>
                                 <?php else: ?>
-                                    <span style="color:#888;">✓</span>
+                                    <span style="color:#888;font-weight:700;">✓</span>
                                 <?php endif; ?>
                             </td>
                         </tr>
-                        <?php endwhile; ?>
+                    <?php
+                        endwhile;
+                    else:
+                    ?>
+                        <tr>
+                            <td colspan="7" style="text-align:center;padding:2rem;color:var(--text-muted);">
+                                Nenhuma mensalidade encontrada.
+                            </td>
+                        </tr>
+                    <?php endif; ?>
                     </tbody>
                 </table>
-            <?php else: ?>
-                <p style="text-align:center; color:#888; padding:20px;">
-                    <i class="fas fa-inbox"></i> Nenhuma mensalidade encontrada.
-                </p>
-            <?php endif; ?>
+            </div>
         </div>
-    </div>
+    </section>
+</main>
 
-    <script>
-        function pagar(id) {
-            if (confirm('Confirmar pagamento da mensalidade?')) {
-                window.location.href = 'pagar_mensalidade.php?id=' + id;
-            }
-        }
-    </script>
+<script>
+function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+}
+
+function pagar(id) {
+    if (confirm('Confirmar pagamento da mensalidade?')) {
+        window.location.href = 'pagar_mensalidade.php?id=' + id;
+    }
+}
+
+function clock() {
+    const now = new Date();
+    const el = document.getElementById('clock-display');
+    if (el) el.textContent = now.toLocaleTimeString('pt-AO');
+}
+
+window.onload = function() {
+    clock();
+    setInterval(clock, 1000);
+};
+</script>
 </body>
 </html>
+

@@ -1,11 +1,19 @@
  <?php
 include("conexao.php");
 
-$sql = "select * from casa";
-$resultado = mysqli_query($conexao, $sql);
-$sql1 = "select * from funcionarios";
-$resultado1 = mysqli_query($conexao, $sql1);
+// Carregar blocos
+$sql_blocos = "SELECT id, letra, descricao FROM bloco ORDER BY letra";
+$resultado_blocos = mysqli_query($conexao, $sql_blocos);
+$blocos = [];
+while ($row = mysqli_fetch_assoc($resultado_blocos)) {
+    $blocos[$row['id']] = $row;
+}
 ?>
+<script>
+// Dados de blocos para JavaScript
+window.BLCOES_DATA = <?php echo json_encode($blocos); ?>;
+</script>
+<?php
 <!DOCTYPE html>
 <html lang="pt-AO">
 <head>
@@ -289,9 +297,15 @@ $resultado1 = mysqli_query($conexao, $sql1);
           <label>Data de Validade *</label>
           <input type="date" name="validade" />
         </div>
-        <div class="form-group">
+<div class="form-group">
           <label>Local de Emissão *</label>
           <input type="text" name="locale" placeholder="Luanda, SAE Patriota" />
+        </div>
+        <div class="form-group full">
+          <label>Apartamento (Opcional)</label>
+          <select name="id_apartamento" id="select-apartamento">
+            <option value="">Seleccione um apartamento (após registo poderá associar)</option>
+          </select>
         </div>
 
       <div class="reg-consent">
@@ -369,31 +383,18 @@ $resultado1 = mysqli_query($conexao, $sql1);
           <table class="data-table" id="houses-table">
             <thead>
               <tr>
-                <th>ID</th>
                 <th>Bloco</th>
-                <th>Rua</th>
-                <th>Nº</th>
+                <th>Número</th>
                 <th>Tipo</th>
                 <th>Andar</th>
                 <th>Estado</th>
+                <th>Morador</th>
                 <th>Acção</th>
               </tr>
-            </thead> 
-            <?php while($dados = mysqli_fetch_assoc($resultado)){ ?>   
-              <td><?php echo $dados['id']; ?></td> 
-              <td><?php echo $dados['bloco']; ?></td>
-              <td><?php echo $dados['rua']; ?></td>
-              <td><?php echo $dados['casanum']; ?></td>
-              <td><?php echo $dados['tipologia']; ?></td>
-              <td><?php echo $dados['andar']; ?></td>
-              <td><?php echo $dados['estado']; ?></td>
-
-              <td>
-                <a href="editar.php?id=<?php echo $dados['id']; ?>">Editar</a>
-                <a href="excluir.php?id=<?php echo $dados['id']; ?>">Excluir</a>
-              </td>
-            <?php } ?>
-            
+            </thead>
+            <tbody id="houses-tbody">
+              <tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:2rem;">Carregando...</td></tr>
+            </tbody>
           </table>
         </div>
       </div>
@@ -1928,18 +1929,83 @@ function fileSelected(id, input) {
 
 
 function carregarMoradores(){
-
-    fetch("vermoradores.php")
-
-    .then(response => response.text())
-
+    fetch("api/vermoradores.php")
+    .then(response => response.json())
     .then(data => {
-
-        document.getElementById("corpoTabela").innerHTML = data;
-
+        const tbody = document.getElementById("corpoTabela");
+        if (!data.dados || data.dados.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--text-muted);padding:2rem;">Sem moradores registados</td></tr>';
+            return;
+        }
+        tbody.innerHTML = data.dados.map(m => `
+            <tr>
+                <td>${m.id}</td>
+                <td>${m.nome}</td>
+                <td>${m.numbi}</td>
+                <td>${m.telefone}</td>
+                <td>${m.email}</td>
+                <td>${m.nasc}</td>
+                <td>${m.activo}</td>
+                <td>${m.apartamento || '—'}</td>
+                <td>
+                    <button class="btn-secondary btn-sm" onclick="editarMorador(${m.id})"><i class="fa-solid fa-pen"></i> Editar</button>
+                    <button class="btn-danger btn-sm" onclick="removerMorador(${m.id})"><i class="fa-solid fa-trash"></i> Eliminar</button>
+                </td>
+            </tr>
+        `).join('');
     });
-
 }
+
+function carregarCasas() {
+    fetch("api/api_listar_casas.php")
+    .then(response => response.json())
+    .then(data => {
+        const tbody = document.getElementById("houses-tbody");
+        if (!data.dados || data.dados.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:2rem;">Sem residências registadas</td></tr>';
+            return;
+        }
+        tbody.innerHTML = data.dados.map(h => `
+            <tr>
+                <td><span class="house-tag">${h.bloco || '—'}</span></td>
+                <td>${h.numero}</td>
+                <td>${h.tipologia}</td>
+                <td>${h.andar || '—'}</td>
+                <td><span class="badge ${h.estado === 'Disponivel' ? 'pago' : 'vencido'}">${h.estado}</span></td>
+                <td>${h.morador_nome || '—'}</td>
+                <td>
+                    ${h.estado === 'Disponivel' ? 
+                        `<button class="btn-success btn-sm" onclick="editarCasa(${h.id})"><i class="fa-solid fa-pen"></i></button>` : 
+                        '<span style="color:var(--text-muted);">—</span>'
+                    }
+                </td>
+            </tr>
+        `).join('');
+    });
+}
+
+function carregarApartamentosDisponiveis() {
+    fetch("api/api_casas.php?acao=disponiveis")
+    .then(response => response.json())
+    .then(data => {
+        const sel = document.getElementById("select-apartamento");
+        if (sel) {
+            sel.innerHTML = '<option value="">Seleccione um apartamento</option>';
+            if (data.dados) {
+                data.dados.forEach(a => {
+                    sel.innerHTML += `<option value="${a.id}">${a.bloco}-${a.numero} (${a.tipologia})</option>`;
+                });
+            }
+        }
+    });
+}
+
+window.onload = () => {
+    load();
+    clock();
+    setInterval(clock, 1000);
+    // ... rest of existing init code
+};
 
 
 </script>
