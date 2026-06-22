@@ -75,7 +75,10 @@ switch ($acao) {
         }
         $chk->close();
 
-        $senha_hash = password_hash($senha, PASSWORD_DEFAULT);
+$senha_hash = password_hash($senha, PASSWORD_DEFAULT);
+        
+        // Garantir conta activa para permitir login
+        $estado_conta = 'Activo';
         
         // Iniciar transação
         mysqli_begin_transaction($conexao);
@@ -83,10 +86,12 @@ switch ($acao) {
         try {
             // Inserir morador
             $stmt = $conexao->prepare(
-                "INSERT INTO morador (nome, email, telefone, numbi, senha_hash, nasc, morada_anterior, emissao_bi, validade_bi, locale_bi) 
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+"INSERT INTO morador (nome, email, telefone, numbi, senha_hash, nasc, morada_anterior, emissao_bi, validade_bi, locale_bi, estado_conta) 
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+
             );
-            $stmt->bind_param("ssssssssss", $nome, $email, $telefone, $numbi, $senha_hash, $nasc, $morada, $emissao_bi, $validade_bi, $locale_bi);
+$stmt->bind_param("sssssssssss", $nome, $email, $telefone, $numbi, $senha_hash, $nasc, $morada, $emissao_bi, $validade_bi, $locale_bi, $estado_conta);
+
             $stmt->execute();
             $id_morador = $stmt->insert_id;
             $stmt->close();

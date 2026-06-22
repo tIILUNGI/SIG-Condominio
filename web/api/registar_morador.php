@@ -36,6 +36,10 @@ if (strlen($senha) < 6) {
 
 $senha_hash = password_hash($senha, PASSWORD_DEFAULT);
 
+// Garantir que o morador nasce com conta activa (o login exige 'Activo')
+$estado_conta = 'Activo';
+
+
 // Verificar se BI ja existe
 $chk = $conexao->prepare("SELECT id FROM morador WHERE numbi=? OR email=? LIMIT 1");
 $chk->bind_param("ss", $numbi, $email);
@@ -46,13 +50,15 @@ if ($chk->get_result()->num_rows > 0) {
 }
 
 $stmt = $conexao->prepare(
-    "INSERT INTO morador (nome, telefone, email, nasc, nacionalidade, morada_anterior, numbi, emissao_bi, validade_bi, locale_bi, senha_hash)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+"INSERT INTO morador (nome, telefone, email, nasc, nacionalidade, morada_anterior, numbi, emissao_bi, validade_bi, locale_bi, estado_conta, senha_hash)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+
 );
-$stmt->bind_param("sssssssssss",
+$stmt->bind_param("ssssssssssss",
     $nome, $telefone, $email, $nasc, $nacionalidade,
-    $morada, $numbi, $emissao, $validade, $locale, $senha_hash
+    $morada, $numbi, $emissao, $validade, $locale, $estado_conta, $senha_hash
 );
+
 
 if ($stmt->execute()) {
     header("Location: ../login.html?ok=registado");
