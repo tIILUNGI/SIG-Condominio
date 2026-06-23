@@ -13,7 +13,7 @@ while ($row = mysqli_fetch_assoc($resultado_blocos)) {
 // Dados de blocos para JavaScript
 window.BLCOES_DATA = <?php echo json_encode($blocos); ?>;
 </script>
-<?php
+
 
 <!DOCTYPE html>
 <html lang="pt-AO">
