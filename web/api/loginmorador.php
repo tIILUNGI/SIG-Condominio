@@ -36,21 +36,15 @@ if (!$conexao) {
 // ─────────────────────────────────────────────────────────────────────────
 
 $stmt = $conexao->prepare("
-<<<<<<< HEAD
-    SELECT id, nome, email, numbi, senha_hash, estado_conta 
-    FROM morador 
-    WHERE numbi = ?
-=======
-    SELECT 
-        id, 
-        nome, 
-        email, 
-        numbi, 
-        senha_hash, 
+SELECT 
+        id,
+        nome,
+        email,
+        numbi,
+        senha_hash,
         estado_conta 
     FROM morador 
     WHERE numbi = ? 
->>>>>>> 49edb5e (Ajustes baiscos)
     LIMIT 1
 ");
 $stmt->bind_param("s", $numbi);
@@ -65,18 +59,7 @@ if ($res->num_rows > 0) {
     // 3. VERIFICAR STATUS DA CONTA
     // ─────────────────────────────────────────────────────────────────────────
     
-<<<<<<< HEAD
-    error_log("Morador encontrado:");
-    error_log("ID: " . $morador['id']);
-    error_log("Nome: " . $morador['nome']);
-    error_log("Email: " . $morador['email']);
-    error_log("BI: " . $morador['numbi']);
-    error_log("Status: " . $morador['estado_conta']);
-    error_log("Hash da senha: " . $morador['senha_hash']);
-    
-    // Verificar se a conta está ativa
-=======
->>>>>>> 49edb5e (Ajustes baiscos)
+
     if ($morador['estado_conta'] !== 'Activo') {
         // Conta não está activa (Suspenso ou Inactivo)
         $stmt->close();
@@ -98,16 +81,6 @@ if ($res->num_rows > 0) {
         // 5. LOGIN BEM-SUCEDIDO — CRIAR SESSÃO
         // ─────────────────────────────────────────────────────────────────────────
         
-<<<<<<< HEAD
-        // Iniciar sessão do morador
-        $_SESSION['tipo'] = 'morador';
-        $_SESSION['id'] = $morador['id'];
-        $_SESSION['nome'] = $morador['nome'];
-        $_SESSION['email'] = $morador['email'];
-        $_SESSION['numbi'] = $morador['numbi'];
-        
-        // Atualizar último login
-=======
         $_SESSION['tipo']   = 'morador';
         $_SESSION['id']     = $morador['id'];
         $_SESSION['nome']   = $morador['nome'];
@@ -115,7 +88,6 @@ if ($res->num_rows > 0) {
         $_SESSION['numbi']  = $morador['numbi'];
 
         // Atualizar campo último_login na base de dados
->>>>>>> 49edb5e (Ajustes baiscos)
         $upd = $conexao->prepare("UPDATE morador SET ultimo_login = NOW() WHERE id = ?");
         $upd->bind_param("i", $morador['id']);
         $upd->execute();
