@@ -7,12 +7,33 @@
   font-family:Arial, Helvetica, sans-serif;
 }
 
+:root {
+  --gold: #b4914a;
+  --bg: #f5f8fa;
+  --surface: #ffffff;
+  --text: #333333;
+  --text-muted: #777777;
+  --border: #dddddd;
+  --shadow: 0 20px 40px rgba(0,0,0,0.1);
+}
+
+[data-theme="dark"] {
+  --bg: #0f172a;
+  --surface: #1e293b;
+  --text: #f8fafc;
+  --text-muted: #94a3b8;
+  --border: #334155;
+  --shadow: 0 20px 40px rgba(0,0,0,0.4);
+}
+
 body{
   min-height:100vh;
   display:flex;
   justify-content:center;
   align-items:center;
-  background:#f5f5f5;
+  background:var(--bg);
+  color: var(--text);
+  transition: background-color 0.3s, color 0.3s;
 }
 
 /* CONTAINER */
@@ -22,20 +43,29 @@ main{
   display:flex;
   border-radius:12px;
   overflow:hidden;
-  box-shadow:0 20px 40px rgba(0,0,0,0.15);
-  background:white;
+  box-shadow: var(--shadow);
+  background: var(--surface);
+  transition: background-color 0.3s, box-shadow 0.3s;
 }
 
 /* AREA 3D */
 aside{
   width:45%;
-  background:linear-gradient(145deg,#fff7cc,#ffffff);
+  background: var(--surface);
+  border-right: 1px solid var(--border);
   display:flex;
   align-items:center;
   justify-content:center;
   perspective:1000px;
   position:relative;
   overflow:hidden;
+  transition: background-color 0.3s, border-right-color 0.3s;
+}
+[data-theme="light"] aside {
+  background:linear-gradient(145deg,#fff7cc,#ffffff);
+}
+[data-theme="dark"] aside {
+  background:linear-gradient(145deg,#0f172a,#1e293b);
 }
 
 /* CUBO 3D */
@@ -90,20 +120,23 @@ form{
   flex-direction:column;
   justify-content:center;
   transition:0.6s;
-  background:white;
+  background: var(--surface);
 }
 
 h2{
   margin-bottom:20px;
-  color:#444;
+  color: var(--text);
 }
 
 /* INPUTS */
 input,select{
   padding:12px;
   margin:10px 0;
-  border:1px solid #ddd;
+  border:1px solid var(--border);
   border-radius:6px;
+  background: var(--bg);
+  color: var(--text);
+  transition: all 0.3s;
 }
 
 input:focus,select:focus{
@@ -126,8 +159,8 @@ button{
 }
 
 .button , a{
-text-decoration: none;
-color: #333;
+  text-decoration: none;
+  color: var(--gold);
 }
 
 
@@ -154,7 +187,7 @@ main.active #funcionario{
 .toggle{
   margin-top:15px;
   font-size:14px;
-  color:#777;
+  color: var(--text-muted);
   cursor:pointer;
 }
 

@@ -8,9 +8,12 @@
 
 <link rel="stylesheet" href="css/index.css">
 <!-- Google Fonts -->
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="js/theme-manager.js"></script>
+    <script>
+      const savedTheme = localStorage.getItem('nz-theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+    </script>
 </head>
 
 <body>
@@ -29,10 +32,7 @@
 <a href="sobre.html">Sobre nós</a>
 <a href="login.html">Login</a>
 <a href="pages/morador-gest.html">Pagamentos</a>
-<a href="#"></a>
-
-
-<!-- <a href="dashboard.html"><button class="Morador">Dashboard</button></a> -->
+<button id="theme-toggle" class="theme-toggle-btn" onclick="ThemeManager.toggle()" style="width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--text);margin-left:15px;"><i class="fa-solid fa-moon"></i></button>
 </div>
 
 

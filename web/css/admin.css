@@ -18,9 +18,11 @@
       --warn: #f59e0b;
       --sidebar-w: 260px; 
       --radius: 12px;
-      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-      --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-      --shadow-md: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --dark3: #f1f5f9;
+      --dark4: #e2e8f0;
       --topbar-bg: rgba(255, 255, 255, 0.8);
     }
 
@@ -36,6 +38,8 @@
       --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.3);
       --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.5);
       --shadow-md: 0 10px 15px -3px rgb(0 0 0 / 0.5);
+      --dark3: #0f172a;
+      --dark4: #1e293b;
     }
 
     /* Global Transitions for theme switching */

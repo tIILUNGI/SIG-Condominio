@@ -23,6 +23,11 @@ $morador = $result->fetch_assoc();
     <title>Meu Perfil - Nosso Zimbo</title>
     <link rel="stylesheet" href="../css/nosso-zimbo-admin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <script src="../js/theme-manager.js"></script>
+    <script>
+        const savedTheme = localStorage.getItem('nz-theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+    </script>
 </head>
 <body>
 <aside class="sidebar" id="sidebar">
