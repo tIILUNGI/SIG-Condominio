@@ -506,7 +506,8 @@ function carregarDashboard() {
     document.getElementById('ds-pendentes').textContent  = r.mensalidades_pendentes;
     document.getElementById('ds-casas').textContent      = r.apartamentos_disponiveis;
     document.getElementById('ds-receitas').textContent   = fmt(r.receitas_mes) + ' Kz';
-    document.getElementById('badge-pay').textContent     = r.mensalidades_pendentes;
+    const payBadge = document.getElementById('badge-pay');
+    if (payBadge) payBadge.textContent = r.mensalidades_pendentes;
 
     // Gráficos simples
     renderCharts(r);

@@ -21,7 +21,7 @@ $morador = $result->fetch_assoc();
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Meu Perfil - Nosso Zimbo</title>
-    <link rel="stylesheet" href="../Css/nosso-zimbo-admin.css">
+    <link rel="stylesheet" href="../css/nosso-zimbo-admin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
 <body>

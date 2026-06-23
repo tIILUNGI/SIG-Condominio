@@ -74,14 +74,37 @@ switch ($acao) {
         break;
 
     case 'resumo_financeiro':
-        $total_pend = mysqli_fetch_row(mysqli_query($conexao,
-            "SELECT COALESCE(SUM(valor),0) FROM mensalidade WHERE id_morador=$id_morador AND estado='pendente'"))[0] ?? 0;
-        $total_pago = mysqli_fetch_row(mysqli_query($conexao,
-            "SELECT COALESCE(SUM(valor_pago),0) FROM mensalidade_pagamento mp
-             JOIN mensalidade men ON men.id = mp.id_mensalidade
-             WHERE men.id_morador=$id_morador AND mp.estado='confirmado'"))[0] ?? 0;
-        $meses_pagos = mysqli_fetch_row(mysqli_query($conexao,
-            "SELECT COUNT(*) FROM mensalidade WHERE id_morador=$id_morador AND estado='pago'"))[0] ?? 0;
+        // ✅ CORRIGIDO: Usar prepared statements em vez de interpolação
+        $stmt = $conexao->prepare("
+            SELECT COALESCE(SUM(valor),0) as total 
+            FROM mensalidade 
+            WHERE id_morador=? AND estado='pendente'
+        ");
+        $stmt->bind_param("i", $id_morador);
+        $stmt->execute();
+        $total_pend = $stmt->get_result()->fetch_assoc()['total'] ?? 0;
+        $stmt->close();
+
+        $stmt = $conexao->prepare("
+            SELECT COALESCE(SUM(valor_pago),0) as total 
+            FROM mensalidade_pagamento mp
+            JOIN mensalidade men ON men.id = mp.id_mensalidade
+            WHERE men.id_morador=? AND mp.estado='confirmado'
+        ");
+        $stmt->bind_param("i", $id_morador);
+        $stmt->execute();
+        $total_pago = $stmt->get_result()->fetch_assoc()['total'] ?? 0;
+        $stmt->close();
+
+        $stmt = $conexao->prepare("
+            SELECT COUNT(*) as total 
+            FROM mensalidade 
+            WHERE id_morador=? AND estado='pago'
+        ");
+        $stmt->bind_param("i", $id_morador);
+        $stmt->execute();
+        $meses_pagos = $stmt->get_result()->fetch_assoc()['total'] ?? 0;
+        $stmt->close();
 
         echo json_encode(['sucesso' => true, 'dados' => [
             'pendente'    => (float)$total_pend,

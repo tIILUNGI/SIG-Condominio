@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Condomínio Nosso Zimbo — Sistema de Gestão (SIG)
 
 > Baseado no código existente em `web/` (PHP + MySQL) e na base `condominio_nz`.
@@ -116,3 +117,243 @@ Há dois fluxos admin que existem no código:
 4. Entrar como morador e pagar uma mensalidade.
 5. Voltar em “minhas mensalidades” e confirmar que o estado mudou para **pago**.
 
+=======
+# 🏛️ Condomínio Nosso Zimbo — Sistema de Gestão
+
+## Descrição do Projeto
+
+Sistema web completo de gestão de condomínio com:
+- ✅ Portal de autenticação (Admin e Moradores)
+- ✅ Dashboard administrativo com KPIs e relatórios
+- ✅ Gestão de moradores, apartamentos e mensalidades
+- ✅ Controle de pagamentos e visitas
+- ✅ Reserva de áreas comuns
+- ✅ API REST para integração
+
+---
+
+## 📋 Requisitos
+
+- **PHP** 7.4+
+- **MySQL** 5.7+
+- **XAMPP** (ou servidor local equivalente)
+- **Navegador** moderno (Chrome, Firefox, Edge)
+
+---
+
+## 🚀 Instalação
+
+### 1️⃣ Clonar/Baixar o Projeto
+```bash
+cd c:\xampp\htdocs
+# Projeto já em: SIG-Condominio/web/
+```
+
+### 2️⃣ Criar a Base de Dados
+```bash
+# Abrir phpMyAdmin (http://localhost/phpmyadmin)
+# OU executar no terminal MySQL:
+mysql -u root -p < condominio_nz.sql
+```
+
+### 3️⃣ Popular com Dados de Teste
+```bash
+# Executar o script de dados de teste
+mysql -u root -p condominio_nz < api/dados_teste.sql
+```
+
+### 4️⃣ Verificar Permissões
+```bash
+# Assegurar que pasta 'web/' é acessível
+# URL: http://localhost/SIG-Condominio/web/
+```
+
+---
+
+## 📝 Dados de Teste
+
+### 👤 Login Admin
+- **BI:** `000123456LA001`
+- **Senha:** `admin123`
+- **Nome:** João Silva (Super Admin)
+- **Acesso:** http://localhost/SIG-Condominio/web/login.html
+
+### 👤 Login Morador
+- **BI:** `000111222LA010`
+- **Senha:** `morador123`
+- **Nome:** Francisco Neves
+- **Apartamento:** A-102
+
+### 👤 Outro Morador
+- **BI:** `000222333LA011`
+- **Senha:** `morador123`
+- **Nome:** Lurdes Gomes
+- **Apartamento:** A-202
+
+---
+
+## 📚 Estrutura do Projeto
+
+```
+web/
+├── index.html                    # Página inicial
+├── login.html                    # Formulário de login
+├── api/                          # Endpoints PHP
+│   ├── conexao.php              # Configuração de BD
+│   ├── loginmorador.php         # Login de moradores
+│   ├── loginfuncionario.php     # Login de admin
+│   ├── registar_morador.php     # Registo público
+│   ├── registar_admin.php       # Registo de admin
+│   ├── api_dashboard.php        # API de dados
+│   ├── logout.php               # Encerrar sessão
+│   └── condominio_nz.sql        # Schema do BD
+├── js/
+│   ├── login.js                 # Script de validação login
+│   ├── admin_dashboard.js       # Dashboard admin
+│   └── index.js                 # Scripts gerais
+├── css/
+│   ├── login.css                # Estilo login
+│   ├── admin.css                # Estilo dashboard admin
+│   └── ... (outros estilos)
+├── pages/
+│   ├── dashboard.php            # Painel admin (proteção: sessão)
+│   ├── dashboard_morador.php    # Painel morador (proteção: sessão)
+│   └── ... (outras páginas)
+└── Visitante/
+    └── visitante.html           # Formulário de registo
+```
+
+---
+
+## 🔐 Segurança Implementada
+
+### ✅ Autenticação
+- Hash de senha com `password_hash()` (bcrypt)
+- Fallback para senhas em texto plano (legacy)
+- Proteção de sessão em páginas admin
+
+### ✅ Validação
+- Validação de email em cliente e servidor
+- Verificação de força de senha (mín. 6 caracteres)
+- BI com padrão alfanumérico (9-20 caracteres)
+
+### ✅ Proteção
+- Redirecionamento automático para login se não autenticado
+- Escapagem HTML em outputs (`htmlspecialchars`)
+- Prepared statements em queries (proteção SQL injection)
+
+---
+
+## 🎯 Funcionalidades
+
+### 👨‍💼 Admin
+- Dashboard com KPIs
+- Gestão de moradores (CRUD)
+- Gestão de apartamentos (CRUD)
+- Gestão de funcionários
+- Confirmação de pagamentos
+- Relatórios financeiros
+- Agendamento de visitas e áreas comuns
+
+### 👨‍👩‍👧 Morador
+- Dashboard pessoal
+- Visualizar apartamento
+- Ver mensalidades
+- Submeter pagamentos
+- Reportar ocorrências
+- Agendar visitas
+- Reservar áreas comuns
+
+---
+
+## 🔧 Melhorias Recentes (2026-06-23)
+
+### ✅ Corrigidas
+1. **Login.js** — Agora faz submit real dos formulários
+2. **loginfuncionario.php** — Correção de tabela (admin instead of funcionarios)
+3. **loginmorador.php** — Refatorado com comentários estruturados
+4. **conexao.php** — Melhorado com documentação
+5. **Todos arquivos API** — Adicionados comentários em português
+
+### ✅ Criadas
+1. **admin_dashboard.js** — Novo script para dashboard com chamadas reais à API
+2. **dados_teste.sql** — Script para popular BD com dados de teste
+3. **README.md** — Esta documentação
+
+---
+
+## 📊 Base de Dados
+
+### Principais Tabelas
+- `condominio` — Dados do condomínio
+- `administrador` — Funcionários e admins
+- `morador` — Residentes
+- `apartamento` — Frações do condomínio
+- `bloco` — Blocos/torres
+- `mensalidade` — Quotas mensais
+- `mensalidade_pagamento` — Histórico de pagamentos
+- `morador_apartamento` — Associação com histórico
+
+---
+
+## 🐛 Troubleshooting
+
+### ❌ "Erro de ligação à base de dados"
+```bash
+# Verificar se MySQL está running
+# Verificar credenciais em: api/conexao.php
+# Verificar se base 'condominio_nz' existe
+```
+
+### ❌ Login não funciona
+```bash
+# Verificar se dados de teste foram importados
+mysql -u root -p -e "SELECT COUNT(*) FROM condominio_nz.administrador;"
+# Se vazio, executar: dados_teste.sql
+```
+
+### ❌ Dashboard não carrega dados
+```bash
+# Verificar console do navegador (F12 → Console)
+# Verificar php_errors.log do XAMPP
+# Testar API diretamente: http://localhost/SIG-Condominio/web/api/api_dashboard.php?acao=resumo
+```
+
+---
+
+## 📞 Suporte
+
+Para problemas técnicos:
+1. Verifique os logs em `c:\xampp\apache\logs\error.log`
+2. Abra console do navegador (F12)
+3. Teste endpoints de API diretamente
+
+---
+
+## 📄 Licença
+
+Projeto interno — Condomínio Nosso Zimbo (2026)
+
+---
+
+## 🎓 Notas para Desenvolvimento
+
+### Convenções Usadas
+- **Comentários em Português** — Facilita manutenção local
+- **Prepared Statements** — Todas queries protegidas
+- **Session-based Auth** — Não usa JWT/tokens
+- **Timestamps em UTC+01:00** — Hora de Angola
+
+### Próximas Melhorias Sugeridas
+- [ ] Implementar 2FA (two-factor authentication)
+- [ ] Adicionar logs de auditoria
+- [ ] Sistema de notificações email
+- [ ] Backup automático da BD
+- [ ] API REST com tokens JWT
+- [ ] Progressive Web App (PWA)
+
+---
+
+**Última atualização:** 23 de junho de 2026
+**Status:** ✅ Sistema Funcional
+>>>>>>> 49edb5e (Ajustes baiscos)

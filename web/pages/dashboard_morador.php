@@ -48,7 +48,7 @@ $mensalidades_pendentes = $result->fetch_assoc()['total'] ?? 0;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Nosso Zimbo — Painel do Morador</title>
-    <link rel="stylesheet" href="../Css/nosso-zimbo-admin.css">
+    <link rel="stylesheet" href="../css/nosso-zimbo-admin.css">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet" />
@@ -171,7 +171,7 @@ $mensalidades_pendentes = $result->fetch_assoc()['total'] ?? 0;
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; padding:10px;">
                 <div><strong>Nome:</strong> <?php echo htmlspecialchars($morador['nome'] ?? 'N/A'); ?></div>
                 <div><strong>Email:</strong> <?php echo htmlspecialchars($morador['email'] ?? 'N/A'); ?></div>
-                <div><strong>BI:</strong> <?php echo htmlspecialchars($morador['numbI'] ?? 'N/A'); ?></div>
+                <div><strong>BI:</strong> <?php echo htmlspecialchars($morador['numbi'] ?? 'N/A'); ?></div>
                 <div><strong>Telefone:</strong> <?php echo htmlspecialchars($morador['telefone'] ?? 'N/A'); ?></div>
                 <div><strong>Nacionalidade:</strong> <?php echo htmlspecialchars($morador['nacionalidade'] ?? 'N/A'); ?></div>
                 <div><strong>Data Nascimento:</strong> <?php echo $morador['nasc'] ? date('d/m/Y', strtotime($morador['nasc'])) : 'N/A'; ?></div>

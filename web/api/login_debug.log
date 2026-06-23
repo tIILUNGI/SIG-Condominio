@@ -1,0 +1,17 @@
+[23-Jun-2026 03:24:42 Europe/Berlin] [2026-06-23 03:24:42] === TENTATIVA DE LOGIN ADMIN ===
+[23-Jun-2026 03:24:42 Europe/Berlin] [2026-06-23 03:24:42] BI recebido: '000123456LA001' | Senha recebida: (não exibida por segurança)
+[23-Jun-2026 03:24:42 Europe/Berlin] [2026-06-23 03:24:42] ✅ Conexão com BD estabelecida
+[23-Jun-2026 03:24:42 Europe/Berlin] [2026-06-23 03:24:42] Query executada - Registros encontrados: 1
+[23-Jun-2026 03:24:42 Europe/Berlin] [2026-06-23 03:24:42] Admin encontrado:
+[23-Jun-2026 03:24:42 Europe/Berlin] [2026-06-23 03:24:42]   ID: 7
+[23-Jun-2026 03:24:42 Europe/Berlin] [2026-06-23 03:24:42]   Nome: Samuel Admin
+[23-Jun-2026 03:24:42 Europe/Berlin] [2026-06-23 03:24:42]   BI: 000123456LA001
+[23-Jun-2026 03:24:42 Europe/Berlin] [2026-06-23 03:24:42]   Función: Administrador
+[23-Jun-2026 03:24:42 Europe/Berlin] [2026-06-23 03:24:42]   Activo: SIM
+[23-Jun-2026 03:24:42 Europe/Berlin] [2026-06-23 03:24:42] ✅ Conta está ativa
+[23-Jun-2026 03:24:42 Europe/Berlin] [2026-06-23 03:24:42] Password_verify: TRUE
+[23-Jun-2026 03:24:42 Europe/Berlin] [2026-06-23 03:24:42] Senha válida: SIM
+[23-Jun-2026 03:24:42 Europe/Berlin] [2026-06-23 03:24:42] ✅ LOGIN BEM-SUCEDIDO!
+[23-Jun-2026 03:24:42 Europe/Berlin] [2026-06-23 03:24:42] Sessão criada com sucesso
+[23-Jun-2026 03:24:42 Europe/Berlin] [2026-06-23 03:24:42] Último login atualizado
+[23-Jun-2026 03:24:42 Europe/Berlin] [2026-06-23 03:24:42] Redirecionando para dashboard...

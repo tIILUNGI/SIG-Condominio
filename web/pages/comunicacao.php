@@ -15,7 +15,7 @@ $morador_nome = $_SESSION['nome'];
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Comunicação - Nosso Zimbo</title>
-    <link rel="stylesheet" href="../Css/nosso-zimbo-admin.css">
+    <link rel="stylesheet" href="../css/nosso-zimbo-admin.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet" />
 </head>
