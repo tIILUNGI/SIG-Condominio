@@ -981,6 +981,13 @@ article {
   z-index: 1;
 }
 
+.luxury-image-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
 .luxury-glass-card {
   position: absolute;
   top: 60%;
