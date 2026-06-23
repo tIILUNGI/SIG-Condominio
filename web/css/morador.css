@@ -1,37 +1,39 @@
 /* ===== MORADOR PAGE — morador.css ===== */
 
 :root {
-  --gold: #c9a84c;
-  --gold-light: #e8c97a;
-  --gold-dark: #9a7a30;
+  --gold: #b4914a;
+  --gold-light: #d4bc8d;
+  --gold-dark: #8c6d35;
   --blue: #3b82f6;
-  --dark: #0d1117;
-  --dark2: #161b22;
-  --dark3: #21262d;
-  --dark4: #2d333b;
-  --text: #e6edf3;
-  --text2: #8b949e;
-  --text3: #6e7681;
-  --success: #3fb950;
-  --success-bg: rgba(63,185,80,.08);
-  --success-border: rgba(63,185,80,.2);
-  --warning: #d29922;
-  --warning-bg: rgba(210,153,34,.1);
-  --danger: #f85149;
-  --danger-bg: rgba(248,81,73,.1);
-  --info: #58a6ff;
-  --info-bg: rgba(88,166,255,.1);
+  --bg: #f8fafc;
+  --sidebar-bg: #ffffff;
+  --surface: #ffffff;
+  --border: #e2e8f0;
+  --text: #1e293b;
+  --text2: #64748b;
+  --text3: #94a3b8;
+  --success: #10b981;
+  --success-bg: #ecfdf5;
+  --success-border: #a7f3d0;
+  --warning: #f59e0b;
+  --warning-bg: #fffbeb;
+  --danger: #ef4444;
+  --danger-bg: #fef2f2;
+  --info: #3b82f6;
+  --info-bg: #eff6ff;
   --radius: 14px;
   --radius-sm: 8px;
   --sidebar-w: 240px;
   --topbar-h: 60px;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 html, body {
   height: 100%;
-  background: var(--dark);
+  background: var(--bg);
   color: var(--text);
   font-family: 'DM Sans', sans-serif;
   font-size: 14px;
@@ -51,8 +53,8 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .sidebar {
   width: var(--sidebar-w);
   min-height: 100dvh;
-  background: var(--dark2);
-  border-right: 1px solid rgba(255,255,255,.07);
+  background: var(--sidebar-bg);
+  border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
   position: fixed;
@@ -66,7 +68,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   align-items: center;
   gap: 12px;
   padding: 22px 18px;
-  border-bottom: 1px solid rgba(255,255,255,.07);
+  border-bottom: 1px solid var(--border);
 }
 
 .brand-icon {
@@ -110,8 +112,8 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .nav-item i { width: 18px; text-align: center; font-size: 15px; }
 .nav-item span:last-of-type { flex: 1; }
 
-.nav-item:hover { background: var(--dark3); color: var(--text); }
-.nav-item.active { background: rgba(201,168,76,.12); color: var(--gold); }
+.nav-item:hover { background: #f1f5f9; color: var(--text); }
+.nav-item.active { background: #fefce8; color: var(--gold); }
 .nav-item.active i { color: var(--gold); }
 
 .nav-badge {
@@ -127,7 +129,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 
 .sidebar-footer {
   padding: 14px 14px;
-  border-top: 1px solid rgba(255,255,255,.07);
+  border-top: 1px solid var(--border);
   display: flex;
   align-items: center;
   gap: 10px;
@@ -172,6 +174,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   inset: 0;
   background: rgba(0,0,0,.6);
   z-index: 99;
+  -webkit-backdrop-filter: blur(2px);
   backdrop-filter: blur(2px);
 }
 
@@ -187,8 +190,10 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 /* ===== TOPBAR ===== */
 .topbar {
   height: var(--topbar-h);
-  background: var(--dark2);
-  border-bottom: 1px solid rgba(255,255,255,.07);
+  background: rgba(255, 255, 255, 0.8);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
   padding: 0 20px;
@@ -240,8 +245,8 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   display: flex;
   align-items: center;
   gap: 14px;
-  background: rgba(248,81,73,.08);
-  border: 1px solid rgba(248,81,73,.25);
+  background: var(--danger-bg);
+  border: 1px solid var(--success-border);
   border-radius: var(--radius);
   padding: 16px 18px;
   margin-bottom: 24px;
@@ -280,10 +285,11 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 }
 
 .stat-card {
-  background: var(--dark2);
-  border: 1px solid rgba(255,255,255,.07);
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 18px;
+  box-shadow: var(--shadow-sm);
   position: relative;
   overflow: hidden;
 }
@@ -323,16 +329,17 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 
 /* ===== CARDS ===== */
 .card {
-  background: var(--dark2);
-  border: 1px solid rgba(255,255,255,.07);
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 18px;
+  box-shadow: var(--shadow-sm);
 }
 
 .card-head {
   margin-bottom: 14px;
   padding-bottom: 12px;
-  border-bottom: 1px solid rgba(255,255,255,.06);
+  border-bottom: 1px solid #f1f5f9;
 }
 
 .card-title { font-size: 14px; font-weight: 600; color: var(--text); }
@@ -351,9 +358,9 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   border-radius: 20px;
   font-size: 13px;
   font-weight: 500;
-  background: var(--dark3);
+  background: #f1f5f9;
   color: var(--text2);
-  border: 1px solid rgba(255,255,255,.07);
+  border: 1px solid var(--border);
   transition: background .15s, color .15s, border-color .15s;
 }
 .filter-btn:hover { background: var(--dark4); color: var(--text); }
@@ -361,10 +368,11 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 
 /* ===== DEBT ITEMS ===== */
 .debt-item {
-  background: var(--dark2);
-  border: 1px solid rgba(255,255,255,.07);
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 16px 18px;
+  box-shadow: var(--shadow-sm);
   display: flex;
   align-items: center;
   gap: 14px;
@@ -438,10 +446,11 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: var(--dark3);
+  background: #f8fafc;
   border-radius: var(--radius-sm);
   padding: 14px 16px;
   margin-top: 12px;
+  border: 1px solid var(--border);
 }
 
 .total-label { font-size: 12px; color: var(--text2); }
@@ -466,11 +475,12 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 
 /* ===== BANK CARD ===== */
 .bank-card {
-  background: var(--dark2);
-  border: 1px solid rgba(255,255,255,.07);
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 18px;
   margin-bottom: 0;
+  box-shadow: var(--shadow-sm);
 }
 
 .bank-logo {
@@ -484,7 +494,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   align-items: center;
   gap: 10px;
   padding: 8px 0;
-  border-bottom: 1px solid rgba(255,255,255,.05);
+  border-bottom: 1px solid #f1f5f9;
 }
 .bank-field:last-child { border-bottom: none; }
 
@@ -518,13 +528,14 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 }
 
 .method-card {
-  background: var(--dark3);
-  border: 1px solid rgba(255,255,255,.07);
+  background: #ffffff;
+  border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   padding: 14px 10px;
   text-align: center;
   cursor: pointer;
-  transition: border-color .2s, background .2s;
+  box-shadow: var(--shadow-sm);
+  transition: all .2s;
 }
 .method-card:hover, .method-card.selected {
   border-color: var(--gold);
@@ -553,7 +564,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   align-items: center;
   gap: 14px;
   padding: 14px 0;
-  border-bottom: 1px solid rgba(255,255,255,.05);
+  border-bottom: 1px solid #f1f5f9;
 }
 .history-item:last-child { border-bottom: none; }
 
@@ -591,7 +602,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   align-items: center;
   gap: 10px;
   padding: 10px 0;
-  border-bottom: 1px solid rgba(255,255,255,.05);
+  border-bottom: 1px solid #f1f5f9;
 }
 .overview-item:last-child { border-bottom: none; }
 .ov-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
@@ -609,13 +620,14 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   align-items: center;
   justify-content: center;
   padding: 20px;
+  -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px);
 }
 .modal-overlay.open { display: flex; }
 
 .modal-box {
-  background: var(--dark2);
-  border: 1px solid rgba(255,255,255,.1);
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: var(--radius);
   padding: 28px;
   max-width: 480px;
@@ -658,7 +670,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   justify-content: flex-end;
   margin-top: 20px;
   padding-top: 16px;
-  border-top: 1px solid rgba(255,255,255,.07);
+  border-top: 1px solid var(--border);
 }
 
 .pay-confirm-header {
@@ -697,13 +709,13 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .btn-primary:hover { opacity: .88; }
 
 .btn-secondary {
-  background: var(--dark3);
+  background: #ffffff;
   color: var(--text);
   font-size: 13px;
   font-weight: 500;
   padding: 10px 18px;
   border-radius: var(--radius-sm);
-  border: 1px solid rgba(255,255,255,.1);
+  border: 1px solid var(--border);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -714,11 +726,12 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 
 /* ===== FILE UPLOAD ===== */
 .file-upload-area {
-  border: 2px dashed rgba(255,255,255,.12);
+  border: 2px dashed var(--border);
   border-radius: var(--radius-sm);
   padding: 20px;
   text-align: center;
   cursor: pointer;
+  background: #f8fafc;
   transition: border-color .2s, background .2s;
 }
 .file-upload-area:hover { border-color: var(--gold); background: rgba(201,168,76,.05); }
@@ -733,12 +746,13 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   position: fixed;
   bottom: 24px;
   right: 24px;
-  background: var(--dark3);
-  border: 1px solid rgba(255,255,255,.12);
+  background: var(--surface);
+  border: 1px solid var(--border);
   color: var(--text);
   font-size: 13px;
   padding: 12px 18px;
   border-radius: var(--radius-sm);
+  box-shadow: var(--shadow);
   display: flex;
   align-items: center;
   gap: 8px;

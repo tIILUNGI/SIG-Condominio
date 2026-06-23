@@ -51,7 +51,7 @@ aside{
   position:absolute;
   width:60px;
   height:60px;
-  background:#f4c430;
+  background:#b4914a;
   opacity:0.85;
   border:2px solid rgba(255,255,255,0.4);
 }
@@ -107,20 +107,22 @@ input,select{
 }
 
 input:focus,select:focus{
-  border-color:#f4c430;
+  border-color:#b4914a;
+  box-shadow: 0 0 0 3px rgba(180, 145, 74, 0.1);
   outline:none;
 }
 
 /* BOTAO */
 button{
   margin-top:10px;
-  padding:12px;
+  padding:14px;
   border:none;
-  border-radius:6px;
-  background:#f4c430;
-  color:#333;
+  border-radius:8px;
+  background:#b4914a;
+  color:white;
   font-weight:bold;
   cursor:pointer;
+  transition: all 0.3s;
 }
 
 .button , a{
@@ -130,7 +132,9 @@ color: #333;
 
 
 button:hover{
-  background:#e0b12a;
+  background:#9a7a30;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(180, 145, 74, 0.3);
 }
 
 /* TRANSIÇÃO */
@@ -155,7 +159,7 @@ main.active #funcionario{
 }
 
 .toggle:hover{
-  color:#f4c430;
+  color:#b4914a;
 }
 
 /* LOADER */
@@ -169,7 +173,7 @@ main.active #funcionario{
   width:35px;
   height:35px;
   border:4px solid #eee;
-  border-top:4px solid #f4c430;
+  border-top:4px solid #b4914a;
   border-radius:50%;
   margin:auto;
   animation:girar 1s linear infinite;

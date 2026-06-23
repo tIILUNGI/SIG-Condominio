@@ -5,7 +5,7 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Inter', 'Poppins', sans-serif;
 }
 
 body {
@@ -33,13 +33,16 @@ img {
   position: fixed;
   top: 0;
   width: 100%;
-  background: #1b1526;
+  background: rgba(27, 21, 38, 0.85);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
   color: white;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 15px 40px;
   z-index: 999;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 
 .logo {
@@ -60,23 +63,27 @@ img {
 }
 
 .nav-links a:hover {
-  color: #ffb400;
+  color: #b4914a;
 }
 
 
 
 .Morador {
-  width: 200px;
-  padding: 10px;
-  background: #ecca08;
+  width: auto;
+  padding: 10px 24px;
+  background: #b4914a;
   color: white;
-  font-size: 13px;
-  font-weight: bold;
+  font-size: 14px;
+  font-weight: 600;
   border: none;
-  border-radius: 6px, 2px, 3px, 3px;
+  border-radius: 8px;
   cursor: pointer;
-
-
+  transition: all 0.3s ease;
+}
+.Morador:hover {
+  background: #9a7a30;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(180, 145, 74, 0.3);
 }
 
 
@@ -127,8 +134,9 @@ img {
   padding: 40px;
   max-width: 700px;
   text-align: center;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-  border-left: 5px solid #ffb400;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+  border-left: 5px solid #b4914a;
+  border-radius: 4px;
   transition: 0.5s;
 }
 
@@ -168,16 +176,16 @@ img {
 }
 
 .card.yellow {
-  background: #ffb400;
-  color: black;
+  background: #b4914a;
+  color: white;
 }
 
 /* ========================= */
 /* BANNER                    */
 /* ========================= */
 .banner {
-  background: #ffb400;
-  color: black;
+  background: #b4914a;
+  color: white;
   text-align: center;
   padding: 80px 20px;
   font-size: 40px;
@@ -220,11 +228,19 @@ img {
 }
 
 .btn {
-  background: #ffb400;
-  padding: 10px 20px;
+  background: #b4914a;
+  color: white;
+  padding: 12px 28px;
   border: none;
+  border-radius: 6px;
   cursor: pointer;
   margin-top: 10px;
+  font-weight: 600;
+  transition: all 0.3s;
+}
+.btn:hover {
+  background: #9a7a30;
+  box-shadow: 0 4px 12px rgba(180, 145, 74, 0.2);
 }
 
 /* ========================= */
@@ -244,7 +260,7 @@ img {
 }
 
 .Cor {
-  color: #ffb400;
+  color: #b4914a;
 }
 
 h2 {
