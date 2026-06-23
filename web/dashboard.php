@@ -28,7 +28,12 @@ window.BLCOES_DATA = <?php echo json_encode($blocos); ?>;
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-  
+  <script src="js/theme-manager.js"></script>
+  <script>
+    // Immediate script to prevent flash of un-themed content
+    const savedTheme = localStorage.getItem('nz-theme') || 'light';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+  </script>
 </head>
 <body>
 

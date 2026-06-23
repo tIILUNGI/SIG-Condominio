@@ -1,6 +1,7 @@
 /* ===== MORADOR PAGE — morador.css ===== */
 
 :root {
+  /* Light Theme (Default) */
   --gold: #b4914a;
   --gold-light: #d4bc8d;
   --gold-dark: #8c6d35;
@@ -27,6 +28,30 @@
   --topbar-h: 60px;
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --topbar-bg: rgba(255, 255, 255, 0.8);
+}
+
+[data-theme="dark"] {
+  --bg: #0f172a;
+  --surface: #1e293b;
+  --sidebar-bg: #1e293b;
+  --text: #f1f5f9;
+  --text2: #94a3b8;
+  --text3: #64748b;
+  --border: #334155;
+  --topbar-bg: rgba(30, 41, 59, 0.8);
+  --success-bg: rgba(16, 185, 129, 0.1);
+  --warning-bg: rgba(245, 158, 11, 0.1);
+  --danger-bg: rgba(239, 68, 68, 0.1);
+  --info-bg: rgba(59, 130, 246, 0.1);
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.3);
+  --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.5);
+}
+
+/* Global Transitions */
+body { transition: background-color 0.3s ease, color 0.3s ease; }
+.sidebar, .topbar, .card, .stat-card, .debt-item, .pay-item, .modal-box {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease, box-shadow 0.3s ease;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -113,7 +138,8 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .nav-item span:last-of-type { flex: 1; }
 
 .nav-item:hover { background: #f1f5f9; color: var(--text); }
-.nav-item.active { background: #fefce8; color: var(--gold); }
+[data-theme="dark"] .nav-item:hover { background: #334155; }
+.nav-item.active { background: rgba(180, 145, 74, 0.1); color: var(--gold); }
 .nav-item.active i { color: var(--gold); }
 
 .nav-badge {
@@ -190,7 +216,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 /* ===== TOPBAR ===== */
 .topbar {
   height: var(--topbar-h);
-  background: rgba(255, 255, 255, 0.8);
+  background: var(--topbar-bg);
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--border);
@@ -210,7 +236,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   padding: 6px;
   border-radius: 6px;
 }
-.menu-toggle:hover { background: var(--dark3); color: var(--text); }
+.menu-toggle:hover { background: var(--border); color: var(--text); }
 
 .topbar-center { flex: 1; display: flex; justify-content: center; }
 .topbar-logo-sm { display: none; font-family: 'DM Serif Display', serif; font-size: 15px; color: var(--text); }
@@ -339,7 +365,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .card-head {
   margin-bottom: 14px;
   padding-bottom: 12px;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--border);
 }
 
 .card-title { font-size: 14px; font-weight: 600; color: var(--text); }
@@ -358,13 +384,13 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   border-radius: 20px;
   font-size: 13px;
   font-weight: 500;
-  background: #f1f5f9;
+  background: var(--surface);
   color: var(--text2);
   border: 1px solid var(--border);
   transition: background .15s, color .15s, border-color .15s;
 }
-.filter-btn:hover { background: var(--dark4); color: var(--text); }
-.filter-btn.active { background: var(--gold); color: var(--dark); border-color: var(--gold); }
+.filter-btn:hover { background: var(--bg); color: var(--text); }
+.filter-btn.active { background: var(--gold); color: white; border-color: var(--gold); }
 
 /* ===== DEBT ITEMS ===== */
 .debt-item {
@@ -446,7 +472,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #f8fafc;
+  background: var(--bg);
   border-radius: var(--radius-sm);
   padding: 14px 16px;
   margin-top: 12px;
@@ -494,7 +520,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   align-items: center;
   gap: 10px;
   padding: 8px 0;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--border);
 }
 .bank-field:last-child { border-bottom: none; }
 
@@ -509,10 +535,10 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 .copy-btn {
   padding: 4px 8px;
   border-radius: 5px;
-  background: var(--dark3);
+  background: var(--bg);
   color: var(--text2);
   font-size: 12px;
-  border: none;
+  border: 1px solid var(--border);
   cursor: pointer;
   transition: background .15s, color .15s;
   flex-shrink: 0;
@@ -528,7 +554,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
 }
 
 .method-card {
-  background: #ffffff;
+  background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   padding: 14px 10px;
@@ -564,7 +590,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   align-items: center;
   gap: 14px;
   padding: 14px 0;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--border);
 }
 .history-item:last-child { border-bottom: none; }
 
@@ -602,7 +628,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   align-items: center;
   gap: 10px;
   padding: 10px 0;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--border);
 }
 .overview-item:last-child { border-bottom: none; }
 .ov-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
@@ -655,7 +681,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   font-size: 14px;
   transition: background .15s;
 }
-.modal-close:hover { background: var(--dark3); color: var(--text); }
+.modal-close:hover { background: var(--border); color: var(--text); }
 
 .modal-title {
   font-family: 'DM Serif Display', serif;
@@ -722,7 +748,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   gap: 7px;
   transition: background .15s;
 }
-.btn-secondary:hover { background: var(--dark4); }
+.btn-secondary:hover { background: var(--border); }
 
 /* ===== FILE UPLOAD ===== */
 .file-upload-area {
@@ -731,7 +757,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   padding: 20px;
   text-align: center;
   cursor: pointer;
-  background: #f8fafc;
+  background: var(--bg);
   transition: border-color .2s, background .2s;
 }
 .file-upload-area:hover { border-color: var(--gold); background: rgba(201,168,76,.05); }
