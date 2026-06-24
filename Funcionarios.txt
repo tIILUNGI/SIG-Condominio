@@ -1,0 +1,6 @@
+1. Administrador Principal | Super Admin      | 000000000 | Admin@2026
+2. Joaquina Ferreira       | Administrador   | 111111111 | Admin@2026
+3. Mário Costa             | Recursos Humanos | 222222222 | Admin@2026
+4. Sofia Martins           | Segurança       | 333333333 | Admin@2026
+5. Paulo Santos            | Área Técnica    | 444444444 | Admin@2026
+6. Ana Rodrigues           | Administrador   | 555555555 | Admin@2026
