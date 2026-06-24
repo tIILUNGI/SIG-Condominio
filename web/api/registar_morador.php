@@ -154,17 +154,4 @@ if ($stmt->execute()) {
 $stmt->close();
 exit;
 ?>
-    $emissao,
-    $validade,
-    $locale,
-    $estado_conta
-);
 
-
-if ($stmt->execute()) {
-    header("Location: ../login.html?ok=registado");
-} else {
-    header("Location: ../login.html?erro=bd");
-}
-$stmt->close();
-exit;

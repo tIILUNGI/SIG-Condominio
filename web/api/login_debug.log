@@ -66,3 +66,70 @@
 [23-Jun-2026 12:29:04 UTC] [2026-06-23 12:29:04] Sessão criada com sucesso
 [23-Jun-2026 12:29:04 UTC] [2026-06-23 12:29:04] Último login atualizado
 [23-Jun-2026 12:29:04 UTC] [2026-06-23 12:29:04] Redirecionando para dashboard...
+[24-Jun-2026 15:26:55 UTC] [2026-06-24 15:26:55] === TENTATIVA DE LOGIN ADMIN ===
+[24-Jun-2026 15:26:55 UTC] [2026-06-24 15:26:55] BI recebido: '000000000' | Senha recebida: (não exibida por segurança)
+[24-Jun-2026 15:26:55 UTC] [2026-06-24 15:26:55] ✅ Conexão com BD estabelecida
+[24-Jun-2026 15:26:55 UTC] [2026-06-24 15:26:55] Query executada - Registros encontrados: 1
+[24-Jun-2026 15:26:55 UTC] [2026-06-24 15:26:55] Admin encontrado:
+[24-Jun-2026 15:26:55 UTC] [2026-06-24 15:26:55]   ID: 1
+[24-Jun-2026 15:26:55 UTC] [2026-06-24 15:26:55]   Nome: Administrador Principal
+[24-Jun-2026 15:26:55 UTC] [2026-06-24 15:26:55]   BI: 000000000
+[24-Jun-2026 15:26:55 UTC] [2026-06-24 15:26:55]   Función: Super Admin
+[24-Jun-2026 15:26:55 UTC] [2026-06-24 15:26:55]   Activo: SIM
+[24-Jun-2026 15:26:55 UTC] [2026-06-24 15:26:55] ✅ Conta está ativa
+[24-Jun-2026 15:26:55 UTC] [2026-06-24 15:26:55] Password_verify: FALSE
+[24-Jun-2026 15:26:55 UTC] [2026-06-24 15:26:55] Senha válida: SIM
+[24-Jun-2026 15:26:55 UTC] [2026-06-24 15:26:55] ✅ LOGIN BEM-SUCEDIDO!
+[24-Jun-2026 15:26:55 UTC] [2026-06-24 15:26:55] Sessão criada com sucesso
+[24-Jun-2026 15:26:55 UTC] [2026-06-24 15:26:55] Último login atualizado
+[24-Jun-2026 15:26:55 UTC] [2026-06-24 15:26:55] Redirecionando para dashboard...
+[24-Jun-2026 15:27:23 UTC] [2026-06-24 15:27:23] === TENTATIVA DE LOGIN ADMIN ===
+[24-Jun-2026 15:27:23 UTC] [2026-06-24 15:27:23] BI recebido: '123456789' | Senha recebida: (não exibida por segurança)
+[24-Jun-2026 15:27:23 UTC] [2026-06-24 15:27:23] ✅ Conexão com BD estabelecida
+[24-Jun-2026 15:27:23 UTC] [2026-06-24 15:27:23] Query executada - Registros encontrados: 0
+[24-Jun-2026 15:27:23 UTC] [2026-06-24 15:27:23] ❌ ERRO: Nenhum admin encontrado com BI: '123456789'
+[24-Jun-2026 15:27:23 UTC] [2026-06-24 15:27:23] Admins cadastrados no sistema:
+[24-Jun-2026 15:27:23 UTC] [2026-06-24 15:27:23]   - BI: '000000000' | Nome: Administrador Principal
+[24-Jun-2026 15:27:23 UTC] [2026-06-24 15:27:23] === FIM DA TENTATIVA (FALHA) ===
+[24-Jun-2026 16:01:35 UTC] [2026-06-24 16:01:35] === TENTATIVA DE LOGIN ADMIN ===
+[24-Jun-2026 16:01:35 UTC] [2026-06-24 16:01:35] BI recebido: '000000000' | Senha recebida: (não exibida por segurança)
+[24-Jun-2026 16:01:35 UTC] [2026-06-24 16:01:35] ✅ Conexão com BD estabelecida
+[24-Jun-2026 16:01:35 UTC] [2026-06-24 16:01:35] Query executada - Registros encontrados: 1
+[24-Jun-2026 16:01:35 UTC] [2026-06-24 16:01:35] Admin encontrado:
+[24-Jun-2026 16:01:35 UTC] [2026-06-24 16:01:35]   ID: 1
+[24-Jun-2026 16:01:35 UTC] [2026-06-24 16:01:35]   Nome: Administrador Principal
+[24-Jun-2026 16:01:35 UTC] [2026-06-24 16:01:35]   BI: 000000000
+[24-Jun-2026 16:01:35 UTC] [2026-06-24 16:01:35]   Función: Super Admin
+[24-Jun-2026 16:01:35 UTC] [2026-06-24 16:01:35]   Activo: SIM
+[24-Jun-2026 16:01:35 UTC] [2026-06-24 16:01:35] ✅ Conta está ativa
+[24-Jun-2026 16:01:35 UTC] [2026-06-24 16:01:35] Password_verify: FALSE
+[24-Jun-2026 16:01:35 UTC] [2026-06-24 16:01:35] Senha válida: SIM
+[24-Jun-2026 16:01:35 UTC] [2026-06-24 16:01:35] ✅ LOGIN BEM-SUCEDIDO!
+[24-Jun-2026 16:01:35 UTC] [2026-06-24 16:01:35] Sessão criada com sucesso
+[24-Jun-2026 16:01:35 UTC] [2026-06-24 16:01:35] Último login atualizado
+[24-Jun-2026 16:01:35 UTC] [2026-06-24 16:01:35] Redirecionando para dashboard...
+[24-Jun-2026 16:02:34 UTC] [2026-06-24 16:02:34] === TENTATIVA DE LOGIN ADMIN ===
+[24-Jun-2026 16:02:34 UTC] [2026-06-24 16:02:34] BI recebido: '987654324' | Senha recebida: (não exibida por segurança)
+[24-Jun-2026 16:02:34 UTC] [2026-06-24 16:02:34] ✅ Conexão com BD estabelecida
+[24-Jun-2026 16:02:34 UTC] [2026-06-24 16:02:34] Query executada - Registros encontrados: 0
+[24-Jun-2026 16:02:34 UTC] [2026-06-24 16:02:34] ❌ ERRO: Nenhum admin encontrado com BI: '987654324'
+[24-Jun-2026 16:02:34 UTC] [2026-06-24 16:02:34] Admins cadastrados no sistema:
+[24-Jun-2026 16:02:34 UTC] [2026-06-24 16:02:34]   - BI: '000000000' | Nome: Administrador Principal
+[24-Jun-2026 16:02:34 UTC] [2026-06-24 16:02:34] === FIM DA TENTATIVA (FALHA) ===
+[24-Jun-2026 16:02:54 UTC] [2026-06-24 16:02:54] === TENTATIVA DE LOGIN ADMIN ===
+[24-Jun-2026 16:02:54 UTC] [2026-06-24 16:02:54] BI recebido: '000000000' | Senha recebida: (não exibida por segurança)
+[24-Jun-2026 16:02:54 UTC] [2026-06-24 16:02:54] ✅ Conexão com BD estabelecida
+[24-Jun-2026 16:02:54 UTC] [2026-06-24 16:02:54] Query executada - Registros encontrados: 1
+[24-Jun-2026 16:02:54 UTC] [2026-06-24 16:02:54] Admin encontrado:
+[24-Jun-2026 16:02:54 UTC] [2026-06-24 16:02:54]   ID: 1
+[24-Jun-2026 16:02:54 UTC] [2026-06-24 16:02:54]   Nome: Administrador Principal
+[24-Jun-2026 16:02:54 UTC] [2026-06-24 16:02:54]   BI: 000000000
+[24-Jun-2026 16:02:54 UTC] [2026-06-24 16:02:54]   Función: Super Admin
+[24-Jun-2026 16:02:54 UTC] [2026-06-24 16:02:54]   Activo: SIM
+[24-Jun-2026 16:02:54 UTC] [2026-06-24 16:02:54] ✅ Conta está ativa
+[24-Jun-2026 16:02:54 UTC] [2026-06-24 16:02:54] Password_verify: FALSE
+[24-Jun-2026 16:02:54 UTC] [2026-06-24 16:02:54] Senha válida: SIM
+[24-Jun-2026 16:02:54 UTC] [2026-06-24 16:02:54] ✅ LOGIN BEM-SUCEDIDO!
+[24-Jun-2026 16:02:54 UTC] [2026-06-24 16:02:54] Sessão criada com sucesso
+[24-Jun-2026 16:02:54 UTC] [2026-06-24 16:02:54] Último login atualizado
+[24-Jun-2026 16:02:54 UTC] [2026-06-24 16:02:54] Redirecionando para dashboard...
