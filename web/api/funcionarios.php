@@ -27,7 +27,7 @@ $stmt = $conexao->prepare("INSERT INTO funcionarios (nome, telefone, email, nasc
 $stmt->bind_param("ssssssssssss", $nome, $telefone, $email, $nasc, $nacionalidade, $morada, $numbi, $emissao, $validade, $locale, $funcao, $iban);
 
 if ($stmt->execute()) {
-    header("Location: dashboard.html");
+    header("Location: ../pages/dashboard.php");
 } else {
     echo "Erro: " . $stmt->error;
 }

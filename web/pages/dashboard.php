@@ -5,6 +5,7 @@ if (!isset($_SESSION['tipo']) || $_SESSION['tipo'] !== 'admin') {
     header("Location: ../login.html?erro=acesso");
     exit;
 }
+include("../api/csrf_protection.php");
 include("../api/conexao.php");
 
 $nome_admin = htmlspecialchars($_SESSION['nome'] ?? 'Administrador');
@@ -160,6 +161,7 @@ $nome_cond = htmlspecialchars($cond['nome'] ?? 'Condomínio Nosso Zimbo');
     <!-- Formulário novo funcionário -->
     <div id="areaNovo">
       <form action="../api/registar_admin.php" method="POST">
+        <?php echo csrf_field(); ?>
         <div class="card">
           <div class="card-head"><p class="card-title"><i class="fa-solid fa-plus"></i> Adicionar Funcionário</p></div>
           <h2 class="step-title">Dados Pessoais</h2>
@@ -224,6 +226,7 @@ $nome_cond = htmlspecialchars($cond['nome'] ?? 'Condomínio Nosso Zimbo');
     <!-- Formulário novo morador -->
     <div id="areaNovMorador">
       <form action="../api/registar_morador.php" method="POST">
+        <?php echo csrf_field(); ?>
         <div class="card">
           <div class="card-head"><p class="card-title"><i class="fa-solid fa-plus"></i> Adicionar Morador</p></div>
           <h2 class="step-title">Dados Pessoais</h2>

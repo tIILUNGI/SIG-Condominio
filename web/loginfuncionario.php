@@ -25,7 +25,7 @@ if($resultado->num_rows > 0){
     if ($senha === $funcionario['numbi'] || $senha === $funcionario['email']) {
         $_SESSION['numbi'] = $numbi;
         $_SESSION['funcao'] = $funcionario['funcao'] ?? '';
-        header("Location: dashboard.html");
+        header("Location: pages/dashboard.php");
         exit;
     }
 }
