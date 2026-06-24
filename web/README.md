@@ -220,7 +220,7 @@ web/
 │   ├── dashboard_morador.php    # Painel morador (proteção: sessão)
 │   └── ... (outras páginas)
 └── Visitante/
-    └── visitante.html           # Formulário de registo
+    └── visitante.php           # Formulário de registo
 ```
 
 ---

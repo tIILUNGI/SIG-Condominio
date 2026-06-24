@@ -1,3 +1,7 @@
+<?php
+session_start();
+include(__DIR__ . '/../api/csrf_protection.php');
+?>
 <!DOCTYPE html>
 <html lang="pt-AO">
 <head>
@@ -46,6 +50,7 @@
   </div>
 
   <form id="form-visitante" action="../api/registar_morador.php" method="POST">
+    <?php echo csrf_field(); ?>
     <!-- ECRÃ 1: ESCOLHA DE SERVIÇO -->
     <section class="reg-step-content active" id="step-1">
       <h2 class="step-title">O que procura?</h2>
@@ -151,7 +156,6 @@
   }
 
   function nextStep(n) {
-    // Validação básica se avançar do step 2
     if (n === 3) {
       const nome = document.querySelector('input[name="nome"]').value;
       const email = document.querySelector('input[name="email"]').value;
