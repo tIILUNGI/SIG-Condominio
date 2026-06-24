@@ -74,9 +74,6 @@ $nome = $_SESSION['nome'] ?? 'Morador';
         <button class="nav-item" onclick="window.location.href='comunicacao.php'">
             <i class="fa-solid fa-comments"></i><span>Comunicação</span>
         </button>
-        <button class="nav-item" onclick="window.location.href='areas_comuns.php'">
-            <i class="fa-solid fa-calendar-check"></i><span>Áreas Comuns</span>
-        </button>
         <button class="nav-item" onclick="window.location.href='visitas.php'">
             <i class="fa-solid fa-user-plus"></i><span>Visitas</span>
         </button>

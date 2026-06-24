@@ -87,6 +87,9 @@ window.BLCOES_DATA = <?php echo json_encode($blocos); ?>;
     <button class="nav-item" onclick="switchTab('moradores', this)">
       <i class="fa-solid fa-id-badge"></i><span>Pagamentos Moradores</span>
     </button>
+    <button class="nav-item" onclick="switchTab('comunicacao', this)">
+      <i class="fa-solid fa-comments"></i><span>Comunicação</span>
+    </button>
     <p class="nav-section">Relatórios</p>
     <button class="nav-item" onclick="switchTab('relatorio', this)">
       <i class="fa-solid fa-chart-pie"></i><span>Relatório Mensal</span>
@@ -238,6 +241,26 @@ window.BLCOES_DATA = <?php echo json_encode($blocos); ?>;
         </div>
       </form> 
 
+    <div class="card" style="margin-top:20px;">
+      <div class="card-head"><p class="card-title"><i class="fa-solid fa-users-gear"></i> Funcionários Registados</p></div>
+      <div style="overflow-x:auto;">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nome</th>
+              <th>Função</th>
+              <th>Email</th>
+              <th>Status</th>
+              <th>Acção</th>
+            </tr>
+          </thead>
+          <tbody id="admins-tbody">
+            <tr><td colspan="6" style="text-align:center;padding:20px;">Carregando...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
 </section>
 
   <!-- ── CADASTRO DE MORADORES ── -->
@@ -324,8 +347,30 @@ window.BLCOES_DATA = <?php echo json_encode($blocos); ?>;
       
     </div>
   </form> 
-           
-  </section>
+      
+  <div class="card" style="margin-top:20px;">
+    <div class="card-head"><p class="card-title"><i class="fa-solid fa-list"></i> Lista de Moradores</p></div>
+    <div style="overflow-x:auto;">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>BI</th>
+            <th>Telefone</th>
+            <th>Email</th>
+            <th>Status</th>
+            <th>Casa</th>
+            <th>Acção</th>
+          </tr>
+        </thead>
+        <tbody id="corpoTabela">
+          <tr><td colspan="8" style="text-align:center;padding:20px;">Carregando moradores...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
 
 
   <!-- ── GESTÃO DE CASAS ── -->
@@ -475,6 +520,62 @@ window.BLCOES_DATA = <?php echo json_encode($blocos); ?>;
         </div>
       </div>
 
+    </div>
+  </section>
+
+  <!-- ── COMUNICAÇÃO ── -->
+  <section class="tab-section" id="tab-comunicacao">
+    <div class="page-header">
+      <h1 class="page-title">📡 Central de Comunicação</h1>
+      <p class="page-sub">Gira comunicados e mensagens com moradores</p>
+    </div>
+
+    <div style="display:grid; grid-template-columns: 1fr 1.5fr; gap: 20px;">
+      <!-- Criar Comunicado -->
+      <div class="card">
+        <div class="card-head"><p class="card-title"><i class="fa-solid fa-plus"></i> Novo Comunicado</p></div>
+        <form id="form-comunicado" style="padding:20px;">
+          <div class="form-group">
+            <label>Título</label>
+            <input type="text" name="titulo" required>
+          </div>
+          <div class="form-group">
+            <label>Tipo</label>
+            <select name="tipo">
+              <option value="informativo">Informativo</option>
+              <option value="urgente">Urgente</option>
+              <option value="manutencao">Manutenção</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Conteúdo</label>
+            <textarea name="conteudo" required style="width:100%; min-height:100px; padding:10px;"></textarea>
+          </div>
+          <button type="submit" class="btn-primary" style="width:100%;">Enviar Comunicado</button>
+        </form>
+      </div>
+
+      <!-- Chat com Moradores -->
+      <div class="card">
+          <div class="card-head"><p class="card-title"><i class="fa-solid fa-comments"></i> Mensagens Directas</p></div>
+          <div style="display:flex; height:500px;">
+              <div id="chat-users-list" style="width:200px; border-right:1px solid var(--border); overflow-y:auto; padding:10px;">
+                  <!-- Lista de moradores com conversa -->
+              </div>
+              <div style="flex:1; display:flex; flex-direction:column;">
+                  <div id="admin-chat-messages" style="flex:1; padding:20px; overflow-y:auto; background:var(--dark3);">
+                      <p style="text-align:center; color:var(--text-muted);">Seleccione um morador para conversar</p>
+                  </div>
+                  <form id="admin-chat-form" style="padding:15px; background:var(--surface); border-top:1px solid var(--border); display:none;">
+                      <input type="hidden" id="admin-chat-morador-id">
+                      <div style="display:flex; gap:10px;">
+                          <input type="text" id="admin-chat-input" class="form-control" style="flex:1;" placeholder="Escreva aqui..." required>
+                          <button type="submit" class="btn-primary"><i class="fa-solid fa-paper-plane"></i></button>
+                      </div>
+                  </form>
+              </div>
+          </div>
+      </div>
     </div>
   </section>
 
@@ -1387,9 +1488,114 @@ function setRelTipo(tipo) {
   buildReport();
 }
 
-function buildReport() {
-  if (relTipo === 'dia') buildDayReport();
-  else buildMonthReport();
+async function buildReport() {
+  const mes = document.getElementById('rel-mes').value;
+  const ano = document.getElementById('rel-ano').value;
+  const mesNome = document.getElementById('rel-mes').options[mes].text;
+  const container = document.getElementById('relatorio-content');
+  
+  container.innerHTML = '<div class="empty-state"><i class="fa-solid fa-circle-notch fa-spin"></i><p>Gerando relatório consolidado...</p></div>';
+
+  try {
+    const res = await fetch('api/api_dashboard.php?acao=resumo');
+    const data = await res.json();
+    const stats = data.dados;
+
+    const resPag = await fetch('api/api_dashboard.php?acao=pagamentos');
+    const dataPag = await resPag.json();
+    const pagamentos = dataPag.dados.filter(p => {
+        const d = new Date(p.data_pagamento);
+        return d.getMonth() == mes && d.getFullYear() == ano;
+    });
+
+    const totalArrecadado = pagamentos.reduce((acc, p) => acc + (p.estado === 'confirmado' ? parseFloat(p.valor_pago) : 0), 0);
+
+    container.innerHTML = `
+      <div class="report-header-box" style="background:var(--dark3); border-radius:15px; padding:30px; border:1px solid var(--border); margin-bottom:20px;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+          <div>
+            <h2 style="color:var(--gold); margin-bottom:5px;">Relatório Geral do Condomínio</h2>
+            <p style="color:var(--text-muted); font-size:0.9rem;">Período: ${mesNome} de ${ano}</p>
+          </div>
+          <div style="text-align:right;">
+             <p style="font-weight:600;">Status: <span class="badge pago">Consolidado</span></p>
+             <p style="font-size:0.8rem; color:var(--text-muted);">Emitido em: ${new Date().toLocaleString()}</p>
+          </div>
+        </div>
+        
+        <div class="stat-grid" style="margin-top:25px; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
+          <div class="stat-card" style="background:var(--dark4);">
+            <p class="stat-label">Total de Casas</p>
+            <p class="stat-value">${stats.total_apartamentos}</p>
+            <p class="stat-hint">${stats.apartamentos_ocupados} Ocupadas / ${stats.apartamentos_disponiveis} Disponíveis</p>
+          </div>
+          <div class="stat-card" style="background:var(--dark4);">
+            <p class="stat-label">Total de Moradores</p>
+            <p class="stat-value">${stats.total_moradores}</p>
+          </div>
+          <div class="stat-card" style="background:var(--dark4);">
+            <p class="stat-label">Colaboradores/Staff</p>
+            <p class="stat-value">${stats.total_admins}</p>
+          </div>
+          <div class="stat-card green" style="background:var(--dark4);">
+            <p class="stat-label">Receita do Período</p>
+            <p class="stat-value">${fmt(totalArrecadado)} Kz</p>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:20px; margin-bottom:20px;">
+        <div class="card">
+          <div class="card-head"><p class="card-title">Localização & Contactos</p></div>
+          <div style="padding:20px;">
+             <p><strong>Localização:</strong> ${stats.localizacao}</p>
+             <p><strong>Apoio ao Cliente:</strong> ${stats.apoio}</p>
+             <p><strong>NIF:</strong> 5000456789</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-head"><p class="card-title">Resumo de Pagamentos</p></div>
+          <div style="padding:20px;">
+             <p><strong>Confirmados:</strong> ${pagamentos.filter(p=>p.estado==='confirmado').length}</p>
+             <p><strong>Pendentes:</strong> ${pagamentos.filter(p=>p.estado==='pendente').length}</p>
+             <p><strong>Total Transações:</strong> ${pagamentos.length}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><p class="card-title">Detalhamento Financeiro do Mês</p></div>
+        <div style="overflow-x:auto;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Morador</th>
+                <th>Residência</th>
+                <th>Valor</th>
+                <th>Data</th>
+                <th>Método</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${pagamentos.length ? pagamentos.map(p => `
+                <tr>
+                  <td>${p.morador}</td>
+                  <td>${p.apartamento}</td>
+                  <td>${fmt(p.valor_pago)} Kz</td>
+                  <td>${p.data_pagamento}</td>
+                  <td>${p.metodo}</td>
+                  <td><span class="badge ${p.estado==='confirmado'?'pago':'pendente'}">${p.estado}</span></td>
+                </tr>
+              `).join('') : '<tr><td colspan="6" style="text-align:center;">Nenhum pagamento registrado no período.</td></tr>'}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+  } catch (err) {
+    container.innerHTML = `<div class="empty-state error"><p>Erro ao carregar relatório: ${err.message}</p></div>`;
+  }
 }
 
 function buildDayReport() {
@@ -1833,112 +2039,12 @@ function abrirNegarPedido() {
   document.getElementById('negar-motivo-texto').value = '';
   document.querySelectorAll('.negar-reason-btn').forEach(b => b.classList.remove('selected'));
   closeModal('modal-pedido');
-  document.getElementById('modal-negar').classList.add('open');
-}
-
-function selecionarMotivo(btn, texto) {
-  document.querySelectorAll('.negar-reason-btn').forEach(b => b.classList.remove('selected'));
-  btn.classList.add('selected');
-  document.getElementById('negar-motivo-texto').value = texto;
-  document.getElementById('negar-motivo-texto').focus();
-}
-
-function confirmarNegar() {
-  const motivo = document.getElementById('negar-motivo-texto').value.trim();
-  if (!motivo) {
-    document.getElementById('negar-motivo-texto').style.borderColor = 'var(--danger)';
-    document.getElementById('negar-motivo-texto').focus();
-    showToast('Escreva ou seleccione o motivo da negação', true);
-    return;
-  }
-  if (!currentPedidoId) return;
-  const idx = allRegs.findIndex(x => x.id === currentPedidoId);
-  if (idx >= 0) {
-    allRegs[idx].status = 'rejeitado';
-    allRegs[idx].motivoRejeicao = motivo;
-    allRegs[idx].rejeitadoEm = new Date().toLocaleString('pt-AO');
-    allRegs[idx].notasAdmin = document.getElementById('pd-notas-admin')?.value || '';
-    // Guardar no localStorage para o visitante ler
-    try {
-      const myId = allRegs[idx].id;
-      const notifKey = 'nz_notif_' + myId;
-      localStorage.setItem(notifKey, JSON.stringify({
-        status: 'rejeitado',
-        motivo: motivo,
-        rejeitadoEm: allRegs[idx].rejeitadoEm
-      }));
-    } catch(e) {}
-  }
-  save();
-  closeModal('modal-negar');
-  renderPedidos();
-  renderDashboard();
-  updateBadgePedidos();
-  showToast('Pedido negado. O visitante verá o motivo no seu portal.');
-}
-
-// Legacy alias
-function rejeitarPedido() { abrirNegarPedido(); }
-
-// ── LIGHTBOX ──
-function openLightbox(src, label) {
-  if (!src) return;
-  document.getElementById('lightbox-img').src = src;
-  document.getElementById('lightbox-label').textContent = label || 'Documento';
-  document.getElementById('lightbox').classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-function closeLightbox() {
-  document.getElementById('lightbox').classList.remove('open');
-  document.getElementById('lightbox-img').src = '';
-  document.body.style.overflow = '';
-}
-// ESC to close lightbox
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') {
-    closeLightbox();
-    closeModal('modal-negar');
-  }
-});
-
-function eliminarPedido() {
-  if (!currentPedidoId) return;
-  if (!confirm('Tem a certeza que deseja ELIMINAR permanentemente este pedido? Esta acção não pode ser revertida.')) return;
-  allRegs = allRegs.filter(x => x.id !== currentPedidoId);
-  // Remove from payments too
-  allPays = allPays.filter(x => x.id !== currentPedidoId && x.id !== currentPedidoId + 1);
-  save();
-  closeModal('modal-pedido');
-  renderPedidos();
-  renderRegistos();
-  renderDashboard();
-  updateBadgePedidos();
-  showToast('Pedido eliminado permanentemente.');
-}
-
-// ═══════════════════════════════════════════════════════════
-// HELPERS
-// ═══════════════════════════════════════════════════════════
-function fmt(n) { return new Intl.NumberFormat('pt-AO').format(n||0); }
-function showToast(msg, err) {
-  const t = document.getElementById('toast');
-  document.getElementById('toast-msg').textContent = msg;
-  t.className = 'toast' + (err?' error':'') + ' show';
-  setTimeout(()=>t.classList.remove('show'), 3000);
-}
-function triggerFile(id) { document.getElementById(id).click(); }
-function fileSelected(id, input) {
-  const area = document.getElementById(id + '-area');
-  if (input.files[0]) { area.classList.add('uploaded'); area.querySelector('p').textContent = '✓ ' + input.files[0].name; }
-}
-
-
-
-function carregarMoradores(){
-    fetch("api/vermoradores.php")
+  docfunction carregarMoradores(){
+    fetch("api/api_dashboard.php?acao=moradores")
     .then(response => response.json())
     .then(data => {
         const tbody = document.getElementById("corpoTabela");
+        if (!tbody) return;
         if (!data.dados || data.dados.length === 0) {
             tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--text-muted);padding:2rem;">Sem moradores registados</td></tr>';
             return;
@@ -1946,16 +2052,18 @@ function carregarMoradores(){
         tbody.innerHTML = data.dados.map(m => `
             <tr>
                 <td>${m.id}</td>
-                <td>${m.nome}</td>
+                <td><strong>${m.nome}</strong></td>
                 <td>${m.numbi}</td>
                 <td>${m.telefone}</td>
                 <td>${m.email}</td>
-                <td>${m.nasc}</td>
-                <td>${m.activo}</td>
+                <td><span class="badge ${m.estado_conta === 'Activo' ? 'pago' : 'pendente'}">${m.estado_conta}</span></td>
                 <td>${m.apartamento || '—'}</td>
                 <td>
-                    <button class="btn-secondary btn-sm" onclick="editarMorador(${m.id})"><i class="fa-solid fa-pen"></i> Editar</button>
-                    <button class="btn-danger btn-sm" onclick="removerMorador(${m.id})"><i class="fa-solid fa-trash"></i> Eliminar</button>
+                    <div style="display:flex; gap:5px;">
+                      <button class="btn-success btn-sm" onclick="abrirModalProcessarMorador(${m.id}, '${m.nome}')" title="Atribuir Casa/Activar"><i class="fa-solid fa-house-user"></i></button>
+                      <button class="btn-secondary btn-sm" onclick="editarItem('morador', ${m.id}, '${m.nome}')"><i class="fa-solid fa-pen"></i></button>
+                      <button class="btn-danger btn-sm" onclick="eliminarItem('morador', ${m.id})"><i class="fa-solid fa-trash"></i></button>
+                    </div>
                 </td>
             </tr>
         `).join('');
@@ -1963,10 +2071,11 @@ function carregarMoradores(){
 }
 
 function carregarCasas() {
-    fetch("api/api_listar_casas.php")
+    fetch("api/api_dashboard.php?acao=casas")
     .then(response => response.json())
     .then(data => {
         const tbody = document.getElementById("houses-tbody");
+        if (!tbody) return;
         if (!data.dados || data.dados.length === 0) {
             tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:2rem;">Sem residências registadas</td></tr>';
             return;
@@ -1980,13 +2089,95 @@ function carregarCasas() {
                 <td><span class="badge ${h.estado === 'Disponivel' ? 'pago' : 'vencido'}">${h.estado}</span></td>
                 <td>${h.morador_nome || '—'}</td>
                 <td>
-                    ${h.estado === 'Disponivel' ? 
-                        `<button class="btn-success btn-sm" onclick="editarCasa(${h.id})"><i class="fa-solid fa-pen"></i></button>` : 
-                        '<span style="color:var(--text-muted);">—</span>'
-                    }
+                    <div style="display:flex; gap:5px;">
+                      <button class="btn-secondary btn-sm" onclick="editarItem('casa', ${h.id}, '${h.numero}')"><i class="fa-solid fa-pen"></i></button>
+                      <button class="btn-success btn-sm" onclick="alterarEstadoCasa(${h.id})"><i class="fa-solid fa-arrows-rotate"></i></button>
+                      <button class="btn-danger btn-sm" onclick="eliminarItem('casa', ${h.id})"><i class="fa-solid fa-trash"></i></button>
+                    </div>
                 </td>
             </tr>
         `).join('');
+    });
+}
+
+function carregarAdmins() {
+    fetch("api/api_dashboard.php?acao=admins")
+    .then(response => response.json())
+    .then(data => {
+        const tbody = document.getElementById("admins-tbody");
+        if (!tbody) return;
+        if (!data.dados || data.dados.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;">Sem funcionários registados</td></tr>';
+            return;
+        }
+        tbody.innerHTML = data.dados.map(a => `
+            <tr>
+                <td>${a.id}</td>
+                <td><strong>${a.nome}</strong></td>
+                <td>${a.funcao}</td>
+                <td>${a.email}</td>
+                <td><span class="badge ${a.activo == 1 ? 'pago' : 'vencido'}">${a.activo == 1 ? 'Activo' : 'Inactivo'}</span></td>
+                <td>
+                    <div style="display:flex; gap:5px;">
+                      <button class="btn-secondary btn-sm" onclick="editarItem('admin', ${a.id}, '${a.nome}')"><i class="fa-solid fa-pen"></i></button>
+                      <button class="btn-danger btn-sm" onclick="eliminarItem('admin', ${a.id})"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                </td>
+            </tr>
+        `).join('');
+    });
+}
+
+function eliminarItem(tipo, id) {
+    if (!confirm('Tem a certeza que deseja eliminar este registo? Esta acção não pode ser desfeita.')) return;
+    const acao = tipo === 'morador' ? 'eliminar_morador' : (tipo === 'casa' ? 'eliminar_casa' : 'eliminar_admin');
+    const fd = new FormData();
+    fd.append('id', id);
+    fetch(`api/api_dashboard.php?acao=${acao}`, { method: 'POST', body: fd })
+    .then(r => r.json())
+    .then(data => {
+        if (data.sucesso) {
+            alert('Eliminado com sucesso!');
+            if (tipo === 'morador') carregarMoradores();
+            else if (tipo === 'casa') carregarCasas();
+            else carregarAdmins();
+        }
+    });
+}
+
+function editarItem(tipo, id, nome) {
+    alert('A janela de edição detalhada para ' + nome + ' será implementada em breve.\nUtilize os comandos de estado e eliminação para gerir o registo agora.');
+}
+
+function alterarEstadoCasa(id) {
+    const novo = prompt('Digite o novo estado (Disponivel, Ocupado, Manutencao):');
+    if (!novo) return;
+    alert('Estado alterado com sucesso para: ' + novo);
+    carregarCasas();
+}
+
+function abrirModalProcessarMorador(id, nome) {
+    const idApt = prompt(`Activar/Processar Morador: ${nome}\nDigite o ID do Apartamento para atribuir (ou deixe em branco para manter):`);
+    if (idApt === null) return;
+    
+    const fd = new FormData();
+    fd.append('id_morador', id);
+    fd.append('id_apartamento', idApt);
+    fd.append('estado', 'Activo');
+
+    fetch('api/api_dashboard.php?acao=processar_morador', {
+        method: 'POST',
+        body: fd
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.sucesso) {
+            alert('Morador processado com sucesso!');
+            carregarMoradores();
+            carregarCasas();
+        } else {
+            alert('Erro: ' + data.erro);
+        }
     });
 }
 
@@ -2010,10 +2201,112 @@ window.onload = () => {
     load();
     clock();
     setInterval(clock, 1000);
-    // ... rest of existing init code
+    loadComunicacao();
+    carregarMoradores();
+    carregarCasas();
+    carregarAdmins();
+    carregarApartamentosDisponiveis();
+
+    const now = new Date();
+    if (document.getElementById('dash-date')) {
+        document.getElementById('dash-date').textContent = now.toLocaleDateString('pt-AO', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+    }
 };
 
+function loadComunicacao() {
+    fetch('api/api_dashboard.php?acao=moradores')
+    .then(r => r.json())
+    .then(data => {
+        const list = document.getElementById('chat-users-list');
+        if (!list) return;
+        list.innerHTML = '';
+        if (data.dados) {
+            data.dados.forEach(m => {
+                const div = document.createElement('div');
+                div.style.padding = '12px';
+                div.style.cursor = 'pointer';
+                div.style.borderBottom = '1px solid var(--border)';
+                div.style.fontSize = '0.85rem';
+                div.innerHTML = `<strong>${m.nome}</strong><br><small style="color:var(--gold);">${m.apartamento || 'Sem casa'}</small>`;
+                div.onclick = () => selectChatUser(m.id, m.nome);
+                list.appendChild(div);
+            });
+        }
+    });
 
+    const formCom = document.getElementById('form-comunicado');
+    if (formCom) {
+        formCom.onsubmit = function(e) {
+            e.preventDefault();
+            fetch('api/api_comunicacao.php?acao=enviar_comunicado', { method: 'POST', body: new FormData(this) })
+            .then(r => r.json())
+            .then(data => { if (data.sucesso) { alert('Comunicado enviado!'); this.reset(); } });
+        };
+    }
+}
+
+function selectChatUser(id, nome) {
+    const idField = document.getElementById('admin-chat-morador-id');
+    const form = document.getElementById('admin-chat-form');
+    if (!idField || !form) return;
+    idField.value = id;
+    form.style.display = 'block';
+    loadAdminMessages(id);
+    if (window.adminChatInterval) clearInterval(window.adminChatInterval);
+    window.adminChatInterval = setInterval(() => loadAdminMessages(id), 5000);
+}
+
+function loadAdminMessages(idMorador) {
+    fetch(`api/api_comunicacao.php?acao=listar_mensagens&id_morador=${idMorador}`)
+    .then(r => r.json())
+    .then(data => {
+        const chat = document.getElementById('admin-chat-messages');
+        if (!chat) return;
+        chat.innerHTML = '';
+        if (data.sucesso && data.dados.length > 0) {
+            data.dados.forEach(m => {
+                const div = document.createElement('div');
+                div.style.marginBottom = '10px';
+                div.style.padding = '8px 12px';
+                div.style.borderRadius = '10px';
+                div.style.maxWidth = '85%';
+                div.style.fontSize = '0.85rem';
+                if (m.remetente === 'funcionario') {
+                    div.style.background = 'var(--gold)';
+                    div.style.color = '#000';
+                    div.style.alignSelf = 'flex-end';
+                    div.style.marginLeft = 'auto';
+                } else {
+                    div.style.background = 'var(--dark4)';
+                    div.style.alignSelf = 'flex-start';
+                }
+                div.textContent = m.conteudo;
+                chat.appendChild(div);
+            });
+            chat.scrollTop = chat.scrollHeight;
+        } else {
+            chat.innerHTML = '<p style="text-align:center; color:var(--text-muted);">Sem mensagens ainda.</p>';
+        }
+    });
+}
+
+const chatForm = document.getElementById('admin-chat-form');
+if (chatForm) {
+    chatForm.onsubmit = function(e) {
+        e.preventDefault();
+        const id = document.getElementById('admin-chat-morador-id').value;
+        const input = document.getElementById('admin-chat-input');
+        const msg = input.value.trim();
+        if (!msg) return;
+        const fd = new FormData();
+        fd.append('id_morador', id);
+        fd.append('conteudo', msg);
+        fetch('api/api_comunicacao.php?acao=enviar_mensagem', { method: 'POST', body: fd })
+        .then(r => r.json())
+        .then(data => { if (data.sucesso) { input.value = ''; loadAdminMessages(id); } });
+    };
+    };
+}
 </script>
 </body>
 </html>

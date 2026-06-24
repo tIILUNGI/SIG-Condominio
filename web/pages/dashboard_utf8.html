@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 include("conexao.php");
 
 $sql = "select * from aluno";
@@ -10,223 +10,14 @@ $resultado = mysqli_query($conexao, $sql);
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Nosso Zimbo — Painel de Administração</title>
+  <title>Nosso Zimbo â€” Painel de AdministraÃ§Ã£o</title>
 <link rel="stylesheet" href="Css/nosso-zimbo-admin.css">
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js">
-/* --- FUNCIONARIOS --- */
-let allFuncs = JSON.parse(localStorage.getItem('nz_funcionarios') || '[]');
-function saveFuncs() { localStorage.setItem('nz_funcionarios', JSON.stringify(allFuncs)); }
-function resetFuncForm() {
-    document.getElementById('f-nome').value = '';
-    document.getElementById('f-senha').value = '';
-    document.getElementById('f-telefone').value = '';
-    document.getElementById('f-email').value = '';
-    document.getElementById('f-nascimento').value = '';
-    document.getElementById('f-funcao').value = '';
-    document.getElementById('f-nacionalidade').value = 'Angolana';
-    document.getElementById('f-estado-func').value = 'Activo';
-    document.getElementById('f-morada').value = '';
-    document.getElementById('f-editing-id').value = '';
-    document.getElementById('func-form-titulo').innerText = 'Novo Funcionário';
-    document.getElementById('func-btn-txt').innerText = 'Registar Funcionário';
-}
-function salvarFuncionario() {
-    const idField = document.getElementById('f-editing-id').value;
-    const item = {
-        id: idField ? parseInt(idField) : Date.now(),
-        nome: document.getElementById('f-nome').value.trim(),
-        senha: document.getElementById('f-senha').value,
-        telefone: document.getElementById('f-telefone').value,
-        email: document.getElementById('f-email').value,
-        nasc: document.getElementById('f-nascimento').value,
-        funcao: document.getElementById('f-funcao').value,
-        nac: document.getElementById('f-nacionalidade').value,
-        estado: document.getElementById('f-estado-func').value,
-        morada: document.getElementById('f-morada').value
-    };
-    if(!item.nome || !item.telefone || !item.funcao) { showToast('Preencha os campos obrigatórios (*)', true); return; }
-    if(idField) {
-        const idx = allFuncs.findIndex(f => f.id === item.id);
-        if(idx >= 0) allFuncs[idx] = item;
-    } else {
-        allFuncs.push(item);
-    }
-    saveFuncs();
-    resetFuncForm();
-    renderFuncionarios();
-    showToast('Funcionário guardado com sucesso!');
-}
-function renderFuncionarios() {
-    const tbody = document.getElementById('funcionarios-tbody');
-    if(!tbody) return;
-    if(!allFuncs.length) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--text-muted);">Sem funcionários registados</td></tr>';
-        return;
-    }
-    tbody.innerHTML = allFuncs.map(f => \
-        <tr>
-            <td><strong>\</strong></td>
-            <td>\</td>
-            <td>\</td>
-            <td><span class="badge \">\</span></td>
-            <td>
-                <div style="display:flex;gap:.4rem;">
-                    <button class="btn-secondary btn-sm" onclick="verFunc(\)" title="Ver"><i class="fa-solid fa-eye"></i></button>
-                    <button class="btn-secondary btn-sm" onclick="editFunc(\)" title="Editar"><i class="fa-solid fa-pen"></i></button>
-                    <button class="btn-danger btn-sm" onclick="delFunc(\)" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
-                </div>
-            </td>
-        </tr>
-    \).join('');
-}
-function editFunc(id) {
-    const f = allFuncs.find(x => x.id === id);
-    if(!f) return;
-    document.getElementById('f-nome').value = f.nome;
-    document.getElementById('f-senha').value = f.senha || '';
-    document.getElementById('f-telefone').value = f.telefone;
-    document.getElementById('f-email').value = f.email;
-    document.getElementById('f-nascimento').value = f.nasc;
-    document.getElementById('f-funcao').value = f.funcao;
-    document.getElementById('f-nacionalidade').value = f.nac;
-    document.getElementById('f-estado-func').value = f.estado;
-    document.getElementById('f-morada').value = f.morada;
-    document.getElementById('f-editing-id').value = f.id;
-    document.getElementById('func-form-titulo').innerText = 'Editar Funcionário';
-    document.getElementById('func-btn-txt').innerText = 'Actualizar Funcionário';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-function delFunc(id) {
-    if(!confirm('Deseja eliminar este funcionário?')) return;
-    allFuncs = allFuncs.filter(f => f.id !== id);
-    saveFuncs();
-    renderFuncionarios();
-    showToast('Funcionário eliminado.');
-}
-function verFunc(id) {
-    const f = allFuncs.find(x => x.id === id);
-    if(!f) return;
-    alert(\DETALHES DO FUNCIONÁRIO:\\n\\nNome: \\\nCargo: \\\nTelefone: \\\nEmail: \\\nNasc: \\\nMorada: \\\nEstado: \\);
-}
-
-/* --- MORADORES --- */
-let allMors = JSON.parse(localStorage.getItem('nz_moradores_admin') || '[]');
-function saveMors() { localStorage.setItem('nz_moradores_admin', JSON.stringify(allMors)); }
-function resetMorForm() {
-    document.getElementById('m-nome').value = '';
-    document.getElementById('m-senha').value = '';
-    document.getElementById('m-telefone').value = '';
-    document.getElementById('m-email').value = '';
-    document.getElementById('m-nascimento').value = '';
-    document.getElementById('m-nacionalidade').value = 'Angolana';
-    document.getElementById('m-morada').value = '';
-    document.getElementById('m-numbi').value = '';
-    document.getElementById('m-emissao').value = '';
-    document.getElementById('m-validade').value = '';
-    document.getElementById('m-locale').value = '';
-    document.getElementById('m-estado').value = 'Activo';
-    document.getElementById('m-editing-id').value = '';
-    document.getElementById('mor-form-titulo').innerText = 'Novo Morador';
-    document.getElementById('mor-btn-txt').innerText = 'Registar Morador';
-}
-function salvarMorador() {
-    const idField = document.getElementById('m-editing-id').value;
-    const item = {
-        id: idField ? parseInt(idField) : Date.now(),
-        nome: document.getElementById('m-nome').value.trim(),
-        senha: document.getElementById('m-senha').value,
-        telefone: document.getElementById('m-telefone').value,
-        email: document.getElementById('m-email').value,
-        nasc: document.getElementById('m-nascimento').value,
-        nac: document.getElementById('m-nacionalidade').value,
-        morada: document.getElementById('m-morada').value,
-        numbi: document.getElementById('m-numbi').value,
-        emissao: document.getElementById('m-emissao').value,
-        validade: document.getElementById('m-validade').value,
-        locale: document.getElementById('m-locale').value,
-        estado: document.getElementById('m-estado').value
-    };
-    if(!item.nome || !item.telefone || !item.numbi) { showToast('Preencha os campos obrigatórios (*)', true); return; }
-    if(idField) {
-        const idx = allMors.findIndex(f => f.id === item.id);
-        if(idx >= 0) allMors[idx] = item;
-    } else {
-        allMors.push(item);
-    }
-    saveMors();
-    resetMorForm();
-    renderMoradoresAdmin();
-    showToast('Morador guardado com sucesso!');
-}
-function renderMoradoresAdmin() {
-    const tbody = document.getElementById('moradores-admin-tbody');
-    if(!tbody) return;
-    if(!allMors.length) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--text-muted);">Sem moradores registados</td></tr>';
-        return;
-    }
-    tbody.innerHTML = allMors.map(m => \
-        <tr>
-            <td><strong>\</strong></td>
-            <td>\</td>
-            <td>\</td>
-            <td style="font-family:monospace;font-size:.78rem;">\</td>
-            <td><span class="badge \">\</span></td>
-            <td>
-                <div style="display:flex;gap:.4rem;">
-                    <button class="btn-secondary btn-sm" onclick="verMor(\)" title="Ver"><i class="fa-solid fa-eye"></i></button>
-                    <button class="btn-secondary btn-sm" onclick="editMor(\)" title="Editar"><i class="fa-solid fa-pen"></i></button>
-                    <button class="btn-danger btn-sm" onclick="delMor(\)" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
-                </div>
-            </td>
-        </tr>
-    \).join('');
-}
-function editMor(id) {
-    const m = allMors.find(x => x.id === id);
-    if(!m) return;
-    document.getElementById('m-nome').value = m.nome;
-    document.getElementById('m-senha').value = m.senha || '';
-    document.getElementById('m-telefone').value = m.telefone;
-    document.getElementById('m-email').value = m.email;
-    document.getElementById('m-nascimento').value = m.nasc;
-    document.getElementById('m-nacionalidade').value = m.nac;
-    document.getElementById('m-morada').value = m.morada;
-    document.getElementById('m-numbi').value = m.numbi;
-    document.getElementById('m-emissao').value = m.emissao;
-    document.getElementById('m-validade').value = m.validade;
-    document.getElementById('m-locale').value = m.locale;
-    document.getElementById('m-estado').value = m.estado;
-    document.getElementById('m-editing-id').value = m.id;
-    document.getElementById('mor-form-titulo').innerText = 'Editar Morador';
-    document.getElementById('mor-btn-txt').innerText = 'Actualizar Morador';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-function delMor(id) {
-    if(!confirm('Deseja eliminar este morador?')) return;
-    allMors = allMors.filter(x => x.id !== id);
-    saveMors();
-    renderMoradoresAdmin();
-    showToast('Morador eliminado.');
-}
-function verMor(id) {
-    const m = allMors.find(x => x.id === id);
-    if(!m) return;
-    alert(\DETALHES DO MORADOR:\\n\\nNome: \\\nTelefone: \\\nEmail: \\\nBI: \\\nNasc: \\\nMorada: \\\nEstado: \\);
-}
-
-// Add to window.onload or similar
-window.addEventListener('load', () => {
-    renderFuncionarios();
-    renderMoradoresAdmin();
-});
-
-</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
   
 </head>
 <body>
@@ -234,10 +25,10 @@ window.addEventListener('load', () => {
 <!-- PDF PRINT HEADER (hidden normally, shown only on print) -->
 <div id="pdf-report-header" style="display:none; margin-bottom:1.5rem; padding-bottom:1rem; border-bottom: 3px solid #c9a84c;">
   <div style="display:flex; align-items:center; gap:1rem;">
-    <div style="width:50px;height:50px;background:linear-gradient(135deg,#9a7a2e,#c9a84c);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;color:#000;flex-shrink:0;">🏛</div>
+    <div style="width:50px;height:50px;background:linear-gradient(135deg,#9a7a2e,#c9a84c);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;color:#000;flex-shrink:0;">ðŸ›</div>
     <div>
-      <h1 style="font-size:1.4rem;font-weight:900;color:#111;margin:0;">Condomínio Nosso Zimbo</h1>
-      <p style="font-size:.82rem;color:#666;margin:0;">Relatório Financeiro Oficial · <span id="pdf-gen-date"></span></p>
+      <h1 style="font-size:1.4rem;font-weight:900;color:#111;margin:0;">CondomÃ­nio Nosso Zimbo</h1>
+      <p style="font-size:.82rem;color:#666;margin:0;">RelatÃ³rio Financeiro Oficial Â· <span id="pdf-gen-date"></span></p>
     </div>
     <div style="margin-left:auto;text-align:right;">
       <p style="font-size:.75rem;color:#888;">NIF: 000.000.000</p>
@@ -257,12 +48,12 @@ window.addEventListener('load', () => {
     </div>
   </div>
   <nav class="sidebar-nav">
-    <p class="nav-section">Gestão</p>
+    <p class="nav-section">GestÃ£o</p>
     <button class="nav-item active" onclick="switchTab('dashboard', this)">
       <i class="fa-solid fa-gauge-high"></i><span>Dashboard</span>
     </button>
     <button class="nav-item" onclick="switchTab('pedidos', this)">
-      <i class="fa-solid fa-inbox"></i><span>Cadastro de Funcionários</span>
+      <i class="fa-solid fa-inbox"></i><span>Cadastro de FuncionÃ¡rios</span>
       <span class="nav-badge" id="badge-pedidos">0</span>
     </button>
     <button class="nav-item" onclick="switchTab('registos', this)">
@@ -271,9 +62,9 @@ window.addEventListener('load', () => {
       <span class="nav-badge" id="badge-reg">0</span>
     </button>
     <button class="nav-item" onclick="switchTab('casas', this)">
-      <i class="fa-solid fa-house-chimney"></i><span>Gestão de Casas</span>
+      <i class="fa-solid fa-house-chimney"></i><span>GestÃ£o de Casas</span>
     </button>
-    <p class="nav-section">Finanças</p>
+    <p class="nav-section">FinanÃ§as</p>
     <button class="nav-item" onclick="switchTab('pagamentos', this)">
       <i class="fa-solid fa-money-bill-transfer"></i><span>Pagamentos</span>
       <span class="nav-badge" id="badge-pay">0</span>
@@ -281,9 +72,9 @@ window.addEventListener('load', () => {
     <button class="nav-item" onclick="switchTab('moradores', this)">
       <i class="fa-solid fa-id-badge"></i><span>Pagamentos Moradores</span>
     </button>
-    <p class="nav-section">Relatórios</p>
+    <p class="nav-section">RelatÃ³rios</p>
     <button class="nav-item" onclick="switchTab('relatorio', this)">
-      <i class="fa-solid fa-chart-pie"></i><span>Relatório Mensal</span>
+      <i class="fa-solid fa-chart-pie"></i><span>RelatÃ³rio Mensal</span>
     </button>
   </nav>
   <div class="sidebar-footer">
@@ -300,14 +91,14 @@ window.addEventListener('load', () => {
 <main class="main-content">
   <header class="topbar">
     <button class="menu-toggle" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
-    <span class="topbar-title"><i class="fa-solid fa-building-columns"></i> Nosso Zimbo — Admin</span>
+    <span class="topbar-title"><i class="fa-solid fa-building-columns"></i> Nosso Zimbo â€” Admin</span>
     <div class="topbar-right">
       <div class="clock-display" id="clock-display"></div>
       <div class="avatar-admin" style="width:34px;height:34px;">AD</div>
     </div>
   </header>
 
-  <!-- ── DASHBOARD ── -->
+  <!-- â”€â”€ DASHBOARD â”€â”€ -->
   <section class="tab-section active" id="tab-dashboard">
     <div class="page-header">
       <h1 class="page-title">Dashboard</h1>
@@ -323,7 +114,7 @@ window.addEventListener('load', () => {
       </div>
       <div class="stat-card green">
         <div class="stat-icon"><i class="fa-solid fa-sack-dollar"></i></div>
-        <p class="stat-label">Receitas do Mês</p>
+        <p class="stat-label">Receitas do MÃªs</p>
         <p class="stat-value" id="ds-receitas">0 Kz</p>
         <p class="stat-hint">Pagamentos recebidos</p>
       </div>
@@ -331,38 +122,38 @@ window.addEventListener('load', () => {
         <div class="stat-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
         <p class="stat-label">Pendentes</p>
         <p class="stat-value" id="ds-pendentes">0</p>
-        <p class="stat-hint">A aguardar aprovação</p>
+        <p class="stat-hint">A aguardar aprovaÃ§Ã£o</p>
       </div>
       <div class="stat-card blue">
         <div class="stat-icon"><i class="fa-solid fa-house"></i></div>
-        <p class="stat-label">Casas Disponíveis</p>
+        <p class="stat-label">Casas DisponÃ­veis</p>
         <p class="stat-value" id="ds-casas">0</p>
         <p class="stat-hint">De um total de casas V3</p>
       </div>
     </div>
   </section>
 
-  <!-- ──── CADASTRO DE FUNCIONÁRIOS ──── -->
+  <!-- â”€â”€â”€â”€ CADASTRO DE FUNCIONÃRIOS â”€â”€â”€â”€ -->
   <section class="tab-section" id="tab-pedidos">
     <div class="page-header">
-      <h1 class="page-title">Cadastro de Funcion�rios</h1>
-      <p class="page-sub">Adicione e gira os funcion�rios do condom�nio</p>
+      <h1 class="page-title">Cadastro de Funcionários</h1>
+      <p class="page-sub">Adicione e gira os funcionários do condomínio</p>
     </div>
 
     <div class="card" style="margin-bottom:1.5rem;">
       <div class="card-head">
-        <p class="card-title"><i class="fa-solid fa-user-plus"></i> <span id="func-form-titulo">Novo Funcion�rio</span></p>
+        <p class="card-title"><i class="fa-solid fa-user-plus"></i> <span id="func-form-titulo">Novo Funcionário</span></p>
         <button class="btn-secondary btn-sm" onclick="resetFuncForm()"><i class="fa-solid fa-rotate-left"></i> Limpar</button>
       </div>
       <div class="card-body" style="padding:1.5rem;">
         <div class="form-grid">
           <div class="form-group full">
             <label>Nome Completo *</label>
-            <input type="text" id="f-nome" placeholder="Ex: Jo�o Manuel da Silva" maxlength="60" />
+            <input type="text" id="f-nome" placeholder="Ex: João Manuel da Silva" maxlength="60" />
           </div>
           <div class="form-group">
             <label>Senha *</label>
-            <input type="password" id="f-senha" maxlength="60" placeholder="M�nimo 6 caracteres" />
+            <input type="password" id="f-senha" maxlength="60" placeholder="Mínimo 6 caracteres" />
           </div>
           <div class="form-group">
             <label>Telefone *</label>
@@ -377,14 +168,14 @@ window.addEventListener('load', () => {
             <input type="date" id="f-nascimento" />
           </div>
           <div class="form-group">
-            <label>Fun��o / Cargo *</label>
+            <label>Função / Cargo *</label>
             <select id="f-funcao">
               <option value="">-- Selecione --</option>
-              <option value="Seguran�a">Seguran�a</option>
+              <option value="Segurança">Segurança</option>
               <option value="Limpeza">Limpeza</option>
               <option value="Administrador">Administrador</option>
               <option value="Recursos Humanos">Recursos Humanos</option>
-              <option value="�rea T�cnica">�rea T�cnica</option>
+              <option value="Área Técnica">Área Técnica</option>
             </select>
           </div>
           <div class="form-group">
@@ -400,11 +191,11 @@ window.addEventListener('load', () => {
           </div>
           <div class="form-group full">
             <label>Morada Actual *</label>
-            <input type="text" id="f-morada" placeholder="Rua, bairro, munic�pio, prov�ncia" />
+            <input type="text" id="f-morada" placeholder="Rua, bairro, município, província" />
           </div>
         </div>
         <div style="display:flex;gap:.75rem;margin-top:1.25rem;">
-          <button class="btn-primary" onclick="salvarFuncionario()"><i class="fa-solid fa-floppy-disk"></i> <span id="func-btn-txt">Registar Funcion�rio</span></button>
+          <button class="btn-primary" onclick="salvarFuncionario()"><i class="fa-solid fa-floppy-disk"></i> <span id="func-btn-txt">Registar Funcionário</span></button>
           <button class="btn-secondary" onclick="resetFuncForm()"><i class="fa-solid fa-xmark"></i> Cancelar</button>
         </div>
         <input type="hidden" id="f-editing-id" value="" />
@@ -413,23 +204,23 @@ window.addEventListener('load', () => {
 
     <div class="card">
       <div class="card-head">
-        <p class="card-title"><i class="fa-solid fa-list"></i> Funcion�rios Registados</p>
+        <p class="card-title"><i class="fa-solid fa-list"></i> Funcionários Registados</p>
         <button class="btn-secondary btn-sm" onclick="renderFuncionarios()"><i class="fa-solid fa-rotate"></i></button>
       </div>
       <div style="overflow-x:auto;">
         <table class="data-table">
-          <thead><tr><th>Nome</th><th>Cargo</th><th>Telefone</th><th>Estado</th><th>A��es</th></tr></thead>
-          <tbody id="funcionarios-tbody"><tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--text-muted);">Sem funcion�rios registados</td></tr></tbody>
+          <thead><tr><th>Nome</th><th>Cargo</th><th>Telefone</th><th>Estado</th><th>Ações</th></tr></thead>
+          <tbody id="funcionarios-tbody"><tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--text-muted);">Sem funcionários registados</td></tr></tbody>
         </table>
       </div>
     </div>
   </section>
-  <!-- ── CADASTRO DE MORADORES ── -->
-  <!-- ──── CADASTRO DE MORADORES ──── -->
+  <!-- â”€â”€ CADASTRO DE MORADORES â”€â”€ -->
+  <!-- â”€â”€â”€â”€ CADASTRO DE MORADORES â”€â”€â”€â”€ -->
   <section class="tab-section" id="tab-registos">
     <div class="page-header">
       <h1 class="page-title">Cadastro de Moradores</h1>
-      <p class="page-sub">Adicione e gira os moradores do condom�nio</p>
+      <p class="page-sub">Adicione e gira os moradores do condomínio</p>
     </div>
 
     <div class="card" style="margin-bottom:1.5rem;">
@@ -446,7 +237,7 @@ window.addEventListener('load', () => {
           </div>
           <div class="form-group">
             <label>Senha *</label>
-            <input type="password" id="m-senha" maxlength="60" placeholder="M�nimo 6 caracteres" />
+            <input type="password" id="m-senha" maxlength="60" placeholder="Mínimo 6 caracteres" />
           </div>
           <div class="form-group">
             <label>Telefone *</label>
@@ -466,17 +257,17 @@ window.addEventListener('load', () => {
           </div>
           <div class="form-group full">
             <label>Morada Actual *</label>
-            <input type="text" id="m-morada" placeholder="Rua, bairro, munic�pio, prov�ncia" />
+            <input type="text" id="m-morada" placeholder="Rua, bairro, município, província" />
           </div>
         </div>
-        <h3 style="font-size:.9rem;font-weight:700;color:var(--gold);margin:1.25rem 0 1rem;text-transform:uppercase;letter-spacing:.05em;"><i class="fa-solid fa-id-card"></i> Documento de Identifica��o</h3>
+        <h3 style="font-size:.9rem;font-weight:700;color:var(--gold);margin:1.25rem 0 1rem;text-transform:uppercase;letter-spacing:.05em;"><i class="fa-solid fa-id-card"></i> Documento de Identificação</h3>
         <div class="form-grid">
           <div class="form-group">
-            <label>N� do Bilhete de Identidade *</label>
+            <label>Nº do Bilhete de Identidade *</label>
             <input type="text" id="m-numbi" placeholder="000XXXXXX LA 000" />
           </div>
           <div class="form-group">
-            <label>Data de Emiss�o *</label>
+            <label>Data de Emissão *</label>
             <input type="date" id="m-emissao" />
           </div>
           <div class="form-group">
@@ -484,7 +275,7 @@ window.addEventListener('load', () => {
             <input type="date" id="m-validade" />
           </div>
           <div class="form-group">
-            <label>Local de Emiss�o *</label>
+            <label>Local de Emissão *</label>
             <input type="text" id="m-locale" placeholder="Luanda, SAE Patriota" />
           </div>
           <div class="form-group">
@@ -510,25 +301,25 @@ window.addEventListener('load', () => {
       </div>
       <div style="overflow-x:auto;">
         <table class="data-table">
-          <thead><tr><th>Nome</th><th>Telefone</th><th>Email</th><th>BI</th><th>Estado</th><th>A��es</th></tr></thead>
+          <thead><tr><th>Nome</th><th>Telefone</th><th>Email</th><th>BI</th><th>Estado</th><th>Ações</th></tr></thead>
           <tbody id="moradores-admin-tbody"><tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--text-muted);">Sem moradores registados</td></tr></tbody>
         </table>
       </div>
     </div>
   </section>
 
-  <!-- ── GESTÃO DE CASAS ── -->
+  <!-- â”€â”€ GESTÃƒO DE CASAS â”€â”€ -->
   <section class="tab-section" id="tab-casas">
     <div class="page-header">
-      <h1 class="page-title">Gestão de Casas</h1>
-      <p class="page-sub">Adicione e gira as residências do condomínio</p>
+      <h1 class="page-title">GestÃ£o de Casas</h1>
+      <p class="page-sub">Adicione e gira as residÃªncias do condomÃ­nio</p>
     </div>
     <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.25rem;">
 
       <!-- Form de adicionar casa -->
       <form action="casa.php" method="POST" id="house-form">
       <div class="card">
-        <div class="card-head"><p class="card-title"><i class="fa-solid fa-plus"></i> Adicionar Nova Resid�ncia</p></div>
+        <div class="card-head"><p class="card-title"><i class="fa-solid fa-plus"></i> Adicionar Nova Residência</p></div>
         <div class="card-body">
           <div class="form-grid">
             <div class="form-group">
@@ -536,11 +327,11 @@ window.addEventListener('load', () => {
               <input type="text" id="h-bloco" name="bloco" placeholder="Ex: A, B, C..." maxlength="3" />
             </div>
             <div class="form-group">
-              <label>N�mero da Rua *</label>
+              <label>Número da Rua *</label>
               <input type="text" id="h-rua" name="rua" placeholder="Ex: Rua 3, Rua Principal..." />
             </div>
             <div class="form-group">
-              <label>N�mero da Casa *</label>
+              <label>Número da Casa *</label>
               <input type="text" id="h-numero" name="casanum" placeholder="Ex: 14, 7B..." />
             </div>
             <div class="form-group">
@@ -549,7 +340,7 @@ window.addEventListener('load', () => {
             </div>
             <div class="form-group">
               <label>Andar / Apartamento</label>
-              <input type="text" id="h-andar" name="andar" placeholder="Ex: 2� Andar, Apt 4B" />
+              <input type="text" id="h-andar" name="andar" placeholder="Ex: 2º Andar, Apt 4B" />
             </div>
             <div class="form-group">
               <label>Zona</label>
@@ -558,13 +349,13 @@ window.addEventListener('load', () => {
             <div class="form-group full">
               <label>Estado Inicial</label>
               <select id="h-estado" name="estado">
-                <option value="disponivel">Dispon�vel</option>
+                <option value="disponivel">Disponível</option>
                 <option value="ocupada">Ocupada</option>
-                <option value="manutencao">Em Manuten��o</option>
+                <option value="manutencao">Em Manutenção</option>
               </select>
             </div>
             <div class="form-group full">
-              <label>Observa��es</label>
+              <label>Observações</label>
               <input type="text" id="h-obs" name="obs" placeholder="Detalhes adicionais..." />
             </div>
           </div>
@@ -577,10 +368,10 @@ window.addEventListener('load', () => {
 
 <!-- Lista de casas -->
        <div class="card">
-         <div class="card-head"><p class="card-title"><i class="fa-solid fa-list"></i> Resid�ncias Registadas</p></div>
+         <div class="card-head"><p class="card-title"><i class="fa-solid fa-list"></i> Residências Registadas</p></div>
          <div style="overflow-x:auto; max-height:500px; overflow-y:auto;">
            <table class="data-table" id="houses-table">
-             <thead><tr><th>Bloco</th><th>Rua</th><th>N�</th><th>Tipo</th><th>Estado</th><th>A��es</th></tr></thead>
+             <thead><tr><th>Bloco</th><th>Rua</th><th>Nº</th><th>Tipo</th><th>Estado</th><th>Ações</th></tr></thead>
              <tbody id="houses-tbody"></tbody>
            </table>
          </div>
@@ -590,7 +381,7 @@ window.addEventListener('load', () => {
     </div>
   </section>
 
-  <!-- ── PAGAMENTOS (VISITANTES) ── -->
+  <!-- â”€â”€ PAGAMENTOS (VISITANTES) â”€â”€ -->
   <section class="tab-section" id="tab-pagamentos">
     <div class="page-header">
       <h1 class="page-title">Pagamentos de Visitantes</h1>
@@ -599,14 +390,14 @@ window.addEventListener('load', () => {
     <div class="card">
       <div style="overflow-x:auto;">
         <table class="data-table">
-          <thead><tr><th>Referência</th><th>Cliente</th><th>Serviço</th><th>Valor</th><th>Método</th><th>Data</th><th>Estado</th><th>Ver</th></tr></thead>
+          <thead><tr><th>ReferÃªncia</th><th>Cliente</th><th>ServiÃ§o</th><th>Valor</th><th>MÃ©todo</th><th>Data</th><th>Estado</th><th>Ver</th></tr></thead>
           <tbody id="pays-tbody"></tbody>
         </table>
       </div>
     </div>
   </section>
 
-  <!-- ── PAGAMENTOS MORADORES ── -->
+  <!-- â”€â”€ PAGAMENTOS MORADORES â”€â”€ -->
   <section class="tab-section" id="tab-moradores">
     <div class="page-header">
       <h1 class="page-title">Pagamentos dos Moradores</h1>
@@ -616,7 +407,7 @@ window.addEventListener('load', () => {
     <!-- Historico Morador -->
 <div class="card">
         <div class="card-head">
-          <p class="card-title"><i class="fa-solid fa-clock-rotate-left"></i> Histórico de Recebimentos</p>
+          <p class="card-title"><i class="fa-solid fa-clock-rotate-left"></i> HistÃ³rico de Recebimentos</p>
           <span id="hist-count" style="font-size:.75rem;color:var(--text-muted);"></span>
         </div>
         <div style="max-height:380px;overflow-y:auto;padding:1rem 1.25rem;">
@@ -627,13 +418,13 @@ window.addEventListener('load', () => {
       </div>
     
 <br>
-    <!-- HISTÓRICO DE PAGAMENTOS -->
+    <!-- HISTÃ“RICO DE PAGAMENTOS -->
     <div style="display:grid; grid-template-columns: 1fr 1.6fr; gap:1.25rem; margin-bottom:1.25rem;">
 
-      <!-- Barra de histórico -->
+      <!-- Barra de histÃ³rico -->
       <div class="card">
         <div class="card-head">
-          <p class="card-title"><i class="fa-solid fa-clock-rotate-left"></i> Histórico de Recebimentos</p>
+          <p class="card-title"><i class="fa-solid fa-clock-rotate-left"></i> HistÃ³rico de Recebimentos</p>
           <span id="hist-count" style="font-size:.75rem;color:var(--text-muted);"></span>
         </div>
         <div style="max-height:380px;overflow-y:auto;padding:1rem 1.25rem;">
@@ -643,7 +434,7 @@ window.addEventListener('load', () => {
         </div>
       </div>
 
-      <!-- Resumo rápido por morador -->
+      <!-- Resumo rÃ¡pido por morador -->
       <div class="card">
         <div class="card-head">
           <p class="card-title"><i class="fa-solid fa-users"></i> Resumo por Morador</p>
@@ -653,7 +444,7 @@ window.addEventListener('load', () => {
         </div>
         <div style="overflow-x:auto;">
           <table class="data-table">
-            <thead><tr><th>Morador</th><th>Apt</th><th>Tipo</th><th>Valor</th><th>Método</th><th>Data</th><th>Estado</th></tr></thead>
+            <thead><tr><th>Morador</th><th>Apt</th><th>Tipo</th><th>Valor</th><th>MÃ©todo</th><th>Data</th><th>Estado</th></tr></thead>
             <tbody id="mor-tbody"></tbody>
           </table>
         </div>
@@ -662,26 +453,26 @@ window.addEventListener('load', () => {
     </div>
   </section>
 
-  <!-- ── RELATÓRIO MENSAL ── -->
+  <!-- â”€â”€ RELATÃ“RIO MENSAL â”€â”€ -->
   <section class="tab-section" id="tab-relatorio">
     <div class="page-header" style="display:flex; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; gap:1rem;">
       <div>
-        <h1 class="page-title">Relatório Financeiro</h1>
-        <p class="page-sub">Resumo financeiro e operacional — diário e mensal</p>
+        <h1 class="page-title">RelatÃ³rio Financeiro</h1>
+        <p class="page-sub">Resumo financeiro e operacional â€” diÃ¡rio e mensal</p>
       </div>
       <div style="display:flex; gap:.75rem; align-items:center; flex-wrap:wrap;">
-        <!-- Tipo de relatório -->
+        <!-- Tipo de relatÃ³rio -->
         <div style="display:flex;background:var(--dark4);border:1px solid var(--border);border-radius:10px;padding:3px;gap:2px;">
           <button id="rel-tipo-dia" onclick="setRelTipo('dia')" style="padding:.4rem .9rem;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.82rem;cursor:pointer;background:var(--gold);color:#000;font-weight:600;transition:all .2s;">
             <i class="fa-solid fa-calendar-day"></i> Dia
           </button>
           <button id="rel-tipo-mes" onclick="setRelTipo('mes')" style="padding:.4rem .9rem;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.82rem;cursor:pointer;background:transparent;color:var(--text-muted);transition:all .2s;">
-            <i class="fa-solid fa-calendar-days"></i> Mês
+            <i class="fa-solid fa-calendar-days"></i> MÃªs
           </button>
         </div>
         <select id="rel-mes" onchange="buildReport()" style="background:var(--dark3); border:1px solid var(--border); color:var(--text); padding:.5rem .75rem; border-radius:8px; font-family:'DM Sans',sans-serif;">
           <option value="0">Janeiro</option><option value="1">Fevereiro</option>
-          <option value="2">Março</option><option value="3">Abril</option>
+          <option value="2">MarÃ§o</option><option value="3">Abril</option>
           <option value="4">Maio</option><option value="5">Junho</option>
           <option value="6">Julho</option><option value="7">Agosto</option>
           <option value="8">Setembro</option><option value="9">Outubro</option>
@@ -703,7 +494,7 @@ window.addEventListener('load', () => {
 <div class="modal-overlay" id="modal-pedido" onclick="closeModal('modal-pedido')">
   <div class="modal-box" style="max-width:700px;" onclick="event.stopPropagation()">
     <button class="modal-close" onclick="closeModal('modal-pedido')"><i class="fa-solid fa-xmark"></i></button>
-    <h3 class="modal-title"><i class="fa-solid fa-user-check" style="font-size:1rem;margin-right:.4rem;"></i> Revisão do Pedido de Visitante</h3>
+    <h3 class="modal-title"><i class="fa-solid fa-user-check" style="font-size:1rem;margin-right:.4rem;"></i> RevisÃ£o do Pedido de Visitante</h3>
     <p style="font-size:.82rem;color:var(--text-muted);margin-bottom:1.25rem;">Verifique todos os dados submetidos pelo visitante. Confirme que correspondem aos documentos fornecidos antes de aprovar.</p>
 
     <!-- Tabs internas -->
@@ -715,10 +506,10 @@ window.addEventListener('load', () => {
         <i class="fa-solid fa-images"></i> Documentos
       </button>
       <button id="ptab-servico" onclick="switchPTab('servico')" style="flex:1;padding:.5rem;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.82rem;cursor:pointer;background:transparent;color:var(--text-muted);transition:all .2s;">
-        <i class="fa-solid fa-file-contract"></i> Serviço & Pagamento
+        <i class="fa-solid fa-file-contract"></i> ServiÃ§o & Pagamento
       </button>
       <button id="ptab-casa" onclick="switchPTab('casa')" style="flex:1;padding:.5rem;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.82rem;cursor:pointer;background:transparent;color:var(--text-muted);transition:all .2s;">
-        <i class="fa-solid fa-house"></i> Atribuir Residência
+        <i class="fa-solid fa-house"></i> Atribuir ResidÃªncia
       </button>
     </div>
 
@@ -727,29 +518,29 @@ window.addEventListener('load', () => {
       <div class="recibo-box" id="pedido-dados-body">
         <div class="recibo-header">
           <div><i class="fa-solid fa-user" style="font-size:1.5rem;color:#000;"></i></div>
-          <div><h3 id="pd-nome-header">—</h3><p id="pd-ref-header">Ref: —</p></div>
+          <div><h3 id="pd-nome-header">â€”</h3><p id="pd-ref-header">Ref: â€”</p></div>
           <div style="margin-left:auto;"><span class="badge pendente" id="pd-status-badge">pendente</span></div>
         </div>
         <div class="recibo-body" style="display:grid;grid-template-columns:1fr 1fr;gap:0;">
           <div>
-            <div class="recibo-row"><span class="rk">Nome Completo</span><span class="rv" id="pd-nome">—</span></div>
-            <div class="recibo-row"><span class="rk">BI / Documento</span><span class="rv" id="pd-bi">—</span></div>
-            <div class="recibo-row"><span class="rk">Data de Nasc.</span><span class="rv" id="pd-nasc">—</span></div>
-            <div class="recibo-row"><span class="rk">Nacionalidade</span><span class="rv" id="pd-nac">—</span></div>
-            <div class="recibo-row"><span class="rk">Estado Civil</span><span class="rv" id="pd-estado-civil">—</span></div>
+            <div class="recibo-row"><span class="rk">Nome Completo</span><span class="rv" id="pd-nome">â€”</span></div>
+            <div class="recibo-row"><span class="rk">BI / Documento</span><span class="rv" id="pd-bi">â€”</span></div>
+            <div class="recibo-row"><span class="rk">Data de Nasc.</span><span class="rv" id="pd-nasc">â€”</span></div>
+            <div class="recibo-row"><span class="rk">Nacionalidade</span><span class="rv" id="pd-nac">â€”</span></div>
+            <div class="recibo-row"><span class="rk">Estado Civil</span><span class="rv" id="pd-estado-civil">â€”</span></div>
           </div>
           <div>
-            <div class="recibo-row"><span class="rk">Telefone</span><span class="rv" id="pd-tel">—</span></div>
-            <div class="recibo-row"><span class="rk">Email</span><span class="rv" id="pd-email">—</span></div>
-            <div class="recibo-row"><span class="rk">Morada Actual</span><span class="rv" id="pd-morada">—</span></div>
-            <div class="recibo-row"><span class="rk">Profissão</span><span class="rv" id="pd-profissao">—</span></div>
-            <div class="recibo-row"><span class="rk">Data do Pedido</span><span class="rv" id="pd-data">—</span></div>
+            <div class="recibo-row"><span class="rk">Telefone</span><span class="rv" id="pd-tel">â€”</span></div>
+            <div class="recibo-row"><span class="rk">Email</span><span class="rv" id="pd-email">â€”</span></div>
+            <div class="recibo-row"><span class="rk">Morada Actual</span><span class="rv" id="pd-morada">â€”</span></div>
+            <div class="recibo-row"><span class="rk">ProfissÃ£o</span><span class="rv" id="pd-profissao">â€”</span></div>
+            <div class="recibo-row"><span class="rk">Data do Pedido</span><span class="rv" id="pd-data">â€”</span></div>
           </div>
         </div>
       </div>
-      <!-- Checklist de validação -->
+      <!-- Checklist de validaÃ§Ã£o -->
       <div style="background:var(--dark4);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;margin-top:1rem;">
-        <p style="font-size:.78rem;font-weight:600;color:var(--gold);margin-bottom:.75rem;letter-spacing:.04em;text-transform:uppercase;"><i class="fa-solid fa-clipboard-check"></i> Checklist de Validação</p>
+        <p style="font-size:.78rem;font-weight:600;color:var(--gold);margin-bottom:.75rem;letter-spacing:.04em;text-transform:uppercase;"><i class="fa-solid fa-clipboard-check"></i> Checklist de ValidaÃ§Ã£o</p>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:.4rem;">
           <label style="display:flex;align-items:center;gap:.5rem;font-size:.82rem;cursor:pointer;">
             <input type="checkbox" id="chk-bi" style="accent-color:var(--gold);"> BI/documento verificado
@@ -761,7 +552,7 @@ window.addEventListener('load', () => {
             <input type="checkbox" id="chk-pay" style="accent-color:var(--gold);"> Comprovativo recebido
           </label>
           <label style="display:flex;align-items:center;gap:.5rem;font-size:.82rem;cursor:pointer;">
-            <input type="checkbox" id="chk-valor" style="accent-color:var(--gold);"> Valor corresponde ao serviço
+            <input type="checkbox" id="chk-valor" style="accent-color:var(--gold);"> Valor corresponde ao serviÃ§o
           </label>
           <label style="display:flex;align-items:center;gap:.5rem;font-size:.82rem;cursor:pointer;">
             <input type="checkbox" id="chk-morada" style="accent-color:var(--gold);"> Morada verificada
@@ -790,7 +581,7 @@ window.addEventListener('load', () => {
               style="max-width:100%;max-height:180px;border-radius:10px;border:2px solid var(--border);object-fit:cover;display:none;"
               class="doc-img-thumb" />
             <div id="doc-selfie-empty" style="color:var(--text-muted);font-size:.82rem;text-align:center;">
-              <i class="fa-solid fa-circle-xmark" style="opacity:.3;font-size:1.8rem;display:block;margin-bottom:.4rem;"></i>Selfie não submetida
+              <i class="fa-solid fa-circle-xmark" style="opacity:.3;font-size:1.8rem;display:block;margin-bottom:.4rem;"></i>Selfie nÃ£o submetida
             </div>
           </div>
         </div>
@@ -812,7 +603,7 @@ window.addEventListener('load', () => {
               </a>
             </div>
             <div id="doc-comprovativo-empty" style="color:var(--text-muted);font-size:.82rem;text-align:center;">
-              <i class="fa-solid fa-circle-xmark" style="opacity:.3;font-size:1.8rem;display:block;margin-bottom:.4rem;"></i>Comprovativo não submetido
+              <i class="fa-solid fa-circle-xmark" style="opacity:.3;font-size:1.8rem;display:block;margin-bottom:.4rem;"></i>Comprovativo nÃ£o submetido
             </div>
           </div>
         </div>
@@ -824,14 +615,14 @@ window.addEventListener('load', () => {
         <!-- BI Frente -->
         <div style="background:var(--dark4);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;">
           <p style="font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--gold);font-weight:600;margin-bottom:.75rem;display:flex;align-items:center;gap:.4rem;">
-            <i class="fa-solid fa-id-card"></i> BI — Frente
+            <i class="fa-solid fa-id-card"></i> BI â€” Frente
           </p>
           <div style="text-align:center;min-height:120px;display:flex;align-items:center;justify-content:center;">
-            <img id="doc-bi-frente-img" src="" onclick="openLightbox(this.src,'Bilhete de Identidade — Frente')"
+            <img id="doc-bi-frente-img" src="" onclick="openLightbox(this.src,'Bilhete de Identidade â€” Frente')"
               style="max-width:100%;max-height:180px;border-radius:10px;border:2px solid var(--border);object-fit:contain;display:none;"
               class="doc-img-thumb" />
             <div id="doc-bi-frente-empty" style="color:var(--text-muted);font-size:.82rem;text-align:center;">
-              <i class="fa-solid fa-circle-xmark" style="opacity:.3;font-size:1.8rem;display:block;margin-bottom:.4rem;"></i>BI (frente) não submetido
+              <i class="fa-solid fa-circle-xmark" style="opacity:.3;font-size:1.8rem;display:block;margin-bottom:.4rem;"></i>BI (frente) nÃ£o submetido
             </div>
           </div>
         </div>
@@ -839,93 +630,93 @@ window.addEventListener('load', () => {
         <!-- BI Verso -->
         <div style="background:var(--dark4);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;">
           <p style="font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--gold);font-weight:600;margin-bottom:.75rem;display:flex;align-items:center;gap:.4rem;">
-            <i class="fa-solid fa-id-card"></i> BI — Verso
+            <i class="fa-solid fa-id-card"></i> BI â€” Verso
           </p>
           <div style="text-align:center;min-height:120px;display:flex;align-items:center;justify-content:center;">
-            <img id="doc-bi-verso-img" src="" onclick="openLightbox(this.src,'Bilhete de Identidade — Verso')"
+            <img id="doc-bi-verso-img" src="" onclick="openLightbox(this.src,'Bilhete de Identidade â€” Verso')"
               style="max-width:100%;max-height:180px;border-radius:10px;border:2px solid var(--border);object-fit:contain;display:none;"
               class="doc-img-thumb" />
             <div id="doc-bi-verso-empty" style="color:var(--text-muted);font-size:.82rem;text-align:center;">
-              <i class="fa-solid fa-circle-xmark" style="opacity:.3;font-size:1.8rem;display:block;margin-bottom:.4rem;"></i>BI (verso) não submetido
+              <i class="fa-solid fa-circle-xmark" style="opacity:.3;font-size:1.8rem;display:block;margin-bottom:.4rem;"></i>BI (verso) nÃ£o submetido
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Nota de verificação -->
+      <!-- Nota de verificaÃ§Ã£o -->
       <div style="background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.2);border-radius:var(--radius);padding:.85rem;margin-top:.85rem;font-size:.8rem;color:var(--text-muted);line-height:1.6;">
         <i class="fa-solid fa-magnifying-glass" style="color:var(--gold);"></i>
-        Clique em qualquer imagem para a ampliar em ecrã completo. Para documentos PDF use o link de abertura directa.
+        Clique em qualquer imagem para a ampliar em ecrÃ£ completo. Para documentos PDF use o link de abertura directa.
       </div>
     </div>
 
-    <!-- Painel: Serviço & Pagamento -->
+    <!-- Painel: ServiÃ§o & Pagamento -->
     <div id="ppanel-servico" style="display:none;">
       <div class="recibo-box">
         <div class="recibo-header">
           <div><i class="fa-solid fa-file-invoice-dollar" style="font-size:1.5rem;color:#000;"></i></div>
-          <div><h3>Detalhes do Serviço</h3><p id="pd-servico-header">—</p></div>
+          <div><h3>Detalhes do ServiÃ§o</h3><p id="pd-servico-header">â€”</p></div>
         </div>
         <div class="recibo-body">
-          <div class="recibo-row"><span class="rk">Tipo de Serviço</span><span class="rv gold" id="pd-servico">—</span></div>
-          <div class="recibo-row"><span class="rk">Modalidade</span><span class="rv" id="pd-modalidade">—</span></div>
-          <div class="recibo-row"><span class="rk">Método de Pagamento</span><span class="rv" id="pd-metodo">—</span></div>
-          <div class="recibo-row"><span class="rk">Valor Total</span><span class="rv gold" id="pd-valor" style="font-size:1.1rem;font-weight:800;">—</span></div>
-          <div class="recibo-row"><span class="rk">Data do Pedido</span><span class="rv" id="pd-data2">—</span></div>
-          <div class="recibo-row"><span class="rk">Código Gerado</span><span class="rv" id="pd-codigo" style="font-family:monospace;font-size:1.1rem;color:var(--gold);font-weight:900;">—</span></div>
+          <div class="recibo-row"><span class="rk">Tipo de ServiÃ§o</span><span class="rv gold" id="pd-servico">â€”</span></div>
+          <div class="recibo-row"><span class="rk">Modalidade</span><span class="rv" id="pd-modalidade">â€”</span></div>
+          <div class="recibo-row"><span class="rk">MÃ©todo de Pagamento</span><span class="rv" id="pd-metodo">â€”</span></div>
+          <div class="recibo-row"><span class="rk">Valor Total</span><span class="rv gold" id="pd-valor" style="font-size:1.1rem;font-weight:800;">â€”</span></div>
+          <div class="recibo-row"><span class="rk">Data do Pedido</span><span class="rv" id="pd-data2">â€”</span></div>
+          <div class="recibo-row"><span class="rk">CÃ³digo Gerado</span><span class="rv" id="pd-codigo" style="font-family:monospace;font-size:1.1rem;color:var(--gold);font-weight:900;">â€”</span></div>
         </div>
       </div>
       <!-- Nota de pagamento -->
       <div style="background:rgba(76,175,125,0.08);border:1px solid rgba(76,175,125,0.25);border-radius:var(--radius);padding:1rem;margin-top:1rem;">
         <p style="font-size:.82rem;color:var(--success);font-weight:600;margin-bottom:.4rem;"><i class="fa-solid fa-circle-info"></i> Nota sobre pagamento</p>
-        <p style="font-size:.8rem;color:var(--text-muted);line-height:1.6;">O comprovativo de pagamento foi submetido pelo visitante no formulário. Confirme o recebimento efectivo nos extractos bancários antes de dar aprovação final.</p>
+        <p style="font-size:.8rem;color:var(--text-muted);line-height:1.6;">O comprovativo de pagamento foi submetido pelo visitante no formulÃ¡rio. Confirme o recebimento efectivo nos extractos bancÃ¡rios antes de dar aprovaÃ§Ã£o final.</p>
       </div>
       <!-- Campo de notas do admin -->
       <div style="margin-top:1rem;">
-        <label style="font-size:.75rem;font-weight:500;color:var(--text-muted);display:block;margin-bottom:5px;">Notas internas (visíveis apenas para o admin)</label>
+        <label style="font-size:.75rem;font-weight:500;color:var(--text-muted);display:block;margin-bottom:5px;">Notas internas (visÃ­veis apenas para o admin)</label>
         <textarea id="pd-notas-admin" style="width:100%;background:var(--dark4);border:1px solid var(--border);border-radius:var(--radius);padding:.65rem .9rem;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.88rem;resize:vertical;min-height:70px;outline:none;" placeholder="Ex: Comprovativo validado, pagamento recebido em 12/05/2026..." onfocus="this.style.borderColor='var(--gold)'" onblur="this.style.borderColor='var(--border)'"></textarea>
       </div>
     </div>
 
-    <!-- Painel: Atribuir Residência -->
+    <!-- Painel: Atribuir ResidÃªncia -->
     <div id="ppanel-casa" style="display:none;">
-      <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:1rem;line-height:1.6;">Seleccione a residência a atribuir a este visitante. Após confirmar, o visitante receberá automaticamente os dados da casa no seu portal.</p>
+      <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:1rem;line-height:1.6;">Seleccione a residÃªncia a atribuir a este visitante. ApÃ³s confirmar, o visitante receberÃ¡ automaticamente os dados da casa no seu portal.</p>
       <div class="form-grid" style="margin-bottom:1rem;">
         <div class="form-group full">
-          <label>Seleccionar Residência Disponível *</label>
+          <label>Seleccionar ResidÃªncia DisponÃ­vel *</label>
           <select id="pd-casa-select" onchange="previewCasaSelecionada()">
-            <option value="">— Seleccione uma residência —</option>
+            <option value="">â€” Seleccione uma residÃªncia â€”</option>
           </select>
         </div>
       </div>
       <!-- Preview da casa seleccionada -->
       <div id="pd-casa-preview" style="display:none;">
         <div style="background:var(--dark4);border:2px solid var(--gold);border-radius:var(--radius);padding:1.25rem;margin-bottom:1rem;">
-          <p style="font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--gold);margin-bottom:.75rem;font-weight:600;"><i class="fa-solid fa-house-circle-check"></i> Residência Seleccionada</p>
+          <p style="font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--gold);margin-bottom:.75rem;font-weight:600;"><i class="fa-solid fa-house-circle-check"></i> ResidÃªncia Seleccionada</p>
           <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5rem;font-size:.85rem;">
-            <div><span style="color:var(--text-muted);font-size:.72rem;display:block;">Bloco</span><strong id="pv-bloco">—</strong></div>
-            <div><span style="color:var(--text-muted);font-size:.72rem;display:block;">Rua</span><strong id="pv-rua">—</strong></div>
-            <div><span style="color:var(--text-muted);font-size:.72rem;display:block;">Número</span><strong id="pv-numero">—</strong></div>
-            <div><span style="color:var(--text-muted);font-size:.72rem;display:block;">Tipo</span><strong id="pv-tipo">—</strong></div>
-            <div><span style="color:var(--text-muted);font-size:.72rem;display:block;">Andar</span><strong id="pv-andar">—</strong></div>
-            <div><span style="color:var(--text-muted);font-size:.72rem;display:block;">Zona</span><strong id="pv-zona">—</strong></div>
+            <div><span style="color:var(--text-muted);font-size:.72rem;display:block;">Bloco</span><strong id="pv-bloco">â€”</strong></div>
+            <div><span style="color:var(--text-muted);font-size:.72rem;display:block;">Rua</span><strong id="pv-rua">â€”</strong></div>
+            <div><span style="color:var(--text-muted);font-size:.72rem;display:block;">NÃºmero</span><strong id="pv-numero">â€”</strong></div>
+            <div><span style="color:var(--text-muted);font-size:.72rem;display:block;">Tipo</span><strong id="pv-tipo">â€”</strong></div>
+            <div><span style="color:var(--text-muted);font-size:.72rem;display:block;">Andar</span><strong id="pv-andar">â€”</strong></div>
+            <div><span style="color:var(--text-muted);font-size:.72rem;display:block;">Zona</span><strong id="pv-zona">â€”</strong></div>
           </div>
         </div>
         <div class="code-box">
-          <p class="code-label">Código de acesso que será enviado ao visitante</p>
-          <div class="code-val" id="pd-novo-codigo">——</div>
-          <p style="font-size:.72rem;color:var(--text-muted);margin-top:.5rem;">Este código será exibido no portal do visitante após aprovação</p>
+          <p class="code-label">CÃ³digo de acesso que serÃ¡ enviado ao visitante</p>
+          <div class="code-val" id="pd-novo-codigo">â€”â€”</div>
+          <p style="font-size:.72rem;color:var(--text-muted);margin-top:.5rem;">Este cÃ³digo serÃ¡ exibido no portal do visitante apÃ³s aprovaÃ§Ã£o</p>
         </div>
       </div>
       <div id="pd-sem-casas" style="display:none;">
         <div class="empty-state">
           <i class="fa-solid fa-house-circle-xmark"></i>
-          <p>Sem residências disponíveis.<br>Adicione casas na aba "Gestão de Casas".</p>
+          <p>Sem residÃªncias disponÃ­veis.<br>Adicione casas na aba "GestÃ£o de Casas".</p>
         </div>
       </div>
     </div>
 
-    <!-- Rodapé do modal com acções -->
+    <!-- RodapÃ© do modal com acÃ§Ãµes -->
     <div class="modal-footer" style="border-top:1px solid var(--border);padding-top:1rem;margin-top:1rem;">
       <button onclick="eliminarPedido()" id="btn-eliminar" style="display:inline-flex;align-items:center;gap:.4rem;background:rgba(224,82,82,0.12);border:1px solid rgba(224,82,82,0.4);color:var(--danger);padding:.65rem 1.1rem;border-radius:10px;cursor:pointer;font-size:.85rem;font-weight:600;transition:all .2s;" onmouseover="this.style.background='rgba(224,82,82,0.25)'" onmouseout="this.style.background='rgba(224,82,82,0.12)'">
         <i class="fa-solid fa-trash"></i> Eliminar
@@ -935,12 +726,12 @@ window.addEventListener('load', () => {
       </button>
       <div style="flex:1;"></div>
       <button class="btn-secondary" onclick="closeModal('modal-pedido')">Fechar</button>
-      <button class="btn-primary" onclick="aprovarPedidoFinal()" id="btn-aprovar-final"><i class="fa-solid fa-circle-check"></i> Confirmar & Atribuir Residência</button>
+      <button class="btn-primary" onclick="aprovarPedidoFinal()" id="btn-aprovar-final"><i class="fa-solid fa-circle-check"></i> Confirmar & Atribuir ResidÃªncia</button>
     </div>
   </div>
 </div>
 
-<!-- MODAL: Confirmação de aprovação — dados da residência para o visitante -->
+<!-- MODAL: ConfirmaÃ§Ã£o de aprovaÃ§Ã£o â€” dados da residÃªncia para o visitante -->
 <div class="modal-overlay" id="modal-confirmacao" onclick="closeModal('modal-confirmacao')">
   <div class="modal-box" style="max-width:500px;text-align:center;" onclick="event.stopPropagation()">
     <button class="modal-close" onclick="closeModal('modal-confirmacao')"><i class="fa-solid fa-xmark"></i></button>
@@ -948,19 +739,19 @@ window.addEventListener('load', () => {
       <i class="fa-solid fa-check"></i>
     </div>
     <h3 class="modal-title">Pedido Aprovado com Sucesso!</h3>
-    <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:1.5rem;line-height:1.6;">A residência foi atribuída e o visitante já pode consultar os dados no seu portal.</p>
+    <p style="font-size:.85rem;color:var(--text-muted);margin-bottom:1.5rem;line-height:1.6;">A residÃªncia foi atribuÃ­da e o visitante jÃ¡ pode consultar os dados no seu portal.</p>
     <div class="recibo-box" style="text-align:left;margin-bottom:1rem;">
       <div class="recibo-body">
-        <div class="recibo-row"><span class="rk">Visitante</span><span class="rv" id="conf-nome">—</span></div>
-        <div class="recibo-row"><span class="rk">Residência</span><span class="rv gold" id="conf-casa">—</span></div>
-        <div class="recibo-row"><span class="rk">Código de Acesso</span><span class="rv" id="conf-codigo" style="font-family:monospace;font-size:1.3rem;color:var(--gold);font-weight:900;">—</span></div>
+        <div class="recibo-row"><span class="rk">Visitante</span><span class="rv" id="conf-nome">â€”</span></div>
+        <div class="recibo-row"><span class="rk">ResidÃªncia</span><span class="rv gold" id="conf-casa">â€”</span></div>
+        <div class="recibo-row"><span class="rk">CÃ³digo de Acesso</span><span class="rv" id="conf-codigo" style="font-family:monospace;font-size:1.3rem;color:var(--gold);font-weight:900;">â€”</span></div>
       </div>
     </div>
     <p style="font-size:.78rem;color:var(--text-muted);background:rgba(201,168,76,0.06);border:1px solid var(--border);border-radius:8px;padding:.75rem;line-height:1.5;">
-      <i class="fa-solid fa-info-circle" style="color:var(--gold);"></i> O visitante verá os dados da residência no portal ao abrir a página de confirmação com o código de acesso.
+      <i class="fa-solid fa-info-circle" style="color:var(--gold);"></i> O visitante verÃ¡ os dados da residÃªncia no portal ao abrir a pÃ¡gina de confirmaÃ§Ã£o com o cÃ³digo de acesso.
     </p>
     <button class="btn-primary" style="width:100%;margin-top:1rem;" onclick="closeModal('modal-confirmacao')">
-      <i class="fa-solid fa-check-double"></i> Concluído
+      <i class="fa-solid fa-check-double"></i> ConcluÃ­do
     </button>
   </div>
 </div>
@@ -982,7 +773,7 @@ window.addEventListener('load', () => {
 <div class="modal-overlay" id="modal-house" onclick="closeModal('modal-house')">
   <div class="modal-box" onclick="event.stopPropagation()">
     <button class="modal-close" onclick="closeModal('modal-house')"><i class="fa-solid fa-xmark"></i></button>
-    <h3 class="modal-title">Atribuir Residência</h3>
+    <h3 class="modal-title">Atribuir ResidÃªncia</h3>
     <p style="font-size:.85rem; color:var(--text-muted); margin-bottom:1rem;">Seleccione a casa a atribuir ao visitante e envie os dados.</p>
     <div class="form-grid">
       <div class="form-group full">
@@ -990,27 +781,27 @@ window.addEventListener('load', () => {
         <input type="text" id="attr-visitante" readonly />
       </div>
       <div class="form-group full">
-        <label>Seleccionar Casa Disponível</label>
+        <label>Seleccionar Casa DisponÃ­vel</label>
         <select id="attr-casa-select">
-          <option value="">— Seleccione —</option>
+          <option value="">â€” Seleccione â€”</option>
         </select>
       </div>
     </div>
     <div id="attr-house-preview" style="display:none; margin-top:1rem;">
       <div class="code-box">
-        <p class="code-label">Código de 4 dígitos gerado</p>
-        <div class="code-val" id="attr-codigo-display">——</div>
-        <p style="font-size:.72rem; color:var(--text-muted); margin-top:.5rem;">Código enviado ao visitante via portal</p>
+        <p class="code-label">CÃ³digo de 4 dÃ­gitos gerado</p>
+        <div class="code-val" id="attr-codigo-display">â€”â€”</div>
+        <p style="font-size:.72rem; color:var(--text-muted); margin-top:.5rem;">CÃ³digo enviado ao visitante via portal</p>
       </div>
     </div>
     <div class="modal-footer">
       <button class="btn-secondary" onclick="closeModal('modal-house')">Cancelar</button>
-      <button class="btn-primary" onclick="assignHouse()"><i class="fa-solid fa-house-circle-check"></i> Atribuir & Enviar Código</button>
+      <button class="btn-primary" onclick="assignHouse()"><i class="fa-solid fa-house-circle-check"></i> Atribuir & Enviar CÃ³digo</button>
     </div>
   </div>
 </div>
 
-<!-- LIGHTBOX para visualização de documentos -->
+<!-- LIGHTBOX para visualizaÃ§Ã£o de documentos -->
 <div class="lightbox-overlay" id="lightbox" onclick="closeLightbox()">
   <button class="lightbox-close" onclick="closeLightbox()"><i class="fa-solid fa-xmark"></i></button>
   <img class="lightbox-img" id="lightbox-img" src="" alt="" onclick="event.stopPropagation()" />
@@ -1028,33 +819,33 @@ window.addEventListener('load', () => {
       </div>
       <div>
         <h3 class="modal-title" style="margin:0;color:var(--danger);font-size:1.1rem;">Negar Pedido</h3>
-        <p style="font-size:.78rem;color:var(--text-muted);margin:0;">O motivo será visível para o visitante no seu portal</p>
+        <p style="font-size:.78rem;color:var(--text-muted);margin:0;">O motivo serÃ¡ visÃ­vel para o visitante no seu portal</p>
       </div>
     </div>
 
-    <p style="font-size:.8rem;color:var(--text-muted);margin-bottom:.85rem;">Seleccione um motivo pré-definido ou escreva um motivo personalizado:</p>
+    <p style="font-size:.8rem;color:var(--text-muted);margin-bottom:.85rem;">Seleccione um motivo prÃ©-definido ou escreva um motivo personalizado:</p>
 
-    <!-- Motivos rápidos -->
+    <!-- Motivos rÃ¡pidos -->
     <div style="display:flex;flex-direction:column;gap:.45rem;margin-bottom:1rem;" id="negar-razoes">
-      <button class="negar-reason-btn" onclick="selecionarMotivo(this, 'Documentos incompletos ou ilegíveis — o BI ou comprovativo não estão devidamente legíveis.')">
+      <button class="negar-reason-btn" onclick="selecionarMotivo(this, 'Documentos incompletos ou ilegÃ­veis â€” o BI ou comprovativo nÃ£o estÃ£o devidamente legÃ­veis.')">
         <i class="fa-solid fa-file-circle-xmark"></i>
-        Documentos incompletos ou ilegíveis
+        Documentos incompletos ou ilegÃ­veis
       </button>
-      <button class="negar-reason-btn" onclick="selecionarMotivo(this, 'Comprovativo de pagamento não validado — não foi possível confirmar o pagamento junto do banco.')">
+      <button class="negar-reason-btn" onclick="selecionarMotivo(this, 'Comprovativo de pagamento nÃ£o validado â€” nÃ£o foi possÃ­vel confirmar o pagamento junto do banco.')">
         <i class="fa-solid fa-money-bill-transfer"></i>
-        Comprovativo de pagamento não confirmado
+        Comprovativo de pagamento nÃ£o confirmado
       </button>
-      <button class="negar-reason-btn" onclick="selecionarMotivo(this, 'Informações inconsistentes — os dados pessoais fornecidos não correspondem aos documentos.')">
+      <button class="negar-reason-btn" onclick="selecionarMotivo(this, 'InformaÃ§Ãµes inconsistentes â€” os dados pessoais fornecidos nÃ£o correspondem aos documentos.')">
         <i class="fa-solid fa-triangle-exclamation"></i>
         Dados inconsistentes com os documentos
       </button>
-      <button class="negar-reason-btn" onclick="selecionarMotivo(this, 'Sem residências disponíveis neste momento. Poderá submeter novamente quando houver disponibilidade.')">
+      <button class="negar-reason-btn" onclick="selecionarMotivo(this, 'Sem residÃªncias disponÃ­veis neste momento. PoderÃ¡ submeter novamente quando houver disponibilidade.')">
         <i class="fa-solid fa-house-circle-xmark"></i>
-        Sem residências disponíveis
+        Sem residÃªncias disponÃ­veis
       </button>
-      <button class="negar-reason-btn" onclick="selecionarMotivo(this, 'Perfil não aprovado pela gestão do condomínio. Para mais informações contacte a administração.')">
+      <button class="negar-reason-btn" onclick="selecionarMotivo(this, 'Perfil nÃ£o aprovado pela gestÃ£o do condomÃ­nio. Para mais informaÃ§Ãµes contacte a administraÃ§Ã£o.')">
         <i class="fa-solid fa-user-xmark"></i>
-        Perfil não aprovado pela gestão
+        Perfil nÃ£o aprovado pela gestÃ£o
       </button>
     </div>
 
@@ -1065,9 +856,9 @@ window.addEventListener('load', () => {
       </label>
       <textarea id="negar-motivo-texto"
         style="width:100%;background:var(--dark4);border:1px solid var(--border);border-radius:var(--radius);padding:.65rem .9rem;color:var(--text);font-family:'DM Sans',sans-serif;font-size:.88rem;resize:vertical;min-height:90px;outline:none;transition:border-color .2s;"
-        placeholder="Ex: O comprovativo enviado não corresponde ao valor do serviço solicitado. Por favor contacte a administração para mais informações..."
+        placeholder="Ex: O comprovativo enviado nÃ£o corresponde ao valor do serviÃ§o solicitado. Por favor contacte a administraÃ§Ã£o para mais informaÃ§Ãµes..."
         onfocus="this.style.borderColor='var(--danger)'" onblur="this.style.borderColor='var(--border)'"></textarea>
-      <p style="font-size:.72rem;color:var(--text-muted);margin-top:.3rem;"><i class="fa-solid fa-info-circle" style="color:var(--gold);"></i> O visitante verá este texto na página de estado do pedido.</p>
+      <p style="font-size:.72rem;color:var(--text-muted);margin-top:.3rem;"><i class="fa-solid fa-info-circle" style="color:var(--gold);"></i> O visitante verÃ¡ este texto na pÃ¡gina de estado do pedido.</p>
     </div>
 
     <div class="modal-footer" style="border-top:1px solid var(--border);padding-top:1rem;margin-top:1rem;">
@@ -1082,216 +873,7 @@ window.addEventListener('load', () => {
 <!-- TOAST -->
 <div class="toast" id="toast"><i class="fa-solid fa-circle-check"></i> <span id="toast-msg"></span></div>
 
-<script src="javascript/nosso-zimbo-admin.js">
-/* --- FUNCIONARIOS --- */
-let allFuncs = JSON.parse(localStorage.getItem('nz_funcionarios') || '[]');
-function saveFuncs() { localStorage.setItem('nz_funcionarios', JSON.stringify(allFuncs)); }
-function resetFuncForm() {
-    document.getElementById('f-nome').value = '';
-    document.getElementById('f-senha').value = '';
-    document.getElementById('f-telefone').value = '';
-    document.getElementById('f-email').value = '';
-    document.getElementById('f-nascimento').value = '';
-    document.getElementById('f-funcao').value = '';
-    document.getElementById('f-nacionalidade').value = 'Angolana';
-    document.getElementById('f-estado-func').value = 'Activo';
-    document.getElementById('f-morada').value = '';
-    document.getElementById('f-editing-id').value = '';
-    document.getElementById('func-form-titulo').innerText = 'Novo Funcionário';
-    document.getElementById('func-btn-txt').innerText = 'Registar Funcionário';
-}
-function salvarFuncionario() {
-    const idField = document.getElementById('f-editing-id').value;
-    const item = {
-        id: idField ? parseInt(idField) : Date.now(),
-        nome: document.getElementById('f-nome').value.trim(),
-        senha: document.getElementById('f-senha').value,
-        telefone: document.getElementById('f-telefone').value,
-        email: document.getElementById('f-email').value,
-        nasc: document.getElementById('f-nascimento').value,
-        funcao: document.getElementById('f-funcao').value,
-        nac: document.getElementById('f-nacionalidade').value,
-        estado: document.getElementById('f-estado-func').value,
-        morada: document.getElementById('f-morada').value
-    };
-    if(!item.nome || !item.telefone || !item.funcao) { showToast('Preencha os campos obrigatórios (*)', true); return; }
-    if(idField) {
-        const idx = allFuncs.findIndex(f => f.id === item.id);
-        if(idx >= 0) allFuncs[idx] = item;
-    } else {
-        allFuncs.push(item);
-    }
-    saveFuncs();
-    resetFuncForm();
-    renderFuncionarios();
-    showToast('Funcionário guardado com sucesso!');
-}
-function renderFuncionarios() {
-    const tbody = document.getElementById('funcionarios-tbody');
-    if(!tbody) return;
-    if(!allFuncs.length) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--text-muted);">Sem funcionários registados</td></tr>';
-        return;
-    }
-    tbody.innerHTML = allFuncs.map(f => \
-        <tr>
-            <td><strong>\</strong></td>
-            <td>\</td>
-            <td>\</td>
-            <td><span class="badge \">\</span></td>
-            <td>
-                <div style="display:flex;gap:.4rem;">
-                    <button class="btn-secondary btn-sm" onclick="verFunc(\)" title="Ver"><i class="fa-solid fa-eye"></i></button>
-                    <button class="btn-secondary btn-sm" onclick="editFunc(\)" title="Editar"><i class="fa-solid fa-pen"></i></button>
-                    <button class="btn-danger btn-sm" onclick="delFunc(\)" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
-                </div>
-            </td>
-        </tr>
-    \).join('');
-}
-function editFunc(id) {
-    const f = allFuncs.find(x => x.id === id);
-    if(!f) return;
-    document.getElementById('f-nome').value = f.nome;
-    document.getElementById('f-senha').value = f.senha || '';
-    document.getElementById('f-telefone').value = f.telefone;
-    document.getElementById('f-email').value = f.email;
-    document.getElementById('f-nascimento').value = f.nasc;
-    document.getElementById('f-funcao').value = f.funcao;
-    document.getElementById('f-nacionalidade').value = f.nac;
-    document.getElementById('f-estado-func').value = f.estado;
-    document.getElementById('f-morada').value = f.morada;
-    document.getElementById('f-editing-id').value = f.id;
-    document.getElementById('func-form-titulo').innerText = 'Editar Funcionário';
-    document.getElementById('func-btn-txt').innerText = 'Actualizar Funcionário';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-function delFunc(id) {
-    if(!confirm('Deseja eliminar este funcionário?')) return;
-    allFuncs = allFuncs.filter(f => f.id !== id);
-    saveFuncs();
-    renderFuncionarios();
-    showToast('Funcionário eliminado.');
-}
-function verFunc(id) {
-    const f = allFuncs.find(x => x.id === id);
-    if(!f) return;
-    alert(\DETALHES DO FUNCIONÁRIO:\\n\\nNome: \\\nCargo: \\\nTelefone: \\\nEmail: \\\nNasc: \\\nMorada: \\\nEstado: \\);
-}
-
-/* --- MORADORES --- */
-let allMors = JSON.parse(localStorage.getItem('nz_moradores_admin') || '[]');
-function saveMors() { localStorage.setItem('nz_moradores_admin', JSON.stringify(allMors)); }
-function resetMorForm() {
-    document.getElementById('m-nome').value = '';
-    document.getElementById('m-senha').value = '';
-    document.getElementById('m-telefone').value = '';
-    document.getElementById('m-email').value = '';
-    document.getElementById('m-nascimento').value = '';
-    document.getElementById('m-nacionalidade').value = 'Angolana';
-    document.getElementById('m-morada').value = '';
-    document.getElementById('m-numbi').value = '';
-    document.getElementById('m-emissao').value = '';
-    document.getElementById('m-validade').value = '';
-    document.getElementById('m-locale').value = '';
-    document.getElementById('m-estado').value = 'Activo';
-    document.getElementById('m-editing-id').value = '';
-    document.getElementById('mor-form-titulo').innerText = 'Novo Morador';
-    document.getElementById('mor-btn-txt').innerText = 'Registar Morador';
-}
-function salvarMorador() {
-    const idField = document.getElementById('m-editing-id').value;
-    const item = {
-        id: idField ? parseInt(idField) : Date.now(),
-        nome: document.getElementById('m-nome').value.trim(),
-        senha: document.getElementById('m-senha').value,
-        telefone: document.getElementById('m-telefone').value,
-        email: document.getElementById('m-email').value,
-        nasc: document.getElementById('m-nascimento').value,
-        nac: document.getElementById('m-nacionalidade').value,
-        morada: document.getElementById('m-morada').value,
-        numbi: document.getElementById('m-numbi').value,
-        emissao: document.getElementById('m-emissao').value,
-        validade: document.getElementById('m-validade').value,
-        locale: document.getElementById('m-locale').value,
-        estado: document.getElementById('m-estado').value
-    };
-    if(!item.nome || !item.telefone || !item.numbi) { showToast('Preencha os campos obrigatórios (*)', true); return; }
-    if(idField) {
-        const idx = allMors.findIndex(f => f.id === item.id);
-        if(idx >= 0) allMors[idx] = item;
-    } else {
-        allMors.push(item);
-    }
-    saveMors();
-    resetMorForm();
-    renderMoradoresAdmin();
-    showToast('Morador guardado com sucesso!');
-}
-function renderMoradoresAdmin() {
-    const tbody = document.getElementById('moradores-admin-tbody');
-    if(!tbody) return;
-    if(!allMors.length) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--text-muted);">Sem moradores registados</td></tr>';
-        return;
-    }
-    tbody.innerHTML = allMors.map(m => \
-        <tr>
-            <td><strong>\</strong></td>
-            <td>\</td>
-            <td>\</td>
-            <td style="font-family:monospace;font-size:.78rem;">\</td>
-            <td><span class="badge \">\</span></td>
-            <td>
-                <div style="display:flex;gap:.4rem;">
-                    <button class="btn-secondary btn-sm" onclick="verMor(\)" title="Ver"><i class="fa-solid fa-eye"></i></button>
-                    <button class="btn-secondary btn-sm" onclick="editMor(\)" title="Editar"><i class="fa-solid fa-pen"></i></button>
-                    <button class="btn-danger btn-sm" onclick="delMor(\)" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
-                </div>
-            </td>
-        </tr>
-    \).join('');
-}
-function editMor(id) {
-    const m = allMors.find(x => x.id === id);
-    if(!m) return;
-    document.getElementById('m-nome').value = m.nome;
-    document.getElementById('m-senha').value = m.senha || '';
-    document.getElementById('m-telefone').value = m.telefone;
-    document.getElementById('m-email').value = m.email;
-    document.getElementById('m-nascimento').value = m.nasc;
-    document.getElementById('m-nacionalidade').value = m.nac;
-    document.getElementById('m-morada').value = m.morada;
-    document.getElementById('m-numbi').value = m.numbi;
-    document.getElementById('m-emissao').value = m.emissao;
-    document.getElementById('m-validade').value = m.validade;
-    document.getElementById('m-locale').value = m.locale;
-    document.getElementById('m-estado').value = m.estado;
-    document.getElementById('m-editing-id').value = m.id;
-    document.getElementById('mor-form-titulo').innerText = 'Editar Morador';
-    document.getElementById('mor-btn-txt').innerText = 'Actualizar Morador';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-function delMor(id) {
-    if(!confirm('Deseja eliminar este morador?')) return;
-    allMors = allMors.filter(x => x.id !== id);
-    saveMors();
-    renderMoradoresAdmin();
-    showToast('Morador eliminado.');
-}
-function verMor(id) {
-    const m = allMors.find(x => x.id === id);
-    if(!m) return;
-    alert(\DETALHES DO MORADOR:\\n\\nNome: \\\nTelefone: \\\nEmail: \\\nBI: \\\nNasc: \\\nMorada: \\\nEstado: \\);
-}
-
-// Add to window.onload or similar
-window.addEventListener('load', () => {
-    renderFuncionarios();
-    renderMoradoresAdmin();
-});
-
-</script>
+<script src="javascript/nosso-zimbo-admin.js"></script>
 
 
 
@@ -1319,9 +901,9 @@ function save() {
   localStorage.setItem('nz_mor_pays', JSON.stringify(allMorPays));
 }
 
-// ═══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // INIT
-// ═══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 window.onload = () => {
   load();
   clock();
@@ -1363,19 +945,19 @@ function seedDemoData() {
     save();
   }
   if (allMorPays.length === 0) {
-    const moradores = ['João Manuel – Apt 4B', 'Ana Fernandes – Casa 12', 'Pedro Lopes – Apt 2A'];
-    const tipos = ['Renda Mensal','Cota de Condomínio','Prestação de Compra'];
+    const moradores = ['JoÃ£o Manuel â€“ Apt 4B', 'Ana Fernandes â€“ Casa 12', 'Pedro Lopes â€“ Apt 2A'];
+    const tipos = ['Renda Mensal','Cota de CondomÃ­nio','PrestaÃ§Ã£o de Compra'];
     const vals = [150000, 14000, 1000000];
     moradores.forEach((m, i) => {
-      allMorPays.push({ id: Date.now()+i, nome: m.split('–')[0].trim(), apt: m.split('–')[1].trim(), tipo: tipos[i], valor: vals[i], metodo: 'Transferência Bancária', data: new Date(2025, 4, i+3).toLocaleDateString('pt-AO'), estado: i===0 ? 'pendente':'confirmado' });
+      allMorPays.push({ id: Date.now()+i, nome: m.split('â€“')[0].trim(), apt: m.split('â€“')[1].trim(), tipo: tipos[i], valor: vals[i], metodo: 'TransferÃªncia BancÃ¡ria', data: new Date(2025, 4, i+3).toLocaleDateString('pt-AO'), estado: i===0 ? 'pendente':'confirmado' });
     });
     save();
   }
 }
 
-// ═══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // NAVIGATION
-// ═══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 function switchTab(id, btn) {
   document.querySelectorAll('.tab-section').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -1392,17 +974,17 @@ function toggleSidebar() {
 }
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 
-// ═══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // CLOCK
-// ═══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 function clock() {
   const now = new Date();
   document.getElementById('clock-display').textContent = now.toLocaleTimeString('pt-AO');
 }
 
-// ═══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // DASHBOARD
-// ═══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 function renderDashboard() {
   load();
   document.getElementById('ds-total-reg').textContent = allRegs.length;
@@ -1430,9 +1012,9 @@ function renderDashboard() {
   `).join('');
 }
 
-// ═══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // CHARTS
-// ═══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 let chartR, chartS;
 function initCharts() {
   const months = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
@@ -1503,9 +1085,9 @@ function initCharts() {
   });
 }
 
-// ═══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // REGISTOS
-// ═══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 let regFilter = 'todos';
 function filterRegs(f, btn) {
   regFilter = f;
@@ -1521,9 +1103,9 @@ function renderRegistos() {
   if (!regs.length) { tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--text-muted);padding:2rem;">Sem registos</td></tr>'; return; }
   tbody.innerHTML = regs.reverse().map(r => `
     <tr>
-      <td><span class="house-tag">${r.codigo||'—'}</span></td>
+      <td><span class="house-tag">${r.codigo||'â€”'}</span></td>
       <td>${r.nome}</td>
-      <td style="font-size:.8rem; font-family:monospace;">${r.bi||'—'}</td>
+      <td style="font-size:.8rem; font-family:monospace;">${r.bi||'â€”'}</td>
       <td>${r.servico==='aluguel'?'Arrendamento':'Compra'}</td>
       <td>${fmt(r.total)} Kz</td>
       <td>${r.data}</td>
@@ -1548,15 +1130,15 @@ function viewReg(id) {
         <div><h3>${r.nome}</h3><p>Ref: ${r.ref||r.id}</p></div>
       </div>
       <div class="recibo-body">
-        <div class="recibo-row"><span class="rk">BI</span><span class="rv">${r.bi||'—'}</span></div>
-        <div class="recibo-row"><span class="rk">Telefone</span><span class="rv">${r.tel||'—'}</span></div>
-        <div class="recibo-row"><span class="rk">Email</span><span class="rv">${r.email||'—'}</span></div>
-        <div class="recibo-row"><span class="rk">Morada</span><span class="rv">${r.morada||'—'}</span></div>
-        <div class="recibo-row"><span class="rk">Serviço</span><span class="rv gold">${r.servico==='aluguel'?'Arrendamento':'Compra'}</span></div>
+        <div class="recibo-row"><span class="rk">BI</span><span class="rv">${r.bi||'â€”'}</span></div>
+        <div class="recibo-row"><span class="rk">Telefone</span><span class="rv">${r.tel||'â€”'}</span></div>
+        <div class="recibo-row"><span class="rk">Email</span><span class="rv">${r.email||'â€”'}</span></div>
+        <div class="recibo-row"><span class="rk">Morada</span><span class="rv">${r.morada||'â€”'}</span></div>
+        <div class="recibo-row"><span class="rk">ServiÃ§o</span><span class="rv gold">${r.servico==='aluguel'?'Arrendamento':'Compra'}</span></div>
         <div class="recibo-row"><span class="rk">Valor</span><span class="rv gold">${fmt(r.total)} Kz</span></div>
-        <div class="recibo-row"><span class="rk">Método</span><span class="rv">${r.metodo||'—'}</span></div>
-        <div class="recibo-row"><span class="rk">Casa Atribuída</span><span class="rv">${h.bloco?`Bloco ${h.bloco} · Rua ${h.rua} · Nº ${h.numero}`:'Não atribuída'}</span></div>
-        <div class="recibo-row"><span class="rk">Código de Acesso</span><span class="rv" style="font-family:monospace;font-size:1.2rem;color:var(--gold);font-weight:900;">${r.codigo||'—'}</span></div>
+        <div class="recibo-row"><span class="rk">MÃ©todo</span><span class="rv">${r.metodo||'â€”'}</span></div>
+        <div class="recibo-row"><span class="rk">Casa AtribuÃ­da</span><span class="rv">${h.bloco?`Bloco ${h.bloco} Â· Rua ${h.rua} Â· NÂº ${h.numero}`:'NÃ£o atribuÃ­da'}</span></div>
+        <div class="recibo-row"><span class="rk">CÃ³digo de Acesso</span><span class="rv" style="font-family:monospace;font-size:1.2rem;color:var(--gold);font-weight:900;">${r.codigo||'â€”'}</span></div>
         <div class="recibo-row"><span class="rk">Data</span><span class="rv">${r.data} ${r.hora||''}</span></div>
         <div class="recibo-row"><span class="rk">Estado</span><span class="rv"><span class="badge ${r.status}">${r.status}</span></span></div>
       </div>
@@ -1574,14 +1156,14 @@ function approveReg() {
   showToast('Registo aprovado com sucesso!');
 }
 
-// ═══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // CASAS
-// ═══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 function addHouse() {
    const bloco = document.getElementById('h-bloco').value.trim();
    const rua = document.getElementById('h-rua').value.trim();
    const numero = document.getElementById('h-numero').value.trim();
-   if (!bloco || !rua || !numero) { showToast('Preencha Bloco, Rua e N�mero', true); return; }
+   if (!bloco || !rua || !numero) { showToast('Preencha Bloco, Rua e Número', true); return; }
    
    if (editingHouseId) {
       const idx = allHouses.findIndex(h=>h.id===editingHouseId);
@@ -1589,8 +1171,8 @@ function addHouse() {
          allHouses[idx].bloco = bloco;
          allHouses[idx].rua = rua;
          allHouses[idx].numero = numero;
-         allHouses[idx].andar = document.getElementById('h-andar').value || '�';
-         allHouses[idx].zona = document.getElementById('h-zona').value || '�';
+         allHouses[idx].andar = document.getElementById('h-andar').value || '—';
+         allHouses[idx].zona = document.getElementById('h-zona').value || '—';
          allHouses[idx].estado = document.getElementById('h-estado').value;
          allHouses[idx].obs = document.getElementById('h-obs').value;
          editingHouseId = null;
@@ -1598,8 +1180,8 @@ function addHouse() {
    } else {
       const house = {
          id: Date.now(), bloco, rua, numero, tipo: 'V3',
-         andar: document.getElementById('h-andar').value || '�',
-         zona: document.getElementById('h-zona').value || '�',
+         andar: document.getElementById('h-andar').value || '—',
+         zona: document.getElementById('h-zona').value || '—',
          estado: document.getElementById('h-estado').value,
          obs: document.getElementById('h-obs').value
       };
@@ -1638,7 +1220,7 @@ function renderHouses() {
      }).join('');
    }
 function removeHouse(id) {
-   if(!confirm('Eliminar esta casa? Esta a��o n�o pode ser desfeita.')) return;
+   if(!confirm('Eliminar esta casa? Esta ação não pode ser desfeita.')) return;
    allHouses = allHouses.filter(h=>h.id!==id);
    save(); renderHouses(); renderDashboard();
 }
@@ -1663,22 +1245,22 @@ function toggleHouseStatus(id) {
       const newStatus = allHouses[idx].estado === 'disponivel' ? 'ocupada' : 'disponivel';
       allHouses[idx].estado = newStatus;
       save(); renderHouses(); renderDashboard();
-      showToast('Estado alterado para: ' + (newStatus === 'disponivel' ? 'Dispon�vel' : 'Ocupada'));
+      showToast('Estado alterado para: ' + (newStatus === 'disponivel' ? 'Disponível' : 'Ocupada'));
    }
 }
 
 let editingHouseId = null;
 function addHouse() {
-// ═══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 let pendingAssignRegId = null;
 function openAssignHouse(regId) {
   pendingAssignRegId = regId;
   const r = allRegs.find(x=>x.id===regId);
-  document.getElementById('attr-visitante').value = r ? r.nome : '—';
+  document.getElementById('attr-visitante').value = r ? r.nome : 'â€”';
   const sel = document.getElementById('attr-casa-select');
-  sel.innerHTML = '<option value="">— Seleccione —</option>';
+  sel.innerHTML = '<option value="">â€” Seleccione â€”</option>';
   allHouses.filter(h=>h.estado==='disponivel').forEach(h => {
-    sel.innerHTML += `<option value="${h.id}">Bloco ${h.bloco} · Rua ${h.rua} · Nº ${h.numero} · ${h.tipo}</option>`;
+    sel.innerHTML += `<option value="${h.id}">Bloco ${h.bloco} Â· Rua ${h.rua} Â· NÂº ${h.numero} Â· ${h.tipo}</option>`;
   });
   document.getElementById('attr-house-preview').style.display = 'none';
   sel.onchange = () => {
@@ -1711,12 +1293,12 @@ function assignHouse() {
   save();
   renderHouses(); renderRegistos(); renderDashboard();
   closeModal('modal-house');
-  showToast('Casa atribuída! Código enviado ao visitante.');
+  showToast('Casa atribuÃ­da! CÃ³digo enviado ao visitante.');
 }
 
-// ═══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // PAGAMENTOS VISITANTES
-// ═══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 function renderPays() {
   const tbody = document.getElementById('pays-tbody');
   const pays = [...allPays].reverse();
@@ -1727,7 +1309,7 @@ function renderPays() {
       <td>${p.nome}</td>
       <td>${p.servico==='aluguel'?'Arrendamento':'Compra'}</td>
       <td><strong>${fmt(p.total)} Kz</strong></td>
-      <td>${p.metodo||'—'}</td>
+      <td>${p.metodo||'â€”'}</td>
       <td>${p.data}</td>
       <td><span class="badge ${p.status||'pendente'}">${p.status||'pendente'}</span></td>
       <td><button class="btn-success btn-sm" onclick="confirmPay(${p.id})"><i class="fa-solid fa-check"></i> Confirmar</button></td>
@@ -1739,14 +1321,14 @@ function confirmPay(id) {
   if (idx>=0) { allPays[idx].status = 'pago'; save(); renderPays(); showToast('Pagamento confirmado!'); }
 }
 
-// ═══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // PAGAMENTOS MORADORES
-// ═══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 function addMoradorPay() {
   const nome = document.getElementById('mor-nome').value.trim();
   const apt = document.getElementById('mor-apt').value.trim();
   const valor = parseFloat(document.getElementById('mor-valor').value);
-  if (!nome || !apt || !valor) { showToast('Preencha os campos obrigatórios', true); return; }
+  if (!nome || !apt || !valor) { showToast('Preencha os campos obrigatÃ³rios', true); return; }
   const pay = {
     id: Date.now(), nome, apt,
     tipo: document.getElementById('mor-tipo').value,
@@ -1811,9 +1393,9 @@ function renderPayHistory() {
   }).join('');
 }
 
-// ═══════════════════════════════════════════════════════════
-// RELATÓRIO — DIÁRIO + MENSAL
-// ═══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// RELATÃ“RIO â€” DIÃRIO + MENSAL
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 let relTipo = 'dia'; // 'dia' | 'mes'
 
 function setRelTipo(tipo) {
@@ -1855,20 +1437,20 @@ function buildDayReport() {
   const totalMor = rMor.reduce((s,p)=>s+(p.valor||0),0);
   const totalDia = totalVis + totalMor;
 
-  // Pagamentos do mês também
+  // Pagamentos do mÃªs tambÃ©m
   const mes = today.getMonth(), ano = today.getFullYear();
   const rVisMes = allPays.filter(p => { try { const d = new Date(p.data||''); return d.getMonth()===mes && d.getFullYear()===ano; } catch(e){return false;} });
   const rMorMes = allMorPays.filter(p => { try { const d = new Date(p.data||''); return d.getMonth()===mes && d.getFullYear()===ano; } catch(e){return false;} });
   const totalMes = rVisMes.reduce((s,p)=>s+(p.total||0),0) + rMorMes.reduce((s,p)=>s+(p.valor||0),0);
-  const mesNome = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'][mes];
+  const mesNome = ['Janeiro','Fevereiro','MarÃ§o','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'][mes];
 
   document.getElementById('relatorio-content').innerHTML = `
     <div class="report-section">
-      <p class="report-section-title"><i class="fa-solid fa-calendar-day"></i> Relatório do Dia — ${todayStr}</p>
+      <p class="report-section-title"><i class="fa-solid fa-calendar-day"></i> RelatÃ³rio do Dia â€” ${todayStr}</p>
       <div class="day-summary-bar">
         <div class="day-kpi"><div class="dk-val">${fmt(totalDia)} Kz</div><div class="dk-label">Total Recebido Hoje</div></div>
-        <div class="day-kpi"><div class="dk-val">${rVis.length + rMor.length}</div><div class="dk-label">Transacções Hoje</div></div>
-        <div class="day-kpi"><div class="dk-val" style="color:var(--info);">${fmt(totalMes)} Kz</div><div class="dk-label">Total do Mês (${mesNome})</div></div>
+        <div class="day-kpi"><div class="dk-val">${rVis.length + rMor.length}</div><div class="dk-label">TransacÃ§Ãµes Hoje</div></div>
+        <div class="day-kpi"><div class="dk-val" style="color:var(--info);">${fmt(totalMes)} Kz</div><div class="dk-label">Total do MÃªs (${mesNome})</div></div>
       </div>
     </div>
 
@@ -1876,20 +1458,20 @@ function buildDayReport() {
     <div class="report-section">
       <p class="report-section-title"><i class="fa-solid fa-receipt"></i> Pagamentos Recebidos Hoje</p>
       <div class="card" style="overflow:auto; margin-bottom:1rem;">
-        <div class="card-head"><p class="card-title"><i class="fa-solid fa-users"></i> Moradores — ${rMor.length} transacções</p></div>
+        <div class="card-head"><p class="card-title"><i class="fa-solid fa-users"></i> Moradores â€” ${rMor.length} transacÃ§Ãµes</p></div>
         <table class="data-table">
-          <thead><tr><th>Morador</th><th>Apt</th><th>Tipo</th><th>Valor</th><th>Método</th><th>Estado</th></tr></thead>
+          <thead><tr><th>Morador</th><th>Apt</th><th>Tipo</th><th>Valor</th><th>MÃ©todo</th><th>Estado</th></tr></thead>
           <tbody>
             ${rMor.length ? rMor.map(p=>`<tr><td><strong>${p.nome}</strong></td><td><span style="font-family:monospace;font-size:.8rem;">${p.apt}</span></td><td>${p.tipo}</td><td><strong style="color:var(--success);">${fmt(p.valor)} Kz</strong></td><td>${p.metodo}</td><td><span class="badge ${p.estado==='confirmado'?'pago':'pendente'}">${p.estado}</span></td></tr>`).join('') : '<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:1rem;">Sem pagamentos de moradores hoje</td></tr>'}
           </tbody>
         </table>
       </div>
       <div class="card" style="overflow:auto;">
-        <div class="card-head"><p class="card-title"><i class="fa-solid fa-user-clock"></i> Visitantes — ${rVis.length} transacções</p></div>
+        <div class="card-head"><p class="card-title"><i class="fa-solid fa-user-clock"></i> Visitantes â€” ${rVis.length} transacÃ§Ãµes</p></div>
         <table class="data-table">
-          <thead><tr><th>Cliente</th><th>Serviço</th><th>Valor</th><th>Método</th><th>Estado</th></tr></thead>
+          <thead><tr><th>Cliente</th><th>ServiÃ§o</th><th>Valor</th><th>MÃ©todo</th><th>Estado</th></tr></thead>
           <tbody>
-            ${rVis.length ? rVis.map(p=>`<tr><td><strong>${p.nome}</strong></td><td>${p.servico==='aluguel'?'Arrendamento':'Compra'}</td><td><strong style="color:var(--success);">${fmt(p.total)} Kz</strong></td><td>${p.metodo||'—'}</td><td><span class="badge ${p.status||'pendente'}">${p.status||'pendente'}</span></td></tr>`).join('') : '<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:1rem;">Sem pagamentos de visitantes hoje</td></tr>'}
+            ${rVis.length ? rVis.map(p=>`<tr><td><strong>${p.nome}</strong></td><td>${p.servico==='aluguel'?'Arrendamento':'Compra'}</td><td><strong style="color:var(--success);">${fmt(p.total)} Kz</strong></td><td>${p.metodo||'â€”'}</td><td><span class="badge ${p.status||'pendente'}">${p.status||'pendente'}</span></td></tr>`).join('') : '<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:1rem;">Sem pagamentos de visitantes hoje</td></tr>'}
           </tbody>
         </table>
       </div>
@@ -1901,11 +1483,11 @@ function buildDayReport() {
         <strong style="font-size:1.3rem;color:var(--gold);">${fmt(totalDia)} Kz</strong>
       </div>
       <div style="display:flex;justify-content:space-between;align-items:center;font-size:.85rem;">
-        <span style="color:var(--text-muted);">Acumulado do Mês (${mesNome} ${ano})</span>
+        <span style="color:var(--text-muted);">Acumulado do MÃªs (${mesNome} ${ano})</span>
         <strong style="font-size:1.1rem;color:var(--info);">${fmt(totalMes)} Kz</strong>
       </div>
       <div style="font-size:.72rem;color:var(--text-muted);text-align:center;margin-top:.75rem;">
-        Relatório gerado em ${new Date().toLocaleString('pt-AO')} · Condomínio Nosso Zimbo
+        RelatÃ³rio gerado em ${new Date().toLocaleString('pt-AO')} Â· CondomÃ­nio Nosso Zimbo
       </div>
     </div>
   `;
@@ -1914,7 +1496,7 @@ function buildDayReport() {
 function buildMonthReport() {
   const mes = parseInt(document.getElementById('rel-mes').value);
   const ano = parseInt(document.getElementById('rel-ano').value);
-  const mesNome = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'][mes];
+  const mesNome = ['Janeiro','Fevereiro','MarÃ§o','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'][mes];
 
   const rVis = allPays.filter(p => {
     try { const d = new Date(p.data||'2025'); return d.getMonth()===mes && d.getFullYear()===ano; } catch(e){return false;}
@@ -1933,23 +1515,23 @@ function buildMonthReport() {
 
   document.getElementById('relatorio-content').innerHTML = `
     <div class="report-section">
-      <p class="report-section-title"><i class="fa-solid fa-calendar-days"></i> Resumo Mensal — ${mesNome} ${ano}</p>
+      <p class="report-section-title"><i class="fa-solid fa-calendar-days"></i> Resumo Mensal â€” ${mesNome} ${ano}</p>
       <div class="report-kpi-grid">
-        <div class="report-kpi"><div class="kval">${fmt(totalGeral)} Kz</div><div class="klabel">Receita Total do Mês</div></div>
+        <div class="report-kpi"><div class="kval">${fmt(totalGeral)} Kz</div><div class="klabel">Receita Total do MÃªs</div></div>
         <div class="report-kpi"><div class="kval">${fmt(totalVis)} Kz</div><div class="klabel">Recebido de Visitantes</div></div>
         <div class="report-kpi"><div class="kval">${fmt(totalMor)} Kz</div><div class="klabel">Recebido de Moradores</div></div>
         <div class="report-kpi"><div class="kval">${reg_mes.length}</div><div class="klabel">Novos Registos</div></div>
-        <div class="report-kpi"><div class="kval">${rVis.length + rMor.length}</div><div class="klabel">Transacções</div></div>
-        <div class="report-kpi"><div class="kval">${allHouses.filter(h=>h.estado==='disponivel').length}</div><div class="klabel">Casas Disponíveis</div></div>
+        <div class="report-kpi"><div class="kval">${rVis.length + rMor.length}</div><div class="klabel">TransacÃ§Ãµes</div></div>
+        <div class="report-kpi"><div class="kval">${allHouses.filter(h=>h.estado==='disponivel').length}</div><div class="klabel">Casas DisponÃ­veis</div></div>
       </div>
     </div>
 
     ${rMor.length ? `
     <div class="report-section">
-      <p class="report-section-title"><i class="fa-solid fa-users"></i> Pagamentos de Moradores — ${mesNome}</p>
+      <p class="report-section-title"><i class="fa-solid fa-users"></i> Pagamentos de Moradores â€” ${mesNome}</p>
       <div class="card" style="overflow:auto;">
         <table class="data-table">
-          <thead><tr><th>#</th><th>Morador</th><th>Apt</th><th>Tipo</th><th>Valor</th><th>Método</th><th>Data</th><th>Estado</th></tr></thead>
+          <thead><tr><th>#</th><th>Morador</th><th>Apt</th><th>Tipo</th><th>Valor</th><th>MÃ©todo</th><th>Data</th><th>Estado</th></tr></thead>
           <tbody>
             ${rMor.map((p,i)=>`<tr><td style="color:var(--text-muted);font-size:.78rem;">${i+1}</td><td><strong>${p.nome}</strong></td><td><span style="font-family:monospace;font-size:.8rem;">${p.apt}</span></td><td>${p.tipo}</td><td><strong>${fmt(p.valor)} Kz</strong></td><td>${p.metodo}</td><td>${p.data}</td><td><span class="badge ${p.estado==='confirmado'?'pago':'pendente'}">${p.estado}</span></td></tr>`).join('')}
             <tr style="border-top:2px solid var(--border);"><td colspan="4" style="text-align:right;color:var(--text-muted);font-size:.8rem;font-weight:600;">SUBTOTAL MORADORES</td><td colspan="4"><strong style="color:var(--gold);font-size:.95rem;">${fmt(totalMor)} Kz</strong></td></tr>
@@ -1960,10 +1542,10 @@ function buildMonthReport() {
 
     ${reg_mes.length ? `
     <div class="report-section">
-      <p class="report-section-title"><i class="fa-solid fa-user-clock"></i> Registos de Visitantes — ${mesNome}</p>
+      <p class="report-section-title"><i class="fa-solid fa-user-clock"></i> Registos de Visitantes â€” ${mesNome}</p>
       <div class="card" style="overflow:auto;">
         <table class="data-table">
-          <thead><tr><th>#</th><th>Nome</th><th>Serviço</th><th>Valor</th><th>Data</th><th>Estado</th></tr></thead>
+          <thead><tr><th>#</th><th>Nome</th><th>ServiÃ§o</th><th>Valor</th><th>Data</th><th>Estado</th></tr></thead>
           <tbody>
             ${reg_mes.map((r,i)=>`<tr><td style="color:var(--text-muted);font-size:.78rem;">${i+1}</td><td>${r.nome}</td><td>${r.servico==='aluguel'?'Arrendamento':'Compra'}</td><td>${fmt(r.total)} Kz</td><td>${r.data}</td><td><span class="badge ${r.status}">${r.status}</span></td></tr>`).join('')}
             <tr style="border-top:2px solid var(--border);"><td colspan="2" style="text-align:right;color:var(--text-muted);font-size:.8rem;font-weight:600;">SUBTOTAL VISITANTES</td><td colspan="4"><strong style="color:var(--gold);font-size:.95rem;">${fmt(totalVis)} Kz</strong></td></tr>
@@ -1972,7 +1554,7 @@ function buildMonthReport() {
       </div>
     </div>` : ''}
 
-    ${(!reg_mes.length && !rMor.length) ? '<div class="empty-state"><i class="fa-solid fa-file-circle-xmark"></i><p>Sem dados para o período seleccionado</p></div>' : ''}
+    ${(!reg_mes.length && !rMor.length) ? '<div class="empty-state"><i class="fa-solid fa-file-circle-xmark"></i><p>Sem dados para o perÃ­odo seleccionado</p></div>' : ''}
 
     <div style="background:var(--dark3);border:2px solid var(--gold);border-radius:var(--radius);padding:1.25rem;margin-top:1rem;">
       <div style="display:flex;justify-content:space-between;align-items:center;font-size:.85rem;border-bottom:1px solid var(--border);padding-bottom:.75rem;margin-bottom:.5rem;">
@@ -1984,16 +1566,16 @@ function buildMonthReport() {
         <strong style="color:var(--text);">${fmt(totalVis)} Kz</strong>
       </div>
       <div style="display:flex;justify-content:space-between;align-items:center;">
-        <span style="font-weight:700;color:var(--text);">Total Geral — ${mesNome} ${ano}</span>
+        <span style="font-weight:700;color:var(--text);">Total Geral â€” ${mesNome} ${ano}</span>
         <strong style="font-size:1.4rem;color:var(--gold);">${fmt(totalGeral)} Kz</strong>
       </div>
       <div style="font-size:.72rem;color:var(--text-muted);text-align:center;margin-top:.75rem;">
-        Relatório gerado em ${new Date().toLocaleString('pt-AO')} · Condomínio Nosso Zimbo
+        RelatÃ³rio gerado em ${new Date().toLocaleString('pt-AO')} Â· CondomÃ­nio Nosso Zimbo
       </div>
     </div>
     <div class="pdf-report-footer" style="display:none;margin-top:2rem;padding-top:1rem;border-top:2px solid #c9a84c;font-size:.78rem;color:#666;text-align:center;">
-      Este relatório é de carácter confidencial e destina-se exclusivamente à administração do Condomínio Nosso Zimbo.<br>
-      Emitido em ${new Date().toLocaleString('pt-AO')} · Página 1
+      Este relatÃ³rio Ã© de carÃ¡cter confidencial e destina-se exclusivamente Ã  administraÃ§Ã£o do CondomÃ­nio Nosso Zimbo.<br>
+      Emitido em ${new Date().toLocaleString('pt-AO')} Â· PÃ¡gina 1
     </div>
   `;
 }
@@ -2005,9 +1587,9 @@ function imprimirRelatorio() {
   window.print();
 }
 
-// ═══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // PEDIDOS DE VISITANTES
-// ═══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 let pedidoFilter = 'todos';
 let currentPedidoId = null;
 let selectedCasaId = null;
@@ -2047,11 +1629,11 @@ function renderPedidos() {
   tbody.innerHTML = regs.map(r => `
     <tr>
       <td><span class="house-tag" style="font-size:.72rem;">${r.ref || ('NZ-' + r.id)}</span></td>
-      <td><strong>${r.nome || '—'}</strong></td>
-      <td style="font-family:monospace;font-size:.8rem;">${r.bi || '—'}</td>
-      <td>${r.servico === 'aluguel' ? '🏠 Arrendamento' : '🔑 Compra'}</td>
+      <td><strong>${r.nome || 'â€”'}</strong></td>
+      <td style="font-family:monospace;font-size:.8rem;">${r.bi || 'â€”'}</td>
+      <td>${r.servico === 'aluguel' ? 'ðŸ  Arrendamento' : 'ðŸ”‘ Compra'}</td>
       <td><strong>${fmt(r.total || 0)} Kz</strong></td>
-      <td style="font-size:.82rem;">${r.data || '—'}</td>
+      <td style="font-size:.82rem;">${r.data || 'â€”'}</td>
       <td><span class="badge ${r.status || 'pendente'}">${r.status || 'pendente'}</span></td>
       <td>
         <button class="btn-secondary btn-sm" onclick="abrirModalPedido(${r.id})" title="Rever pedido">
@@ -2079,40 +1661,40 @@ function abrirModalPedido(id) {
   if (notasEl) notasEl.value = r.notasAdmin || '';
 
   // Preencher dados pessoais
-  document.getElementById('pd-nome-header').textContent = r.nome || '—';
+  document.getElementById('pd-nome-header').textContent = r.nome || 'â€”';
   document.getElementById('pd-ref-header').textContent = 'Ref: ' + (r.ref || r.id);
   const badge = document.getElementById('pd-status-badge');
   badge.textContent = r.status || 'pendente';
   badge.className = 'badge ' + (r.status || 'pendente');
 
-  document.getElementById('pd-nome').textContent = r.nome || '—';
-  document.getElementById('pd-bi').textContent = r.bi || '—';
-  document.getElementById('pd-nasc').textContent = r.nasc || '—';
-  document.getElementById('pd-nac').textContent = r.nac || '—';
-  document.getElementById('pd-estado-civil').textContent = r.estado || '—';
-  document.getElementById('pd-tel').textContent = r.tel || '—';
-  document.getElementById('pd-email').textContent = r.email || '—';
-  document.getElementById('pd-morada').textContent = r.morada || '—';
-  document.getElementById('pd-profissao').textContent = r.profissao || '—';
-  document.getElementById('pd-data').textContent = (r.data || '—') + ' ' + (r.hora || '');
+  document.getElementById('pd-nome').textContent = r.nome || 'â€”';
+  document.getElementById('pd-bi').textContent = r.bi || 'â€”';
+  document.getElementById('pd-nasc').textContent = r.nasc || 'â€”';
+  document.getElementById('pd-nac').textContent = r.nac || 'â€”';
+  document.getElementById('pd-estado-civil').textContent = r.estado || 'â€”';
+  document.getElementById('pd-tel').textContent = r.tel || 'â€”';
+  document.getElementById('pd-email').textContent = r.email || 'â€”';
+  document.getElementById('pd-morada').textContent = r.morada || 'â€”';
+  document.getElementById('pd-profissao').textContent = r.profissao || 'â€”';
+  document.getElementById('pd-data').textContent = (r.data || 'â€”') + ' ' + (r.hora || '');
 
-  // Preencher serviço
-  const svcNome = r.servico === 'aluguel' ? 'Arrendamento' : 'Compra de Residência';
+  // Preencher serviÃ§o
+  const svcNome = r.servico === 'aluguel' ? 'Arrendamento' : 'Compra de ResidÃªncia';
   document.getElementById('pd-servico-header').textContent = svcNome;
   document.getElementById('pd-servico').textContent = svcNome;
-  document.getElementById('pd-modalidade').textContent = r.modalidade || '—';
-  document.getElementById('pd-metodo').textContent = r.metodo || '—';
+  document.getElementById('pd-modalidade').textContent = r.modalidade || 'â€”';
+  document.getElementById('pd-metodo').textContent = r.metodo || 'â€”';
   document.getElementById('pd-valor').textContent = fmt(r.total || 0) + ' Kz';
-  document.getElementById('pd-data2').textContent = (r.data || '—') + ' ' + (r.hora || '');
-  document.getElementById('pd-codigo').textContent = r.codigo || '—';
+  document.getElementById('pd-data2').textContent = (r.data || 'â€”') + ' ' + (r.hora || '');
+  document.getElementById('pd-codigo').textContent = r.codigo || 'â€”';
 
   // Preencher select de casas
   const sel = document.getElementById('pd-casa-select');
-  sel.innerHTML = '<option value="">— Seleccione uma residência —</option>';
+  sel.innerHTML = '<option value="">â€” Seleccione uma residÃªncia â€”</option>';
   const disponiveis = allHouses.filter(h => h.estado === 'disponivel');
   if (disponiveis.length) {
     disponiveis.forEach(h => {
-      sel.innerHTML += `<option value="${h.id}">Bloco ${h.bloco} · Rua ${h.rua} · Nº ${h.numero} · ${h.tipo} · ${h.zona}</option>`;
+      sel.innerHTML += `<option value="${h.id}">Bloco ${h.bloco} Â· Rua ${h.rua} Â· NÂº ${h.numero} Â· ${h.tipo} Â· ${h.zona}</option>`;
     });
     document.getElementById('pd-sem-casas').style.display = 'none';
     sel.style.display = 'block';
@@ -2122,13 +1704,13 @@ function abrirModalPedido(id) {
   }
   document.getElementById('pd-casa-preview').style.display = 'none';
 
-  // Botões conforme estado
+  // BotÃµes conforme estado
   const btnAprovar = document.getElementById('btn-aprovar-final');
   const btnRejeitar = document.getElementById('btn-rejeitar');
   const btnEliminar = document.getElementById('btn-eliminar');
   if (r.status === 'aprovado') {
     btnAprovar.disabled = true;
-    btnAprovar.innerHTML = '<i class="fa-solid fa-check-double"></i> Já aprovado';
+    btnAprovar.innerHTML = '<i class="fa-solid fa-check-double"></i> JÃ¡ aprovado';
     btnRejeitar.style.display = 'none';
     btnEliminar.style.display = 'none';
   } else if (r.status === 'rejeitado') {
@@ -2138,7 +1720,7 @@ function abrirModalPedido(id) {
     btnEliminar.style.display = 'inline-flex';
   } else {
     btnAprovar.disabled = false;
-    btnAprovar.innerHTML = '<i class="fa-solid fa-circle-check"></i> Confirmar & Atribuir Residência';
+    btnAprovar.innerHTML = '<i class="fa-solid fa-circle-check"></i> Confirmar & Atribuir ResidÃªncia';
     btnRejeitar.style.display = 'inline-flex';
     btnEliminar.style.display = 'inline-flex';
   }
@@ -2156,7 +1738,7 @@ function abrirModalPedido(id) {
   setDocImg('doc-selfie-img', 'doc-selfie-empty', r.selfie || null);
   setDocImg('doc-bi-frente-img', 'doc-bi-frente-empty', r.biFrenteImg || null);
   setDocImg('doc-bi-verso-img', 'doc-bi-verso-empty', r.biVersoImg || null);
-  // Comprovativo — could be image or PDF base64
+  // Comprovativo â€” could be image or PDF base64
   const compImg = document.getElementById('doc-comprovativo-img');
   const compPdf = document.getElementById('doc-comprovativo-pdf-link');
   const compEmpty = document.getElementById('doc-comprovativo-empty');
@@ -2211,12 +1793,12 @@ function previewCasaSelecionada() {
   selectedCasaId = houseId;
   geradoCodigoPedido = String(Math.floor(1000 + Math.random() * 9000));
 
-  document.getElementById('pv-bloco').textContent = house.bloco || '—';
-  document.getElementById('pv-rua').textContent = house.rua || '—';
-  document.getElementById('pv-numero').textContent = house.numero || '—';
+  document.getElementById('pv-bloco').textContent = house.bloco || 'â€”';
+  document.getElementById('pv-rua').textContent = house.rua || 'â€”';
+  document.getElementById('pv-numero').textContent = house.numero || 'â€”';
   document.getElementById('pv-tipo').textContent = house.tipo || 'V3';
-  document.getElementById('pv-andar').textContent = house.andar || '—';
-  document.getElementById('pv-zona').textContent = house.zona || '—';
+  document.getElementById('pv-andar').textContent = house.andar || 'â€”';
+  document.getElementById('pv-zona').textContent = house.zona || 'â€”';
   document.getElementById('pd-novo-codigo').textContent = geradoCodigoPedido;
   document.getElementById('pd-casa-preview').style.display = 'block';
 }
@@ -2225,13 +1807,13 @@ function aprovarPedidoFinal() {
   if (!selectedCasaId) {
     // Ir para aba de casa e avisar
     switchPTab('casa');
-    showToast('Seleccione uma residência para atribuir antes de aprovar', true);
+    showToast('Seleccione uma residÃªncia para atribuir antes de aprovar', true);
     return;
   }
   const r = allRegs.find(x => x.id === currentPedidoId);
   if (!r) return;
   const house = allHouses.find(h => h.id === selectedCasaId);
-  if (!house) { showToast('Casa não encontrada', true); return; }
+  if (!house) { showToast('Casa nÃ£o encontrada', true); return; }
 
   // Guardar notas do admin
   r.notasAdmin = document.getElementById('pd-notas-admin')?.value || '';
@@ -2262,9 +1844,9 @@ function aprovarPedidoFinal() {
   save();
   closeModal('modal-pedido');
 
-  // Modal de confirmação
-  document.getElementById('conf-nome').textContent = r.nome || '—';
-  document.getElementById('conf-casa').textContent = `Bloco ${house.bloco} · Rua ${house.rua} · Nº ${house.numero}`;
+  // Modal de confirmaÃ§Ã£o
+  document.getElementById('conf-nome').textContent = r.nome || 'â€”';
+  document.getElementById('conf-casa').textContent = `Bloco ${house.bloco} Â· Rua ${house.rua} Â· NÂº ${house.numero}`;
   document.getElementById('conf-codigo').textContent = geradoCodigoPedido;
   document.getElementById('modal-confirmacao').classList.add('open');
 
@@ -2295,7 +1877,7 @@ function confirmarNegar() {
   if (!motivo) {
     document.getElementById('negar-motivo-texto').style.borderColor = 'var(--danger)';
     document.getElementById('negar-motivo-texto').focus();
-    showToast('Escreva ou seleccione o motivo da negação', true);
+    showToast('Escreva ou seleccione o motivo da negaÃ§Ã£o', true);
     return;
   }
   if (!currentPedidoId) return;
@@ -2321,13 +1903,13 @@ function confirmarNegar() {
   renderPedidos();
   renderDashboard();
   updateBadgePedidos();
-  showToast('Pedido negado. O visitante verá o motivo no seu portal.');
+  showToast('Pedido negado. O visitante verÃ¡ o motivo no seu portal.');
 }
 
 // Legacy alias
 function rejeitarPedido() { abrirNegarPedido(); }
 
-// ── LIGHTBOX ──
+// â”€â”€ LIGHTBOX â”€â”€
 function openLightbox(src, label) {
   if (!src) return;
   document.getElementById('lightbox-img').src = src;
@@ -2350,7 +1932,7 @@ document.addEventListener('keydown', e => {
 
 function eliminarPedido() {
   if (!currentPedidoId) return;
-  if (!confirm('Tem a certeza que deseja ELIMINAR permanentemente este pedido? Esta acção não pode ser revertida.')) return;
+  if (!confirm('Tem a certeza que deseja ELIMINAR permanentemente este pedido? Esta acÃ§Ã£o nÃ£o pode ser revertida.')) return;
   allRegs = allRegs.filter(x => x.id !== currentPedidoId);
   // Remove from payments too
   allPays = allPays.filter(x => x.id !== currentPedidoId && x.id !== currentPedidoId + 1);
@@ -2363,9 +1945,9 @@ function eliminarPedido() {
   showToast('Pedido eliminado permanentemente.');
 }
 
-// ═══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 // HELPERS
-// ═══════════════════════════════════════════════════════════
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 function fmt(n) { return new Intl.NumberFormat('pt-AO').format(n||0); }
 function showToast(msg, err) {
   const t = document.getElementById('toast');
@@ -2376,7 +1958,7 @@ function showToast(msg, err) {
 function triggerFile(id) { document.getElementById(id).click(); }
 function fileSelected(id, input) {
   const area = document.getElementById(id + '-area');
-  if (input.files[0]) { area.classList.add('uploaded'); area.querySelector('p').textContent = '✓ ' + input.files[0].name; }
+  if (input.files[0]) { area.classList.add('uploaded'); area.querySelector('p').textContent = 'âœ“ ' + input.files[0].name; }
 }
 
 
@@ -2395,215 +1977,6 @@ function carregarMoradores(){
 
 }
 
-
-
-/* --- FUNCIONARIOS --- */
-let allFuncs = JSON.parse(localStorage.getItem('nz_funcionarios') || '[]');
-function saveFuncs() { localStorage.setItem('nz_funcionarios', JSON.stringify(allFuncs)); }
-function resetFuncForm() {
-    document.getElementById('f-nome').value = '';
-    document.getElementById('f-senha').value = '';
-    document.getElementById('f-telefone').value = '';
-    document.getElementById('f-email').value = '';
-    document.getElementById('f-nascimento').value = '';
-    document.getElementById('f-funcao').value = '';
-    document.getElementById('f-nacionalidade').value = 'Angolana';
-    document.getElementById('f-estado-func').value = 'Activo';
-    document.getElementById('f-morada').value = '';
-    document.getElementById('f-editing-id').value = '';
-    document.getElementById('func-form-titulo').innerText = 'Novo Funcionário';
-    document.getElementById('func-btn-txt').innerText = 'Registar Funcionário';
-}
-function salvarFuncionario() {
-    const idField = document.getElementById('f-editing-id').value;
-    const item = {
-        id: idField ? parseInt(idField) : Date.now(),
-        nome: document.getElementById('f-nome').value.trim(),
-        senha: document.getElementById('f-senha').value,
-        telefone: document.getElementById('f-telefone').value,
-        email: document.getElementById('f-email').value,
-        nasc: document.getElementById('f-nascimento').value,
-        funcao: document.getElementById('f-funcao').value,
-        nac: document.getElementById('f-nacionalidade').value,
-        estado: document.getElementById('f-estado-func').value,
-        morada: document.getElementById('f-morada').value
-    };
-    if(!item.nome || !item.telefone || !item.funcao) { showToast('Preencha os campos obrigatórios (*)', true); return; }
-    if(idField) {
-        const idx = allFuncs.findIndex(f => f.id === item.id);
-        if(idx >= 0) allFuncs[idx] = item;
-    } else {
-        allFuncs.push(item);
-    }
-    saveFuncs();
-    resetFuncForm();
-    renderFuncionarios();
-    showToast('Funcionário guardado com sucesso!');
-}
-function renderFuncionarios() {
-    const tbody = document.getElementById('funcionarios-tbody');
-    if(!tbody) return;
-    if(!allFuncs.length) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--text-muted);">Sem funcionários registados</td></tr>';
-        return;
-    }
-    tbody.innerHTML = allFuncs.map(f => \
-        <tr>
-            <td><strong>\</strong></td>
-            <td>\</td>
-            <td>\</td>
-            <td><span class="badge \">\</span></td>
-            <td>
-                <div style="display:flex;gap:.4rem;">
-                    <button class="btn-secondary btn-sm" onclick="verFunc(\)" title="Ver"><i class="fa-solid fa-eye"></i></button>
-                    <button class="btn-secondary btn-sm" onclick="editFunc(\)" title="Editar"><i class="fa-solid fa-pen"></i></button>
-                    <button class="btn-danger btn-sm" onclick="delFunc(\)" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
-                </div>
-            </td>
-        </tr>
-    \).join('');
-}
-function editFunc(id) {
-    const f = allFuncs.find(x => x.id === id);
-    if(!f) return;
-    document.getElementById('f-nome').value = f.nome;
-    document.getElementById('f-senha').value = f.senha || '';
-    document.getElementById('f-telefone').value = f.telefone;
-    document.getElementById('f-email').value = f.email;
-    document.getElementById('f-nascimento').value = f.nasc;
-    document.getElementById('f-funcao').value = f.funcao;
-    document.getElementById('f-nacionalidade').value = f.nac;
-    document.getElementById('f-estado-func').value = f.estado;
-    document.getElementById('f-morada').value = f.morada;
-    document.getElementById('f-editing-id').value = f.id;
-    document.getElementById('func-form-titulo').innerText = 'Editar Funcionário';
-    document.getElementById('func-btn-txt').innerText = 'Actualizar Funcionário';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-function delFunc(id) {
-    if(!confirm('Deseja eliminar este funcionário?')) return;
-    allFuncs = allFuncs.filter(f => f.id !== id);
-    saveFuncs();
-    renderFuncionarios();
-    showToast('Funcionário eliminado.');
-}
-function verFunc(id) {
-    const f = allFuncs.find(x => x.id === id);
-    if(!f) return;
-    alert(\DETALHES DO FUNCIONÁRIO:\\n\\nNome: \\\nCargo: \\\nTelefone: \\\nEmail: \\\nNasc: \\\nMorada: \\\nEstado: \\);
-}
-
-/* --- MORADORES --- */
-let allMors = JSON.parse(localStorage.getItem('nz_moradores_admin') || '[]');
-function saveMors() { localStorage.setItem('nz_moradores_admin', JSON.stringify(allMors)); }
-function resetMorForm() {
-    document.getElementById('m-nome').value = '';
-    document.getElementById('m-senha').value = '';
-    document.getElementById('m-telefone').value = '';
-    document.getElementById('m-email').value = '';
-    document.getElementById('m-nascimento').value = '';
-    document.getElementById('m-nacionalidade').value = 'Angolana';
-    document.getElementById('m-morada').value = '';
-    document.getElementById('m-numbi').value = '';
-    document.getElementById('m-emissao').value = '';
-    document.getElementById('m-validade').value = '';
-    document.getElementById('m-locale').value = '';
-    document.getElementById('m-estado').value = 'Activo';
-    document.getElementById('m-editing-id').value = '';
-    document.getElementById('mor-form-titulo').innerText = 'Novo Morador';
-    document.getElementById('mor-btn-txt').innerText = 'Registar Morador';
-}
-function salvarMorador() {
-    const idField = document.getElementById('m-editing-id').value;
-    const item = {
-        id: idField ? parseInt(idField) : Date.now(),
-        nome: document.getElementById('m-nome').value.trim(),
-        senha: document.getElementById('m-senha').value,
-        telefone: document.getElementById('m-telefone').value,
-        email: document.getElementById('m-email').value,
-        nasc: document.getElementById('m-nascimento').value,
-        nac: document.getElementById('m-nacionalidade').value,
-        morada: document.getElementById('m-morada').value,
-        numbi: document.getElementById('m-numbi').value,
-        emissao: document.getElementById('m-emissao').value,
-        validade: document.getElementById('m-validade').value,
-        locale: document.getElementById('m-locale').value,
-        estado: document.getElementById('m-estado').value
-    };
-    if(!item.nome || !item.telefone || !item.numbi) { showToast('Preencha os campos obrigatórios (*)', true); return; }
-    if(idField) {
-        const idx = allMors.findIndex(f => f.id === item.id);
-        if(idx >= 0) allMors[idx] = item;
-    } else {
-        allMors.push(item);
-    }
-    saveMors();
-    resetMorForm();
-    renderMoradoresAdmin();
-    showToast('Morador guardado com sucesso!');
-}
-function renderMoradoresAdmin() {
-    const tbody = document.getElementById('moradores-admin-tbody');
-    if(!tbody) return;
-    if(!allMors.length) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--text-muted);">Sem moradores registados</td></tr>';
-        return;
-    }
-    tbody.innerHTML = allMors.map(m => \
-        <tr>
-            <td><strong>\</strong></td>
-            <td>\</td>
-            <td>\</td>
-            <td style="font-family:monospace;font-size:.78rem;">\</td>
-            <td><span class="badge \">\</span></td>
-            <td>
-                <div style="display:flex;gap:.4rem;">
-                    <button class="btn-secondary btn-sm" onclick="verMor(\)" title="Ver"><i class="fa-solid fa-eye"></i></button>
-                    <button class="btn-secondary btn-sm" onclick="editMor(\)" title="Editar"><i class="fa-solid fa-pen"></i></button>
-                    <button class="btn-danger btn-sm" onclick="delMor(\)" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
-                </div>
-            </td>
-        </tr>
-    \).join('');
-}
-function editMor(id) {
-    const m = allMors.find(x => x.id === id);
-    if(!m) return;
-    document.getElementById('m-nome').value = m.nome;
-    document.getElementById('m-senha').value = m.senha || '';
-    document.getElementById('m-telefone').value = m.telefone;
-    document.getElementById('m-email').value = m.email;
-    document.getElementById('m-nascimento').value = m.nasc;
-    document.getElementById('m-nacionalidade').value = m.nac;
-    document.getElementById('m-morada').value = m.morada;
-    document.getElementById('m-numbi').value = m.numbi;
-    document.getElementById('m-emissao').value = m.emissao;
-    document.getElementById('m-validade').value = m.validade;
-    document.getElementById('m-locale').value = m.locale;
-    document.getElementById('m-estado').value = m.estado;
-    document.getElementById('m-editing-id').value = m.id;
-    document.getElementById('mor-form-titulo').innerText = 'Editar Morador';
-    document.getElementById('mor-btn-txt').innerText = 'Actualizar Morador';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-function delMor(id) {
-    if(!confirm('Deseja eliminar este morador?')) return;
-    allMors = allMors.filter(x => x.id !== id);
-    saveMors();
-    renderMoradoresAdmin();
-    showToast('Morador eliminado.');
-}
-function verMor(id) {
-    const m = allMors.find(x => x.id === id);
-    if(!m) return;
-    alert(\DETALHES DO MORADOR:\\n\\nNome: \\\nTelefone: \\\nEmail: \\\nBI: \\\nNasc: \\\nMorada: \\\nEstado: \\);
-}
-
-// Add to window.onload or similar
-window.addEventListener('load', () => {
-    renderFuncionarios();
-    renderMoradoresAdmin();
-});
 
 </script>
 </body>

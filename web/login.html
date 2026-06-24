@@ -13,9 +13,7 @@
     </script>
 </head>
 <body>
-<div style="position:fixed; top:20px; right:20px; z-index:1000;">
-  <button id="theme-toggle" class="theme-toggle-btn" onclick="ThemeManager.toggle()" style="width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;border:1px solid var(--border);background:var(--surface);color:var(--text);"><i class="fa-solid fa-moon"></i></button>
-</div>
+<!-- Theme toggle removido -->
 <main id="portal">
   <!-- ANIMAÇÃO 3D -->
   <aside>
@@ -138,10 +136,30 @@ if (err && erros[err]) {
     if (el) { el.textContent = erros[err]; el.style.display = 'block'; }
 }
 if (params.get('ok') === 'registado') {
-    ['msg-erro','msg-erro-func'].forEach(id => {
-        const el = document.getElementById(id);
-        if (el) { el.textContent = '✓ Registo efectuado com sucesso! Faça login.'; el.style.display = 'block'; el.style.color = '#4caf7d'; }
-    });
+    const modal = document.createElement('div');
+    modal.id = 'modal-sucesso';
+    modal.className = 'modal-overlay';
+    
+    // Gerar uma data daqui a 3 dias
+    const dataVisita = new Date();
+    dataVisita.setDate(dataVisita.getDate() + 3);
+    const dataFormatada = dataVisita.toLocaleDateString('pt-AO', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+    modal.innerHTML = `
+      <div class="modal-content">
+        <div class="modal-icon"><i class="fa-solid fa-circle-check"></i></div>
+        <h3>Registo Efectuado com Sucesso!</h3>
+        <p>A sua conta está actualmente com o estado <strong>PENDENTE</strong>.</p>
+        <div class="modal-info-box">
+          <p><i class="fa-solid fa-calendar-day"></i> <strong>Data da Visita:</strong><br>${dataFormatada}</p>
+          <p><i class="fa-solid fa-location-dot"></i> <strong>Localização:</strong><br>Condomínio Nosso Zimbo, Viana, Luanda</p>
+          <p><i class="fa-solid fa-phone"></i> <strong>Apoio ao Cliente:</strong><br>+244 923 000 000 / 912 000 000</p>
+        </div>
+        <p class="modal-instruction">Por favor, dirija-se ao condomínio na data gerada acima com os seus documentos originais (BI) para finalizar o processo de arrendamento ou compra e activar a sua residência.</p>
+        <button onclick="document.getElementById('modal-sucesso').remove()" class="btn-fechar-modal">Compreendido</button>
+      </div>
+    `;
+    document.body.appendChild(modal);
 }
 if (params.get('ok') === 'logout') {
     ['msg-erro','msg-erro-func'].forEach(id => {
@@ -181,6 +199,97 @@ if (params.get('ok') === 'logout') {
 .forgot-link:hover, .register-link:hover {
     text-decoration: underline;
 }
+
+/* Modal Sucesso */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.85);
+    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    animation: fadeIn 0.3s ease;
+}
+
+.modal-content {
+    background: var(--surface);
+    color: var(--text);
+    padding: 2.5rem;
+    border-radius: 20px;
+    max-width: 500px;
+    width: 90%;
+    text-align: center;
+    border: 1px solid var(--border);
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    animation: slideUp 0.4s ease;
+}
+
+.modal-icon {
+    font-size: 4rem;
+    color: #4caf7d;
+    margin-bottom: 1.5rem;
+}
+
+.modal-content h3 {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    color: var(--gold);
+}
+
+.modal-info-box {
+    background: rgba(255,255,255,0.05);
+    padding: 1.5rem;
+    border-radius: 12px;
+    margin: 1.5rem 0;
+    text-align: left;
+    border-left: 4px solid var(--gold);
+}
+
+.modal-info-box p {
+    margin-bottom: 1rem;
+    font-size: 0.95rem;
+}
+
+.modal-info-box p:last-child {
+    margin-bottom: 0;
+}
+
+.modal-info-box i {
+    color: var(--gold);
+    margin-right: 8px;
+    width: 20px;
+}
+
+.modal-instruction {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+}
+
+.btn-fechar-modal {
+    background: var(--gold);
+    color: #000;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.btn-fechar-modal:hover {
+    transform: scale(1.05);
+}
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 </style>
 </body>
 </html>

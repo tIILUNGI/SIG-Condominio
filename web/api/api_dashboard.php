@@ -20,11 +20,14 @@ switch ($acao) {
         $r = [];
 
         $r['total_moradores']   = mysqli_fetch_row(mysqli_query($conexao, "SELECT COUNT(*) FROM morador"))[0] ?? 0;
-        $r['total_admins']      = mysqli_fetch_row(mysqli_query($conexao, "SELECT COUNT(*) FROM administrador WHERE activo=1"))[0] ?? 0;
+        $r['total_admins']      = mysqli_fetch_row(mysqli_query($conexao, "SELECT COUNT(*) FROM administrador"))[0] ?? 0;
         $r['total_apartamentos'] = mysqli_fetch_row(mysqli_query($conexao, "SELECT COUNT(*) FROM apartamento"))[0] ?? 0;
         $r['apartamentos_disponiveis'] = mysqli_fetch_row(mysqli_query($conexao, "SELECT COUNT(*) FROM apartamento WHERE estado='Disponivel'"))[0] ?? 0;
+        $r['apartamentos_ocupados'] = mysqli_fetch_row(mysqli_query($conexao, "SELECT COUNT(*) FROM apartamento WHERE estado='Ocupado' OR estado='ocupada'"))[0] ?? 0;
         $r['mensalidades_pendentes'] = mysqli_fetch_row(mysqli_query($conexao, "SELECT COUNT(*) FROM mensalidade WHERE estado='pendente'"))[0] ?? 0;
         $r['receitas_mes'] = mysqli_fetch_row(mysqli_query($conexao, "SELECT COALESCE(SUM(valor_pago),0) FROM mensalidade_pagamento WHERE MONTH(data_pagamento)=MONTH(NOW()) AND YEAR(data_pagamento)=YEAR(NOW()) AND estado='confirmado'"))[0] ?? 0;
+        $r['localizacao'] = "Viana, Luanda, Angola";
+        $r['apoio'] = "+244 923 000 000";
 
         echo json_encode(['sucesso' => true, 'dados' => $r]);
         break;
@@ -157,6 +160,76 @@ switch ($acao) {
         $stmt->close();
         break;
 
+    case 'processar_morador':
+        $id_morador = intval($_POST['id_morador'] ?? 0);
+        $id_apartamento = intval($_POST['id_apartamento'] ?? 0);
+        $estado = $_POST['estado'] ?? 'Activo';
+
+        if (!$id_morador) { echo json_encode(['sucesso'=>false,'erro'=>'ID Morador inválido']); exit; }
+
+        mysqli_begin_transaction($conexao);
+        try {
+            // Actualizar estado do morador
+            $stmt = $conexao->prepare("UPDATE morador SET estado_conta = ? WHERE id = ?");
+            $stmt->bind_param("si", $estado, $id_morador);
+            $stmt->execute();
+            $stmt->close();
+
+            if ($id_apartamento > 0) {
+                // Desactivar atribuições anteriores
+                $stmt = $conexao->prepare("UPDATE morador_apartamento SET activo = 0 WHERE id_morador = ?");
+                $stmt->bind_param("i", $id_morador);
+                $stmt->execute();
+                $stmt->close();
+
+                // Nova atribuição
+                $stmt = $conexao->prepare("INSERT INTO morador_apartamento (id_morador, id_apartamento, data_entrada, activo) VALUES (?, ?, NOW(), 1)");
+                $stmt->bind_param("ii", $id_morador, $id_apartamento);
+                $stmt->execute();
+                $stmt->close();
+
+                // Marcar casa como ocupada
+                $stmt = $conexao->prepare("UPDATE apartamento SET estado = 'Ocupado' WHERE id = ?");
+                $stmt->bind_param("i", $id_apartamento);
+                $stmt->execute();
+                $stmt->close();
+            }
+
+            mysqli_commit($conexao);
+            echo json_encode(['sucesso' => true]);
+        } catch (Exception $e) {
+            mysqli_rollback($conexao);
+            echo json_encode(['sucesso' => false, 'erro' => $e->getMessage()]);
+        }
+        break;
+
+    case 'eliminar_morador':
+        $id = intval($_POST['id'] ?? 0);
+        if (!$id) { echo json_encode(['sucesso'=>false]); exit; }
+        // Remove associações e o morador
+        mysqli_query($conexao, "DELETE FROM morador_apartamento WHERE id_morador=$id");
+        mysqli_query($conexao, "DELETE FROM mensalidade_pagamento WHERE id_mensalidade IN (SELECT id FROM mensalidade WHERE id_morador=$id)");
+        mysqli_query($conexao, "DELETE FROM mensalidade WHERE id_morador=$id");
+        mysqli_query($conexao, "DELETE FROM chat_mensagem WHERE id_morador=$id");
+        $res = mysqli_query($conexao, "DELETE FROM morador WHERE id=$id");
+        echo json_encode(['sucesso' => $res]);
+        break;
+
+    case 'eliminar_casa':
+        $id = intval($_POST['id'] ?? 0);
+        if (!$id) { echo json_encode(['sucesso'=>false]); exit; }
+        mysqli_query($conexao, "DELETE FROM morador_apartamento WHERE id_apartamento=$id");
+        $res = mysqli_query($conexao, "DELETE FROM apartamento WHERE id=$id");
+        echo json_encode(['sucesso' => $res]);
+        break;
+
+    case 'eliminar_admin':
+        $id = intval($_POST['id'] ?? 0);
+        if (!$id) { echo json_encode(['sucesso'=>false]); exit; }
+        $res = mysqli_query($conexao, "DELETE FROM administrador WHERE id=$id");
+        echo json_encode(['sucesso' => $res]);
+        break;
+    
     case 'blocos':
         $res = mysqli_query($conexao, "SELECT id, letra, descricao FROM bloco ORDER BY letra");
         $rows = [];

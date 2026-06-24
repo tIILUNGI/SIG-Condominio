@@ -116,7 +116,7 @@ if ($chk->num_rows > 0) {
 // 9. INSERIR NOVO MORADOR NA BASE DE DADOS
 // ─────────────────────────────────────────────────────────────────────────
 
-$estado_conta = 'Activo';
+$estado_conta = 'Pendente';
 
 $stmt = $conexao->prepare(
     "INSERT INTO morador 
