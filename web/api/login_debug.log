@@ -318,3 +318,54 @@
 [24-Jun-2026 20:37:26 UTC] [2026-06-24 20:37:26] Sessão criada com sucesso
 [24-Jun-2026 20:37:26 UTC] [2026-06-24 20:37:26] Último login atualizado
 [24-Jun-2026 20:37:26 UTC] [2026-06-24 20:37:26] Redirecionando para dashboard...
+[24-Jun-2026 20:39:44 UTC] [2026-06-24 20:39:44] === TENTATIVA DE LOGIN ADMIN ===
+[24-Jun-2026 20:39:44 UTC] [2026-06-24 20:39:44] BI recebido: '000000000' | Senha recebida: (não exibida por segurança)
+[24-Jun-2026 20:39:44 UTC] [2026-06-24 20:39:44] ✅ Conexão com BD estabelecida
+[24-Jun-2026 20:39:44 UTC] [2026-06-24 20:39:44] Query executada - Registros encontrados: 1
+[24-Jun-2026 20:39:44 UTC] [2026-06-24 20:39:44] Admin encontrado:
+[24-Jun-2026 20:39:44 UTC] [2026-06-24 20:39:44]   ID: 1
+[24-Jun-2026 20:39:44 UTC] [2026-06-24 20:39:44]   Nome: Administrador Principal
+[24-Jun-2026 20:39:44 UTC] [2026-06-24 20:39:44]   BI: 000000000
+[24-Jun-2026 20:39:44 UTC] [2026-06-24 20:39:44]   Función: Super Admin
+[24-Jun-2026 20:39:44 UTC] [2026-06-24 20:39:44]   Activo: SIM
+[24-Jun-2026 20:39:44 UTC] [2026-06-24 20:39:44] ✅ Conta está ativa
+[24-Jun-2026 20:39:45 UTC] [2026-06-24 20:39:45] Password_verify: TRUE
+[24-Jun-2026 20:39:45 UTC] [2026-06-24 20:39:45] Senha válida: SIM
+[24-Jun-2026 20:39:45 UTC] [2026-06-24 20:39:45] ✅ LOGIN BEM-SUCEDIDO!
+[24-Jun-2026 20:39:45 UTC] [2026-06-24 20:39:45] Sessão criada com sucesso
+[24-Jun-2026 20:39:45 UTC] [2026-06-24 20:39:45] Último login atualizado
+[24-Jun-2026 20:39:45 UTC] [2026-06-24 20:39:45] Redirecionando para dashboard...
+[24-Jun-2026 20:51:03 UTC] [2026-06-24 20:51:03] === TENTATIVA DE LOGIN ADMIN ===
+[24-Jun-2026 20:51:03 UTC] [2026-06-24 20:51:03] BI recebido: '000000000' | Senha recebida: (não exibida por segurança)
+[24-Jun-2026 20:51:03 UTC] [2026-06-24 20:51:03] ✅ Conexão com BD estabelecida
+[24-Jun-2026 20:51:03 UTC] [2026-06-24 20:51:03] Query executada - Registros encontrados: 1
+[24-Jun-2026 20:51:03 UTC] [2026-06-24 20:51:03] Admin encontrado:
+[24-Jun-2026 20:51:03 UTC] [2026-06-24 20:51:03]   ID: 1
+[24-Jun-2026 20:51:03 UTC] [2026-06-24 20:51:03]   Nome: Administrador Principal
+[24-Jun-2026 20:51:03 UTC] [2026-06-24 20:51:03]   BI: 000000000
+[24-Jun-2026 20:51:03 UTC] [2026-06-24 20:51:03]   Función: Super Admin
+[24-Jun-2026 20:51:03 UTC] [2026-06-24 20:51:03]   Activo: SIM
+[24-Jun-2026 20:51:03 UTC] [2026-06-24 20:51:03] ✅ Conta está ativa
+[24-Jun-2026 20:51:03 UTC] [2026-06-24 20:51:03] Password_verify: TRUE
+[24-Jun-2026 20:51:03 UTC] [2026-06-24 20:51:03] Senha válida: SIM
+[24-Jun-2026 20:51:03 UTC] [2026-06-24 20:51:03] ✅ LOGIN BEM-SUCEDIDO!
+[24-Jun-2026 20:51:03 UTC] [2026-06-24 20:51:03] Sessão criada com sucesso
+[24-Jun-2026 20:51:03 UTC] [2026-06-24 20:51:03] Último login atualizado
+[24-Jun-2026 20:51:03 UTC] [2026-06-24 20:51:03] Redirecionando para dashboard...
+[24-Jun-2026 21:24:59 UTC] [2026-06-24 21:24:59] === TENTATIVA DE LOGIN ADMIN ===
+[24-Jun-2026 21:24:59 UTC] [2026-06-24 21:24:59] BI recebido: '000000000' | Senha recebida: (não exibida por segurança)
+[24-Jun-2026 21:24:59 UTC] [2026-06-24 21:24:59] ✅ Conexão com BD estabelecida
+[24-Jun-2026 21:24:59 UTC] [2026-06-24 21:24:59] Query executada - Registros encontrados: 1
+[24-Jun-2026 21:24:59 UTC] [2026-06-24 21:24:59] Admin encontrado:
+[24-Jun-2026 21:24:59 UTC] [2026-06-24 21:24:59]   ID: 1
+[24-Jun-2026 21:24:59 UTC] [2026-06-24 21:24:59]   Nome: Administrador Principal
+[24-Jun-2026 21:24:59 UTC] [2026-06-24 21:24:59]   BI: 000000000
+[24-Jun-2026 21:24:59 UTC] [2026-06-24 21:24:59]   Función: Super Admin
+[24-Jun-2026 21:24:59 UTC] [2026-06-24 21:24:59]   Activo: SIM
+[24-Jun-2026 21:24:59 UTC] [2026-06-24 21:24:59] ✅ Conta está ativa
+[24-Jun-2026 21:25:00 UTC] [2026-06-24 21:25:00] Password_verify: TRUE
+[24-Jun-2026 21:25:00 UTC] [2026-06-24 21:25:00] Senha válida: SIM
+[24-Jun-2026 21:25:00 UTC] [2026-06-24 21:25:00] ✅ LOGIN BEM-SUCEDIDO!
+[24-Jun-2026 21:25:00 UTC] [2026-06-24 21:25:00] Sessão criada com sucesso
+[24-Jun-2026 21:25:00 UTC] [2026-06-24 21:25:00] Último login atualizado
+[24-Jun-2026 21:25:00 UTC] [2026-06-24 21:25:00] Redirecionando para dashboard...

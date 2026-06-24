@@ -19,10 +19,10 @@ $stmt = $conexao->prepare("UPDATE mensalidade SET estado='pago', actualizado_em=
 $stmt->bind_param("i", $id_mens);
 
 if ($stmt->execute()) {
-    // Registar pagamento
+    // Registar pagamento (modo legado: sem upload de ficheiro)
+    // Nota: o fluxo novo deve usar upload_recibo_mensalidade.php e ficar PENDENTE.
     $id_morador = intval($_SESSION['id'] ?? 0);
-    // Compatibilidade: a UI atual pode não enviar valor/metodo/referencia.
-    // Buscar o valor da mensalidade e registar o pagamento como confirmado.
+
     $mens = $conexao->prepare("SELECT valor FROM mensalidade WHERE id = ? AND id_morador = ? LIMIT 1");
     $mens->bind_param("ii", $id_mens, $id_morador);
     $mens->execute();

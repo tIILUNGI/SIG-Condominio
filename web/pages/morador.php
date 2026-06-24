@@ -61,6 +61,10 @@ $nome_morador = htmlspecialchars($_SESSION['nome'] ?? 'Morador');
     <button class="nav-item" onclick="switchTab('relatorio', this)">
       <i class="fa-solid fa-chart-pie"></i><span>Relatório Mensal</span>
     </button>
+    <p class="nav-section">Ajustes</p>
+    <button class="nav-item" onclick="window.location.href='meu_perfil.php'">
+      <i class="fa-solid fa-user-gear"></i><span>Meu Perfil</span>
+    </button>
   </nav>
   <div class="sidebar-footer">
     <div class="avatar-admin"><?= strtoupper(substr($nome_morador, 0, 2)) ?></div>
@@ -119,41 +123,53 @@ $nome_morador = htmlspecialchars($_SESSION['nome'] ?? 'Morador');
     </div>
   </section>
 
-  <!-- ── PAGAMENTOS ── -->
+  <!-- ── RESUMO FINANCEIRO (INFORMATIVO) ── -->
   <section class="tab-section" id="tab-pagamentos">
     <div class="page-header">
-      <h1 class="page-title">Fazer Pagamento</h1>
-      <p class="page-sub">Seleccione a mensalidade e submeta o comprovativo</p>
-    </div>
-    <div class="card">
-      <div class="card-head"><p class="card-title"><i class="fa-solid fa-file-invoice-dollar"></i> Mensalidades Pendentes</p></div>
-      <div style="overflow-x:auto;">
-        <table class="data-table">
-          <thead><tr><th>Selec.</th><th>Serviço</th><th>Mês/Ano</th><th>Valor</th><th>Vencimento</th><th>Estado</th><th>Ação</th></tr></thead>
-          <tbody id="mens-tbody"><tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--text-muted);">A carregar...</td></tr></tbody>
-        </table>
-      </div>
+      <h1 class="page-title">💳 Resumo Financeiro</h1>
+      <p class="page-sub">Informações sobre taxas, rendas e condições de compra</p>
     </div>
 
-    <!-- Formulário de pagamento -->
-    <div class="card" style="margin-top:1.25rem;" id="form-pag-card" style="display:none;">
-      <div class="card-head"><p class="card-title"><i class="fa-solid fa-credit-card"></i> Detalhes do Pagamento</p></div>
-      <form action="../api/pagar.php" method="POST" id="form-pagamento">
-        <input type="hidden" name="id" id="pag-mens-id" />
-        <div class="form-grid">
-          <div class="form-group"><label>Valor (Kz)</label><input type="number" name="valor" id="pag-valor" step="0.01" required /></div>
-          <div class="form-group"><label>Método de Pagamento</label>
-            <select name="metodo" required>
-              <option value="Transferência">Transferência Bancária</option>
-              <option value="Multicaixa">Multicaixa Express</option>
-              <option value="TPA">TPA</option>
-              <option value="Dinheiro">Dinheiro</option>
-            </select>
-          </div>
-          <div class="form-group"><label>Referência / Nº Operação</label><input type="text" name="referencia" placeholder="Ex: REF123456789" /></div>
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-bottom: 2rem;">
+        <div class="card">
+            <div class="card-head"><p class="card-title">💵 Mensalidades e Taxas</p></div>
+            <div class="card-body" style="padding:1.5rem;">
+                <table class="data-table">
+                    <thead><tr><th>Serviço</th><th>Valor Mensal</th></tr></thead>
+                    <tbody>
+                        <tr><td>Renda Mensal (V3)</td><td><strong>150.000,00 Kz</strong></td></tr>
+                        <tr><td>Quota de Condomínio</td><td><strong>25.000,00 Kz</strong></td></tr>
+                        <tr><td>Taxa de Limpeza/Manutenção</td><td><strong>10.000,00 Kz</strong></td></tr>
+                        <tr><td>Segurança 24h</td><td><strong>Incluído</strong></td></tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
-        <button type="submit" class="btn-primary"><i class="fa-solid fa-paper-plane"></i> Submeter Pagamento</button>
-      </form>
+
+        <div class="card">
+            <div class="card-head"><p class="card-title">🏠 Compra de Residência</p></div>
+            <div class="card-body" style="padding:1.5rem;">
+                <table class="data-table">
+                    <thead><tr><th>Descrição</th><th>Valor / Condição</th></tr></thead>
+                    <tbody>
+                        <tr><td>Preço Total Casa V3</td><td><strong>45.000.000,00 Kz</strong></td></tr>
+                        <tr><td>Entrada Inicial (20%)</td><td><strong>9.000.000,00 Kz</strong></td></tr>
+                        <tr><td>Prestação Mensal (15 anos)</td><td><strong>200.000,00 Kz</strong></td></tr>
+                        <tr><td>Estado de Entrega</td><td><strong>Chave na mão</strong></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-head"><p class="card-title"><i class="fa-solid fa-circle-info"></i> Notas Importantes</p></div>
+        <div class="card-body" style="padding:1.5rem; font-size:.9rem; line-height:1.6; color:var(--text-muted);">
+            <p>1. Os pagamentos devem ser efectuados até ao dia 5 de cada mês para evitar multas.</p>
+            <p>2. A prova de transferência deve ser enviada via portal ou entregue na administração.</p>
+            <p>3. Para processos de compra, por favor agende uma reunião com o sector financeiro.</p>
+            <p>4. Valores sujeitos a alteração anual conforme assembleia de moradores.</p>
+        </div>
     </div>
   </section>
 

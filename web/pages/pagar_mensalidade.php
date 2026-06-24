@@ -125,8 +125,9 @@ $nome = $_SESSION['nome'] ?? 'Morador';
 </head>
 <body>
 
-<main class="main-content" style="margin-left:0; width:100%;">
-    <div class="pay-card">
+<main class="main-content">
+<div style="padding:10px 16px; background:#fff3cd; border:1px solid #ffeeba; color:#856404; font-weight:700;">VERSÃO NOVA (test cache) - 2026-06-24</div>
+<div class="pay-card">
         <div class="pay-header">
             <i class="fa-solid fa-receipt" style="font-size:3rem; margin-bottom:1rem;"></i>
             <h2>Pagamento de Mensalidade</h2>
@@ -153,17 +154,16 @@ $nome = $_SESSION['nome'] ?? 'Morador';
                 <div class="amount-value">Kz <?php echo number_format($m['valor'], 2); ?></div>
             </div>
 
-            <form action="../api/pagar.php" method="POST">
-                <input type="hidden" name="id" value="<?php echo $id; ?>">
-                <input type="hidden" name="valor" value="<?php echo $m['valor']; ?>">
-                <input type="hidden" name="metodo" value="Transferência Bancária">
-                
+            <form action="../api/upload_recibo_mensalidade.php" method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="id_mensalidade" value="<?php echo $id; ?>">
+
                 <div class="form-group" style="margin-bottom:1.5rem;">
-                    <label>Referência / Comprovativo (Opcional)</label>
-                    <input type="text" name="referencia" placeholder="Ex: TXN123456789" style="width:100%; box-sizing:border-box; padding:12px; border-radius:8px; border:1px solid var(--border); background:var(--dark3); color:var(--text);">
+                    <label>Enviar Recibo/Comprovativo (obrigatório, mínimo 1MB)</label>
+                    <input type="file" name="recibo" accept=".pdf,.png,.jpg,.jpeg" required style="width:100%; box-sizing:border-box; padding:10px; border-radius:8px; border:1px solid var(--border); background:var(--dark3); color:var(--text);">
+                    <div style="margin-top:6px; font-size:.85rem; color:var(--text-muted);">Aceita PDF/JPG/PNG. Tamanho mínimo 1MB. Ex: recibo do banco.</div>
                 </div>
 
-                <button type="submit" class="btn-confirmar">EFECTUAR PAGAMENTO</button>
+                <button type="submit" class="btn-confirmar">ENVIAR PARA APROVAÇÃO</button>
                 <a href="minhas_mensalidades.php" style="display:block; text-align:center; margin-top:1rem; color:var(--text-muted); text-decoration:none;">Cancelar e Sair</a>
             </form>
         </div>

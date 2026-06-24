@@ -267,8 +267,29 @@
       display: flex; align-items: center; justify-content: center;
       cursor: pointer; color: var(--text-muted); font-size: .9rem;
     }
-    .modal-title { font-family: 'DM Serif Display', serif; font-size: 1.3rem; color: var(--gold); margin-bottom: 1rem; }
+.modal-title { font-family: 'DM Serif Display', serif; font-size: 1.3rem; color: var(--gold); margin-bottom: 1rem; }
     .modal-footer { display: flex; gap: .75rem; justify-content: flex-end; margin-top: 1.25rem; }
+
+    /* Fix: impedir que bordas/inputs “comam” conteúdo dentro dos modais */
+    .modal-box, .modal-overlay {
+      -webkit-user-select: none;
+      user-select: none;
+    }
+    .modal-box {
+      padding: 1.5rem;
+    }
+    .modal-box .card {
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .modal-box input,
+    .modal-box select,
+    .modal-box textarea {
+      max-width: 100%;
+    }
+    .modal-box * {
+      box-sizing: border-box;
+    }
 
     /* ── RECIBO ── */
     .recibo-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; box-shadow: var(--shadow); }

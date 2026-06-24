@@ -266,25 +266,44 @@
     document.getElementById(id).classList.remove('open');
   }
 
-  function openModalMorador(m){
-    moradorAtual = m;
-    moradorAtualId = m.id;
+function openModalMorador(m){
+     moradorAtual = m;
+     moradorAtualId = m.id;
 
-    document.getElementById('morador-modal-titulo').textContent = 'Morador — ' + (m.nome || '—');
-    document.getElementById('morador-nome').textContent = m.nome || '—';
-    document.getElementById('morador-numbi').textContent = m.numbi || '—';
-    document.getElementById('morador-telefone').textContent = m.telefone || '—';
-    document.getElementById('morador-email').textContent = m.email || '—';
-    document.getElementById('morador-apartamento').textContent = m.apartamento ? (m.bloco ? (m.bloco+' - ') : '') + m.apartamento : '—';
+     document.getElementById('morador-modal-titulo').textContent = 'Morador — ' + (m.nome || '—');
+     document.getElementById('morador-nome').textContent = m.nome || '—';
+     document.getElementById('morador-numbi').textContent = m.numbi || '—';
+     document.getElementById('morador-telefone').textContent = m.telefone || '—';
+     document.getElementById('morador-email').textContent = m.email || '—';
+     document.getElementById('morador-apartamento').textContent = m.apartamento ? (m.bloco ? (m.bloco+' - ') : '') + m.apartamento : '—';
 
-    document.getElementById('morador-estado-conta').textContent = m.estado_conta || '—';
-    document.getElementById('morador-estado-select').value = m.estado_conta || 'Activo';
+     document.getElementById('morador-estado-conta').textContent = m.estado_conta || '—';
+     document.getElementById('morador-estado-select').value = m.estado_conta || 'Activo';
 
-    document.getElementById('morador-btn-editar').disabled = false;
-    document.getElementById('morador-btn-eliminar').disabled = false;
+     document.getElementById('morador-btn-editar').disabled = false;
+     document.getElementById('morador-btn-eliminar').disabled = false;
 
-    document.getElementById('modal-morador').classList.add('open');
-  }
+     document.getElementById('modal-morador').classList.add('open');
+   }
+
+   function editarMorador(m){
+     moradorAtual = m;
+     moradorAtualId = m.id;
+
+     document.getElementById('morador-modal-titulo').textContent = 'Editar Morador — ' + (m.nome || '—');
+     document.getElementById('morador-nome').textContent = m.nome || '—';
+     document.getElementById('morador-numbi').textContent = m.numbi || '—';
+     document.getElementById('morador-telefone').textContent = m.telefone || '—';
+     document.getElementById('morador-email').textContent = m.email || '—';
+     document.getElementById('morador-apartamento').textContent = m.apartamento ? (m.bloco ? (m.bloco+' - ') : '') + m.apartamento : '—';
+     document.getElementById('morador-estado-conta').textContent = m.estado_conta || '—';
+     document.getElementById('morador-estado-select').value = m.estado_conta || 'Activo';
+
+     document.getElementById('morador-btn-editar').disabled = false;
+     document.getElementById('morador-btn-eliminar').disabled = false;
+
+     document.getElementById('modal-morador').classList.add('open');
+   }
 
   async function carregarMoradores(){
     const tb = document.getElementById('moradores-tbody');
@@ -298,8 +317,10 @@
       return;
     }
 
-    const rows = (data.dados||[]).map(m=>{
+const rows = (data.dados||[]).map(m=>{
       const estado = (m.estado_conta||'') === 'Activo' ? 'success' : 'atencao';
+      // api_moradores.php devolve `apartamento` como código (ex: A-12) e `bloco` em `bloco`.
+      // A UI antes tentava renderizar `m.apartamento` + `m.bloco`, mas o valor de `apartamento` já vem como string.
       return `
         <tr>
           <td><strong>${escapeHtml(m.nome||'—')}</strong></td>
@@ -308,12 +329,17 @@
           <td>${escapeHtml(m.email||'—')}</td>
           <td><span class="badge ${estado}">${escapeHtml(m.estado_conta||'—')}</span></td>
           <td>${escapeHtml(m.apartamento||'—')}</td>
-          <td>
-            <button class="btn-secondary btn-sm" onclick='openModalMorador(${JSON.stringify(m)})' title="Ver">
-              <i class="fa-solid fa-eye"></i>
-            </button>
-          </td>
-        </tr>
+<td>
+             <div style="display:flex;gap:.4rem;">
+               <button class="btn-secondary btn-sm" onclick='openModalMorador(${JSON.stringify(m)})' title="Ver">
+                 <i class="fa-solid fa-eye"></i>
+               </button>
+               <button class="btn-secondary btn-sm" onclick='editarMorador(${JSON.stringify(m)})' title="Editar">
+                 <i class="fa-solid fa-pen"></i>
+               </button>
+             </div>
+           </td>
+         </tr>
       `;
     }).join('');
 
@@ -360,21 +386,37 @@
     }
   }
 
-  function openModalApartamento(a){
-    apartamentoAtual = a;
-    apartamentoAtualId = a.id;
+function openModalApartamento(a){
+     apartamentoAtual = a;
+     apartamentoAtualId = a.id;
 
-    document.getElementById('apt-modal-titulo').textContent = 'Apartamento — ' + (a.codigo || '—');
-    document.getElementById('apt-codigo').textContent = a.codigo || '—';
-    document.getElementById('apt-bloco').textContent = a.bloco || '—';
-    document.getElementById('apt-numero').textContent = a.numero ?? '—';
-    document.getElementById('apt-andar').textContent = a.andar ?? '—';
-    document.getElementById('apt-tipologia').textContent = a.tipologia || '—';
-    document.getElementById('apt-estado').textContent = a.estado || '—';
-    document.getElementById('apt-morador').textContent = a.morador_nome || '—';
+     document.getElementById('apt-modal-titulo').textContent = 'Apartamento — ' + (a.codigo || '—');
+     document.getElementById('apt-codigo').textContent = a.codigo || '—';
+     document.getElementById('apt-bloco').textContent = a.bloco || '—';
+     document.getElementById('apt-numero').textContent = a.numero ?? '—';
+     document.getElementById('apt-andar').textContent = a.andar ?? '—';
+     document.getElementById('apt-tipologia').textContent = a.tipologia || '—';
+     document.getElementById('apt-estado').textContent = a.estado || '—';
+     document.getElementById('apt-morador').textContent = a.morador_nome || '—';
 
-    document.getElementById('modal-apartamento').classList.add('open');
-  }
+     document.getElementById('modal-apartamento').classList.add('open');
+   }
+
+   function editarApartamento(a){
+     apartamentoAtual = a;
+     apartamentoAtualId = a.id;
+
+     document.getElementById('apt-modal-titulo').textContent = 'Editar Apartamento — ' + (a.codigo || '—');
+     document.getElementById('apt-codigo').textContent = a.codigo || '—';
+     document.getElementById('apt-bloco').textContent = a.bloco || '—';
+     document.getElementById('apt-numero').textContent = a.numero ?? '—';
+     document.getElementById('apt-andar').textContent = a.andar ?? '—';
+     document.getElementById('apt-tipologia').textContent = a.tipologia || '—';
+     document.getElementById('apt-estado').textContent = a.estado || '—';
+     document.getElementById('apt-morador').textContent = a.morador_nome || '—';
+
+     document.getElementById('modal-apartamento').classList.add('open');
+   }
 
   async function carregarApartamentos(){
     const tb = document.getElementById('apartamentos-tbody');
@@ -399,12 +441,17 @@
           <td>${escapeHtml(a.tipologia||'—')}</td>
           <td><span class="badge ${estado}">${escapeHtml(a.estado||'—')}</span></td>
           <td>${escapeHtml(a.morador_nome||'—')}</td>
-          <td>
-            <button class="btn-secondary btn-sm" onclick='openModalApartamento(${JSON.stringify(a)})' title="Ver">
-              <i class="fa-solid fa-eye"></i>
-            </button>
-          </td>
-        </tr>
+<td>
+             <div style="display:flex;gap:.4rem;">
+               <button class="btn-secondary btn-sm" onclick='openModalApartamento(${JSON.stringify(a)})' title="Ver">
+                 <i class="fa-solid fa-eye"></i>
+               </button>
+               <button class="btn-secondary btn-sm" onclick='editarApartamento(${JSON.stringify(a)})' title="Editar">
+                 <i class="fa-solid fa-pen"></i>
+               </button>
+             </div>
+           </td>
+         </tr>
       `;
     }).join('');
 

@@ -106,8 +106,8 @@
     }
     .topbar {
       background: var(--topbar-bg); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border);
-      padding: 0 1.5rem; height: 60px; display: flex; align-items: center;
-      position: sticky; top: 0; z-index: 40; gap: 1rem;
+      padding: 0 2rem; height: 60px; display: flex; align-items: center;
+      position: sticky; top: 0; z-index: 40; gap: 1.5rem;
     }
     .menu-toggle { background: none; border: none; color: var(--text-muted); font-size: 1.2rem; cursor: pointer; display: none; }
     .topbar-title { font-family: 'DM Serif Display', serif; font-size: 1rem; color: var(--gold); }
@@ -115,7 +115,7 @@
     .clock-display { font-size: .82rem; color: var(--text-muted); font-family: 'Courier New', monospace; }
 
     /* ── SECTIONS ── */
-    .tab-section { display: none; padding: 2rem 2.5rem; animation: fadeIn .3s ease; }
+    .tab-section { display: none; padding: 2.5rem 3rem; animation: fadeIn .3s ease; overflow-x: hidden; }
     .tab-section.active { display: block; }
     @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
 

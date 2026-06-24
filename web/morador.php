@@ -115,6 +115,10 @@
     <button class="nav-item" onclick="switchTab('relatorio', this)">
       <i class="fa-solid fa-chart-pie"></i><span>Relatório Mensal</span>
     </button>
+    <p class="nav-section">Ajustes</p>
+    <button class="nav-item" onclick="window.location.href='pages/meu_perfil.php'">
+      <i class="fa-solid fa-user-gear"></i><span>Meu Perfil</span>
+    </button>
   </nav>
   <div class="sidebar-footer">
     <div class="avatar-admin">MO</div>
@@ -408,96 +412,55 @@
     </div>
   </section>
 
-      <!-- ── PAGAMENTOS ── -->
+      <!-- ── RESUMO FINANCEIRO (INFORMATIVO) ── -->
   <section class="tab-section" id="tab-pagamentos">
+    <div class="page-header">
+      <h1 class="page-title">💳 Resumo Financeiro</h1>
+      <p class="page-sub">Informações sobre taxas, rendas e condições de compra</p>
+    </div>
 
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+        <div class="card">
+            <div class="card-head"><p class="card-title">💵 Mensalidades e Taxas</p></div>
+            <div class="card-body" style="padding:1.5rem;">
+                <table class="data-table">
+                    <thead><tr><th>Serviço</th><th>Valor Mensal</th></tr></thead>
+                    <tbody>
+                        <tr><td>Renda Mensal (V3)</td><td><strong>150.000,00 Kz</strong></td></tr>
+                        <tr><td>Quota de Condomínio</td><td><strong>25.000,00 Kz</strong></td></tr>
+                        <tr><td>Taxa de Limpeza/Manutenção</td><td><strong>10.000,00 Kz</strong></td></tr>
+                        <tr><td>Segurança 24h</td><td><strong>Incluído</strong></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
 
-  <table class="data-table">
-    <thead>
-        <tr>
-            <th>Selecionar</th>
-            <th>Serviço</th>
-            <th>Referência</th>
-            <th>Valor</th>
-            <th>Estado</th>
-            <th>Ação</th>
-        </tr>
-    </thead>
+        <div class="card">
+            <div class="card-head"><p class="card-title">🏠 Compra de Residência</p></div>
+            <div class="card-body" style="padding:1.5rem;">
+                <table class="data-table">
+                    <thead><tr><th>Descrição</th><th>Valor / Condição</th></tr></thead>
+                    <tbody>
+                        <tr><td>Preço Total Casa V3</td><td><strong>45.000.000,00 Kz</strong></td></tr>
+                        <tr><td>Entrada Inicial (20%)</td><td><strong>9.000.000,00 Kz</strong></td></tr>
+                        <tr><td>Prestação Mensal (15 anos)</td><td><strong>200.000,00 Kz</strong></td></tr>
+                        <tr><td>Estado de Entrega</td><td><strong>Chave na mão</strong></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
 
-    <tbody>
-</section>
-
-    <?php while($dadosm = mysqli_fetch_assoc($resultadom)){ ?>
-
-        <tr>
-
-            <td>
-                <input type="checkbox"
-                       value="<?php echo $dadosm; ?>">
-            </td>
-
-            <td><?php echo $dadosm['servico']; ?></td>
-
-            <td><?php echo $dadosm['mes']; ?></td>
-
-            <td>
-                <?php echo number_format($dadosm['valor'],2,',','.'); ?> Kz
-            </td>
-
-            <td>
-
-                <?php
-                if($dadosm['estado'] == 'pago'){
-                    echo "<span style='color:green;font-weight:bold'>Pago</span>";
-                }else{
-                    echo "<span style='color:red;font-weight:bold'>Pendente</span>";
-                }
-                ?>
-
-            </td>
-
-            <td>
-
-                <?php if($dadosm['estado'] == 'pago'){ ?>
-
-                    <button
-                    style="
-                    background:green;
-                    color:white;
-                    border:none;
-                    padding:8px 15px;
-                    border-radius:5px;
-                    cursor:not-allowed;">
-                    Pago
-                    </button>
-
-                <?php } else { ?>
-
-                  <form method="POST">
-                    <a href="pagar.php?id=<?php echo
-                     $dadosm['id']; ?>">
-
-                        <button 
-                        class="btn-primary"
-                        type="submit"
-                        name="pagar">
-                        Pagar
-                        </button>
-                  </form>
-                    </a>
-
-                <?php } ?>
-
-            </td>
-
-        </tr>
-
-    <?php } ?>
-
-    </tbody>
-
-</table>
-</section>
+    <div class="card">
+        <div class="card-head"><p class="card-title"><i class="fa-solid fa-circle-info"></i> Notas Importantes</p></div>
+        <div class="card-body" style="padding:1.5rem; font-size:.9rem; line-height:1.6; color:var(--text-muted);">
+            <p>1. Os pagamentos devem ser efectuados até ao dia 5 de cada mês para evitar multas.</p>
+            <p>2. A prova de transferência deve ser enviada via portal ou entregue na administração.</p>
+            <p>3. Para processos de compra, por favor agende uma reunião com o sector financeiro.</p>
+            <p>4. Valores sujeitos a alteração anual conforme assembleia de moradores.</p>
+        </div>
+    </div>
+  </section>
 
 <section class="tab-section" id="tab-historico">
 

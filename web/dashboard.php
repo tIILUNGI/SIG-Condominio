@@ -12,6 +12,206 @@ while ($row = mysqli_fetch_assoc($resultado_blocos)) {
 <script>
 // Dados de blocos para JavaScript
 window.BLCOES_DATA = <?php echo json_encode($blocos); ?>;
+
+/* --- FUNCIONARIOS --- */
+let allFuncs = JSON.parse(localStorage.getItem('nz_funcionarios') || '[]');
+function saveFuncs() { localStorage.setItem('nz_funcionarios', JSON.stringify(allFuncs)); }
+function resetFuncForm() {
+    document.getElementById('f-nome').value = '';
+    document.getElementById('f-senha').value = '';
+    document.getElementById('f-telefone').value = '';
+    document.getElementById('f-email').value = '';
+    document.getElementById('f-nascimento').value = '';
+    document.getElementById('f-funcao').value = '';
+    document.getElementById('f-nacionalidade').value = 'Angolana';
+    document.getElementById('f-estado-func').value = 'Activo';
+    document.getElementById('f-morada').value = '';
+    document.getElementById('f-editing-id').value = '';
+    document.getElementById('func-form-titulo').innerText = 'Novo Funcionário';
+    document.getElementById('func-btn-txt').innerText = 'Registar Funcionário';
+}
+function salvarFuncionario() {
+    const idField = document.getElementById('f-editing-id').value;
+    const item = {
+        id: idField ? parseInt(idField) : Date.now(),
+        nome: document.getElementById('f-nome').value.trim(),
+        senha: document.getElementById('f-senha').value,
+        telefone: document.getElementById('f-telefone').value,
+        email: document.getElementById('f-email').value,
+        nasc: document.getElementById('f-nascimento').value,
+        funcao: document.getElementById('f-funcao').value,
+        nac: document.getElementById('f-nacionalidade').value,
+        estado: document.getElementById('f-estado-func').value,
+        morada: document.getElementById('f-morada').value
+    };
+    if(!item.nome || !item.telefone || !item.funcao) { showToast('Preencha os campos obrigatórios (*)', true); return; }
+    if(idField) {
+        const idx = allFuncs.findIndex(f => f.id === item.id);
+        if(idx >= 0) allFuncs[idx] = item;
+    } else {
+        allFuncs.push(item);
+    }
+    saveFuncs();
+    resetFuncForm();
+    renderFuncionarios();
+    showToast('Funcionário guardado com sucesso!');
+}
+function renderFuncionarios() {
+    const tbody = document.getElementById('funcionarios-tbody');
+    if(!tbody) return;
+    if(!allFuncs.length) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--text-muted);">Sem funcionários registados</td></tr>';
+        return;
+    }
+    tbody.innerHTML = allFuncs.map(f => \
+        <tr>
+            <td><strong>\</strong></td>
+            <td>\</td>
+            <td>\</td>
+            <td><span class="badge \">\</span></td>
+            <td>
+                <div style="display:flex;gap:.4rem;">
+                    <button class="btn-secondary btn-sm" onclick="verFunc(\)" title="Ver"><i class="fa-solid fa-eye"></i></button>
+                    <button class="btn-secondary btn-sm" onclick="editFunc(\)" title="Editar"><i class="fa-solid fa-pen"></i></button>
+                    <button class="btn-danger btn-sm" onclick="delFunc(\)" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+                </div>
+            </td>
+        </tr>
+    \).join('');
+}
+function editFunc(id) {
+    const f = allFuncs.find(x => x.id === id);
+    if(!f) return;
+    document.getElementById('f-nome').value = f.nome;
+    document.getElementById('f-senha').value = f.senha || '';
+    document.getElementById('f-telefone').value = f.telefone;
+    document.getElementById('f-email').value = f.email;
+    document.getElementById('f-nascimento').value = f.nasc;
+    document.getElementById('f-funcao').value = f.funcao;
+    document.getElementById('f-nacionalidade').value = f.nac;
+    document.getElementById('f-estado-func').value = f.estado;
+    document.getElementById('f-morada').value = f.morada;
+    document.getElementById('f-editing-id').value = f.id;
+    document.getElementById('func-form-titulo').innerText = 'Editar Funcionário';
+    document.getElementById('func-btn-txt').innerText = 'Actualizar Funcionário';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function delFunc(id) {
+    if(!confirm('Deseja eliminar este funcionário?')) return;
+    allFuncs = allFuncs.filter(f => f.id !== id);
+    saveFuncs();
+    renderFuncionarios();
+    showToast('Funcionário eliminado.');
+}
+function verFunc(id) {
+    const f = allFuncs.find(x => x.id === id);
+    if(!f) return;
+    alert(\DETALHES DO FUNCIONÁRIO:\\n\\nNome: \\\nCargo: \\\nTelefone: \\\nEmail: \\\nNasc: \\\nMorada: \\\nEstado: \\);
+}
+
+/* --- MORADORES --- */
+let allMors = JSON.parse(localStorage.getItem('nz_moradores_admin') || '[]');
+function saveMors() { localStorage.setItem('nz_moradores_admin', JSON.stringify(allMors)); }
+function resetMorForm() {
+    document.getElementById('m-nome').value = '';
+    document.getElementById('m-senha').value = '';
+    document.getElementById('m-telefone').value = '';
+    document.getElementById('m-email').value = '';
+    document.getElementById('m-nascimento').value = '';
+    document.getElementById('m-nacionalidade').value = 'Angolana';
+    document.getElementById('m-morada').value = '';
+    document.getElementById('m-numbi').value = '';
+    document.getElementById('m-estado').value = 'Activo';
+    document.getElementById('m-editing-id').value = '';
+    document.getElementById('mor-form-titulo').innerText = 'Novo Morador';
+    document.getElementById('mor-btn-txt').innerText = 'Registar Morador';
+}
+function salvarMorador() {
+    const idField = document.getElementById('m-editing-id').value;
+    const item = {
+        id: idField ? parseInt(idField) : Date.now(),
+        nome: document.getElementById('m-nome').value.trim(),
+        senha: document.getElementById('m-senha').value,
+        telefone: document.getElementById('m-telefone').value,
+        email: document.getElementById('m-email').value,
+        nasc: document.getElementById('m-nascimento').value,
+        nac: document.getElementById('m-nacionalidade').value,
+        morada: document.getElementById('m-morada').value,
+        numbi: document.getElementById('m-numbi').value,
+        estado: document.getElementById('m-estado').value
+    };
+    if(!item.nome || !item.telefone || !item.numbi) { showToast('Preencha os campos obrigatórios (*)', true); return; }
+    if(idField) {
+        const idx = allMors.findIndex(f => f.id === item.id);
+        if(idx >= 0) allMors[idx] = item;
+    } else {
+        allMors.push(item);
+    }
+    saveMors();
+    resetMorForm();
+    renderMoradoresAdmin();
+    showToast('Morador guardado com sucesso!');
+}
+function renderMoradoresAdmin() {
+    const tbody = document.getElementById('moradores-admin-tbody');
+    if(!tbody) return;
+    if(!allMors.length) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--text-muted);">Sem moradores registados</td></tr>';
+        return;
+    }
+    tbody.innerHTML = allMors.map(m => \
+        <tr>
+            <td><strong>\</strong></td>
+            <td>\</td>
+            <td>\</td>
+            <td style="font-family:monospace;font-size:.78rem;">\</td>
+            <td><span class="badge \">\</span></td>
+            <td>
+                <div style="display:flex;gap:.4rem;">
+                    <button class="btn-secondary btn-sm" onclick="verMor(\)" title="Ver"><i class="fa-solid fa-eye"></i></button>
+                    <button class="btn-secondary btn-sm" onclick="editMor(\)" title="Editar"><i class="fa-solid fa-pen"></i></button>
+                    <button class="btn-danger btn-sm" onclick="delMor(\)" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+                </div>
+            </td>
+        </tr>
+    \).join('');
+}
+function editMor(id) {
+    const m = allMors.find(x => x.id === id);
+    if(!m) return;
+    document.getElementById('m-nome').value = m.nome;
+    document.getElementById('m-senha').value = m.senha || '';
+    document.getElementById('m-telefone').value = m.telefone;
+    document.getElementById('m-email').value = m.email;
+    document.getElementById('m-nascimento').value = m.nasc;
+    document.getElementById('m-nacionalidade').value = m.nac;
+    document.getElementById('m-morada').value = m.morada;
+    document.getElementById('m-numbi').value = m.numbi;
+    document.getElementById('m-estado').value = m.estado;
+    document.getElementById('m-editing-id').value = m.id;
+    document.getElementById('mor-form-titulo').innerText = 'Editar Morador';
+    document.getElementById('mor-btn-txt').innerText = 'Actualizar Morador';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function delMor(id) {
+    if(!confirm('Deseja eliminar este morador?')) return;
+    allMors = allMors.filter(x => x.id !== id);
+    saveMors();
+    renderMoradoresAdmin();
+    showToast('Morador eliminado.');
+}
+function verMor(id) {
+    const m = allMors.find(x => x.id === id);
+    if(!m) return;
+    alert(\DETALHES DO MORADOR:\\n\\nNome: \\\nTelefone: \\\nEmail: \\\nBI: \\\nNasc: \\\nMorada: \\\nEstado: \\);
+}
+
+window.addEventListener('load', () => {
+    localStorage.setItem('nz_test', '1'); // Force check
+    renderFuncionarios();
+    renderMoradoresAdmin();
+});
+
 </script>
 
 
@@ -27,13 +227,613 @@ window.BLCOES_DATA = <?php echo json_encode($blocos); ?>;
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-  <script src="js/theme-manager.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js">
+/* --- FUNCIONARIOS --- */
+let allFuncs = JSON.parse(localStorage.getItem('nz_funcionarios') || '[]');
+function saveFuncs() { localStorage.setItem('nz_funcionarios', JSON.stringify(allFuncs)); }
+function resetFuncForm() {
+    document.getElementById('f-nome').value = '';
+    document.getElementById('f-senha').value = '';
+    document.getElementById('f-telefone').value = '';
+    document.getElementById('f-email').value = '';
+    document.getElementById('f-nascimento').value = '';
+    document.getElementById('f-funcao').value = '';
+    document.getElementById('f-nacionalidade').value = 'Angolana';
+    document.getElementById('f-estado-func').value = 'Activo';
+    document.getElementById('f-morada').value = '';
+    document.getElementById('f-editing-id').value = '';
+    document.getElementById('func-form-titulo').innerText = 'Novo Funcionário';
+    document.getElementById('func-btn-txt').innerText = 'Registar Funcionário';
+}
+function salvarFuncionario() {
+    const idField = document.getElementById('f-editing-id').value;
+    const item = {
+        id: idField ? parseInt(idField) : Date.now(),
+        nome: document.getElementById('f-nome').value.trim(),
+        senha: document.getElementById('f-senha').value,
+        telefone: document.getElementById('f-telefone').value,
+        email: document.getElementById('f-email').value,
+        nasc: document.getElementById('f-nascimento').value,
+        funcao: document.getElementById('f-funcao').value,
+        nac: document.getElementById('f-nacionalidade').value,
+        estado: document.getElementById('f-estado-func').value,
+        morada: document.getElementById('f-morada').value
+    };
+    if(!item.nome || !item.telefone || !item.funcao) { showToast('Preencha os campos obrigatórios (*)', true); return; }
+    if(idField) {
+        const idx = allFuncs.findIndex(f => f.id === item.id);
+        if(idx >= 0) allFuncs[idx] = item;
+    } else {
+        allFuncs.push(item);
+    }
+    saveFuncs();
+    resetFuncForm();
+    renderFuncionarios();
+    showToast('Funcionário guardado com sucesso!');
+}
+function renderFuncionarios() {
+    const tbody = document.getElementById('funcionarios-tbody');
+    if(!tbody) return;
+    if(!allFuncs.length) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--text-muted);">Sem funcionários registados</td></tr>';
+        return;
+    }
+    tbody.innerHTML = allFuncs.map(f => \
+        <tr>
+            <td><strong>\</strong></td>
+            <td>\</td>
+            <td>\</td>
+            <td><span class="badge \">\</span></td>
+            <td>
+                <div style="display:flex;gap:.4rem;">
+                    <button class="btn-secondary btn-sm" onclick="verFunc(\)" title="Ver"><i class="fa-solid fa-eye"></i></button>
+                    <button class="btn-secondary btn-sm" onclick="editFunc(\)" title="Editar"><i class="fa-solid fa-pen"></i></button>
+                    <button class="btn-danger btn-sm" onclick="delFunc(\)" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+                </div>
+            </td>
+        </tr>
+    \).join('');
+}
+function editFunc(id) {
+    const f = allFuncs.find(x => x.id === id);
+    if(!f) return;
+    document.getElementById('f-nome').value = f.nome;
+    document.getElementById('f-senha').value = f.senha || '';
+    document.getElementById('f-telefone').value = f.telefone;
+    document.getElementById('f-email').value = f.email;
+    document.getElementById('f-nascimento').value = f.nasc;
+    document.getElementById('f-funcao').value = f.funcao;
+    document.getElementById('f-nacionalidade').value = f.nac;
+    document.getElementById('f-estado-func').value = f.estado;
+    document.getElementById('f-morada').value = f.morada;
+    document.getElementById('f-editing-id').value = f.id;
+    document.getElementById('func-form-titulo').innerText = 'Editar Funcionário';
+    document.getElementById('func-btn-txt').innerText = 'Actualizar Funcionário';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function delFunc(id) {
+    if(!confirm('Deseja eliminar este funcionário?')) return;
+    allFuncs = allFuncs.filter(f => f.id !== id);
+    saveFuncs();
+    renderFuncionarios();
+    showToast('Funcionário eliminado.');
+}
+function verFunc(id) {
+    const f = allFuncs.find(x => x.id === id);
+    if(!f) return;
+    alert(\DETALHES DO FUNCIONÁRIO:\\n\\nNome: \\\nCargo: \\\nTelefone: \\\nEmail: \\\nNasc: \\\nMorada: \\\nEstado: \\);
+}
+
+/* --- MORADORES --- */
+let allMors = JSON.parse(localStorage.getItem('nz_moradores_admin') || '[]');
+function saveMors() { localStorage.setItem('nz_moradores_admin', JSON.stringify(allMors)); }
+function resetMorForm() {
+    document.getElementById('m-nome').value = '';
+    document.getElementById('m-senha').value = '';
+    document.getElementById('m-telefone').value = '';
+    document.getElementById('m-email').value = '';
+    document.getElementById('m-nascimento').value = '';
+    document.getElementById('m-nacionalidade').value = 'Angolana';
+    document.getElementById('m-morada').value = '';
+    document.getElementById('m-numbi').value = '';
+    document.getElementById('m-estado').value = 'Activo';
+    document.getElementById('m-editing-id').value = '';
+    document.getElementById('mor-form-titulo').innerText = 'Novo Morador';
+    document.getElementById('mor-btn-txt').innerText = 'Registar Morador';
+}
+function salvarMorador() {
+    const idField = document.getElementById('m-editing-id').value;
+    const item = {
+        id: idField ? parseInt(idField) : Date.now(),
+        nome: document.getElementById('m-nome').value.trim(),
+        senha: document.getElementById('m-senha').value,
+        telefone: document.getElementById('m-telefone').value,
+        email: document.getElementById('m-email').value,
+        nasc: document.getElementById('m-nascimento').value,
+        nac: document.getElementById('m-nacionalidade').value,
+        morada: document.getElementById('m-morada').value,
+        numbi: document.getElementById('m-numbi').value,
+        estado: document.getElementById('m-estado').value
+    };
+    if(!item.nome || !item.telefone || !item.numbi) { showToast('Preencha os campos obrigatórios (*)', true); return; }
+    if(idField) {
+        const idx = allMors.findIndex(f => f.id === item.id);
+        if(idx >= 0) allMors[idx] = item;
+    } else {
+        allMors.push(item);
+    }
+    saveMors();
+    resetMorForm();
+    renderMoradoresAdmin();
+    showToast('Morador guardado com sucesso!');
+}
+function renderMoradoresAdmin() {
+    const tbody = document.getElementById('moradores-admin-tbody');
+    if(!tbody) return;
+    if(!allMors.length) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--text-muted);">Sem moradores registados</td></tr>';
+        return;
+    }
+    tbody.innerHTML = allMors.map(m => \
+        <tr>
+            <td><strong>\</strong></td>
+            <td>\</td>
+            <td>\</td>
+            <td style="font-family:monospace;font-size:.78rem;">\</td>
+            <td><span class="badge \">\</span></td>
+            <td>
+                <div style="display:flex;gap:.4rem;">
+                    <button class="btn-secondary btn-sm" onclick="verMor(\)" title="Ver"><i class="fa-solid fa-eye"></i></button>
+                    <button class="btn-secondary btn-sm" onclick="editMor(\)" title="Editar"><i class="fa-solid fa-pen"></i></button>
+                    <button class="btn-danger btn-sm" onclick="delMor(\)" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+                </div>
+            </td>
+        </tr>
+    \).join('');
+}
+function editMor(id) {
+    const m = allMors.find(x => x.id === id);
+    if(!m) return;
+    document.getElementById('m-nome').value = m.nome;
+    document.getElementById('m-senha').value = m.senha || '';
+    document.getElementById('m-telefone').value = m.telefone;
+    document.getElementById('m-email').value = m.email;
+    document.getElementById('m-nascimento').value = m.nasc;
+    document.getElementById('m-nacionalidade').value = m.nac;
+    document.getElementById('m-morada').value = m.morada;
+    document.getElementById('m-numbi').value = m.numbi;
+    document.getElementById('m-estado').value = m.estado;
+    document.getElementById('m-editing-id').value = m.id;
+    document.getElementById('mor-form-titulo').innerText = 'Editar Morador';
+    document.getElementById('mor-btn-txt').innerText = 'Actualizar Morador';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function delMor(id) {
+    if(!confirm('Deseja eliminar este morador?')) return;
+    allMors = allMors.filter(x => x.id !== id);
+    saveMors();
+    renderMoradoresAdmin();
+    showToast('Morador eliminado.');
+}
+function verMor(id) {
+    const m = allMors.find(x => x.id === id);
+    if(!m) return;
+    alert(\DETALHES DO MORADOR:\\n\\nNome: \\\nTelefone: \\\nEmail: \\\nBI: \\\nNasc: \\\nMorada: \\\nEstado: \\);
+}
+
+window.addEventListener('load', () => {
+    localStorage.setItem('nz_test', '1'); // Force check
+    renderFuncionarios();
+    renderMoradoresAdmin();
+});
+
+</script>
+  <script src="js/theme-manager.js">
+/* --- FUNCIONARIOS --- */
+let allFuncs = JSON.parse(localStorage.getItem('nz_funcionarios') || '[]');
+function saveFuncs() { localStorage.setItem('nz_funcionarios', JSON.stringify(allFuncs)); }
+function resetFuncForm() {
+    document.getElementById('f-nome').value = '';
+    document.getElementById('f-senha').value = '';
+    document.getElementById('f-telefone').value = '';
+    document.getElementById('f-email').value = '';
+    document.getElementById('f-nascimento').value = '';
+    document.getElementById('f-funcao').value = '';
+    document.getElementById('f-nacionalidade').value = 'Angolana';
+    document.getElementById('f-estado-func').value = 'Activo';
+    document.getElementById('f-morada').value = '';
+    document.getElementById('f-editing-id').value = '';
+    document.getElementById('func-form-titulo').innerText = 'Novo Funcionário';
+    document.getElementById('func-btn-txt').innerText = 'Registar Funcionário';
+}
+function salvarFuncionario() {
+    const idField = document.getElementById('f-editing-id').value;
+    const item = {
+        id: idField ? parseInt(idField) : Date.now(),
+        nome: document.getElementById('f-nome').value.trim(),
+        senha: document.getElementById('f-senha').value,
+        telefone: document.getElementById('f-telefone').value,
+        email: document.getElementById('f-email').value,
+        nasc: document.getElementById('f-nascimento').value,
+        funcao: document.getElementById('f-funcao').value,
+        nac: document.getElementById('f-nacionalidade').value,
+        estado: document.getElementById('f-estado-func').value,
+        morada: document.getElementById('f-morada').value
+    };
+    if(!item.nome || !item.telefone || !item.funcao) { showToast('Preencha os campos obrigatórios (*)', true); return; }
+    if(idField) {
+        const idx = allFuncs.findIndex(f => f.id === item.id);
+        if(idx >= 0) allFuncs[idx] = item;
+    } else {
+        allFuncs.push(item);
+    }
+    saveFuncs();
+    resetFuncForm();
+    renderFuncionarios();
+    showToast('Funcionário guardado com sucesso!');
+}
+function renderFuncionarios() {
+    const tbody = document.getElementById('funcionarios-tbody');
+    if(!tbody) return;
+    if(!allFuncs.length) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--text-muted);">Sem funcionários registados</td></tr>';
+        return;
+    }
+    tbody.innerHTML = allFuncs.map(f => \
+        <tr>
+            <td><strong>\</strong></td>
+            <td>\</td>
+            <td>\</td>
+            <td><span class="badge \">\</span></td>
+            <td>
+                <div style="display:flex;gap:.4rem;">
+                    <button class="btn-secondary btn-sm" onclick="verFunc(\)" title="Ver"><i class="fa-solid fa-eye"></i></button>
+                    <button class="btn-secondary btn-sm" onclick="editFunc(\)" title="Editar"><i class="fa-solid fa-pen"></i></button>
+                    <button class="btn-danger btn-sm" onclick="delFunc(\)" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+                </div>
+            </td>
+        </tr>
+    \).join('');
+}
+function editFunc(id) {
+    const f = allFuncs.find(x => x.id === id);
+    if(!f) return;
+    document.getElementById('f-nome').value = f.nome;
+    document.getElementById('f-senha').value = f.senha || '';
+    document.getElementById('f-telefone').value = f.telefone;
+    document.getElementById('f-email').value = f.email;
+    document.getElementById('f-nascimento').value = f.nasc;
+    document.getElementById('f-funcao').value = f.funcao;
+    document.getElementById('f-nacionalidade').value = f.nac;
+    document.getElementById('f-estado-func').value = f.estado;
+    document.getElementById('f-morada').value = f.morada;
+    document.getElementById('f-editing-id').value = f.id;
+    document.getElementById('func-form-titulo').innerText = 'Editar Funcionário';
+    document.getElementById('func-btn-txt').innerText = 'Actualizar Funcionário';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function delFunc(id) {
+    if(!confirm('Deseja eliminar este funcionário?')) return;
+    allFuncs = allFuncs.filter(f => f.id !== id);
+    saveFuncs();
+    renderFuncionarios();
+    showToast('Funcionário eliminado.');
+}
+function verFunc(id) {
+    const f = allFuncs.find(x => x.id === id);
+    if(!f) return;
+    alert(\DETALHES DO FUNCIONÁRIO:\\n\\nNome: \\\nCargo: \\\nTelefone: \\\nEmail: \\\nNasc: \\\nMorada: \\\nEstado: \\);
+}
+
+/* --- MORADORES --- */
+let allMors = JSON.parse(localStorage.getItem('nz_moradores_admin') || '[]');
+function saveMors() { localStorage.setItem('nz_moradores_admin', JSON.stringify(allMors)); }
+function resetMorForm() {
+    document.getElementById('m-nome').value = '';
+    document.getElementById('m-senha').value = '';
+    document.getElementById('m-telefone').value = '';
+    document.getElementById('m-email').value = '';
+    document.getElementById('m-nascimento').value = '';
+    document.getElementById('m-nacionalidade').value = 'Angolana';
+    document.getElementById('m-morada').value = '';
+    document.getElementById('m-numbi').value = '';
+    document.getElementById('m-estado').value = 'Activo';
+    document.getElementById('m-editing-id').value = '';
+    document.getElementById('mor-form-titulo').innerText = 'Novo Morador';
+    document.getElementById('mor-btn-txt').innerText = 'Registar Morador';
+}
+function salvarMorador() {
+    const idField = document.getElementById('m-editing-id').value;
+    const item = {
+        id: idField ? parseInt(idField) : Date.now(),
+        nome: document.getElementById('m-nome').value.trim(),
+        senha: document.getElementById('m-senha').value,
+        telefone: document.getElementById('m-telefone').value,
+        email: document.getElementById('m-email').value,
+        nasc: document.getElementById('m-nascimento').value,
+        nac: document.getElementById('m-nacionalidade').value,
+        morada: document.getElementById('m-morada').value,
+        numbi: document.getElementById('m-numbi').value,
+        estado: document.getElementById('m-estado').value
+    };
+    if(!item.nome || !item.telefone || !item.numbi) { showToast('Preencha os campos obrigatórios (*)', true); return; }
+    if(idField) {
+        const idx = allMors.findIndex(f => f.id === item.id);
+        if(idx >= 0) allMors[idx] = item;
+    } else {
+        allMors.push(item);
+    }
+    saveMors();
+    resetMorForm();
+    renderMoradoresAdmin();
+    showToast('Morador guardado com sucesso!');
+}
+function renderMoradoresAdmin() {
+    const tbody = document.getElementById('moradores-admin-tbody');
+    if(!tbody) return;
+    if(!allMors.length) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--text-muted);">Sem moradores registados</td></tr>';
+        return;
+    }
+    tbody.innerHTML = allMors.map(m => \
+        <tr>
+            <td><strong>\</strong></td>
+            <td>\</td>
+            <td>\</td>
+            <td style="font-family:monospace;font-size:.78rem;">\</td>
+            <td><span class="badge \">\</span></td>
+            <td>
+                <div style="display:flex;gap:.4rem;">
+                    <button class="btn-secondary btn-sm" onclick="verMor(\)" title="Ver"><i class="fa-solid fa-eye"></i></button>
+                    <button class="btn-secondary btn-sm" onclick="editMor(\)" title="Editar"><i class="fa-solid fa-pen"></i></button>
+                    <button class="btn-danger btn-sm" onclick="delMor(\)" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+                </div>
+            </td>
+        </tr>
+    \).join('');
+}
+function editMor(id) {
+    const m = allMors.find(x => x.id === id);
+    if(!m) return;
+    document.getElementById('m-nome').value = m.nome;
+    document.getElementById('m-senha').value = m.senha || '';
+    document.getElementById('m-telefone').value = m.telefone;
+    document.getElementById('m-email').value = m.email;
+    document.getElementById('m-nascimento').value = m.nasc;
+    document.getElementById('m-nacionalidade').value = m.nac;
+    document.getElementById('m-morada').value = m.morada;
+    document.getElementById('m-numbi').value = m.numbi;
+    document.getElementById('m-estado').value = m.estado;
+    document.getElementById('m-editing-id').value = m.id;
+    document.getElementById('mor-form-titulo').innerText = 'Editar Morador';
+    document.getElementById('mor-btn-txt').innerText = 'Actualizar Morador';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function delMor(id) {
+    if(!confirm('Deseja eliminar este morador?')) return;
+    allMors = allMors.filter(x => x.id !== id);
+    saveMors();
+    renderMoradoresAdmin();
+    showToast('Morador eliminado.');
+}
+function verMor(id) {
+    const m = allMors.find(x => x.id === id);
+    if(!m) return;
+    alert(\DETALHES DO MORADOR:\\n\\nNome: \\\nTelefone: \\\nEmail: \\\nBI: \\\nNasc: \\\nMorada: \\\nEstado: \\);
+}
+
+window.addEventListener('load', () => {
+    localStorage.setItem('nz_test', '1'); // Force check
+    renderFuncionarios();
+    renderMoradoresAdmin();
+});
+
+</script>
   <script>
     // Immediate script to prevent flash of un-themed content
     const savedTheme = localStorage.getItem('nz-theme') || 'light';
     document.documentElement.setAttribute('data-theme', savedTheme);
-  </script>
+  
+/* --- FUNCIONARIOS --- */
+let allFuncs = JSON.parse(localStorage.getItem('nz_funcionarios') || '[]');
+function saveFuncs() { localStorage.setItem('nz_funcionarios', JSON.stringify(allFuncs)); }
+function resetFuncForm() {
+    document.getElementById('f-nome').value = '';
+    document.getElementById('f-senha').value = '';
+    document.getElementById('f-telefone').value = '';
+    document.getElementById('f-email').value = '';
+    document.getElementById('f-nascimento').value = '';
+    document.getElementById('f-funcao').value = '';
+    document.getElementById('f-nacionalidade').value = 'Angolana';
+    document.getElementById('f-estado-func').value = 'Activo';
+    document.getElementById('f-morada').value = '';
+    document.getElementById('f-editing-id').value = '';
+    document.getElementById('func-form-titulo').innerText = 'Novo Funcionário';
+    document.getElementById('func-btn-txt').innerText = 'Registar Funcionário';
+}
+function salvarFuncionario() {
+    const idField = document.getElementById('f-editing-id').value;
+    const item = {
+        id: idField ? parseInt(idField) : Date.now(),
+        nome: document.getElementById('f-nome').value.trim(),
+        senha: document.getElementById('f-senha').value,
+        telefone: document.getElementById('f-telefone').value,
+        email: document.getElementById('f-email').value,
+        nasc: document.getElementById('f-nascimento').value,
+        funcao: document.getElementById('f-funcao').value,
+        nac: document.getElementById('f-nacionalidade').value,
+        estado: document.getElementById('f-estado-func').value,
+        morada: document.getElementById('f-morada').value
+    };
+    if(!item.nome || !item.telefone || !item.funcao) { showToast('Preencha os campos obrigatórios (*)', true); return; }
+    if(idField) {
+        const idx = allFuncs.findIndex(f => f.id === item.id);
+        if(idx >= 0) allFuncs[idx] = item;
+    } else {
+        allFuncs.push(item);
+    }
+    saveFuncs();
+    resetFuncForm();
+    renderFuncionarios();
+    showToast('Funcionário guardado com sucesso!');
+}
+function renderFuncionarios() {
+    const tbody = document.getElementById('funcionarios-tbody');
+    if(!tbody) return;
+    if(!allFuncs.length) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--text-muted);">Sem funcionários registados</td></tr>';
+        return;
+    }
+    tbody.innerHTML = allFuncs.map(f => \
+        <tr>
+            <td><strong>\</strong></td>
+            <td>\</td>
+            <td>\</td>
+            <td><span class="badge \">\</span></td>
+            <td>
+                <div style="display:flex;gap:.4rem;">
+                    <button class="btn-secondary btn-sm" onclick="verFunc(\)" title="Ver"><i class="fa-solid fa-eye"></i></button>
+                    <button class="btn-secondary btn-sm" onclick="editFunc(\)" title="Editar"><i class="fa-solid fa-pen"></i></button>
+                    <button class="btn-danger btn-sm" onclick="delFunc(\)" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+                </div>
+            </td>
+        </tr>
+    \).join('');
+}
+function editFunc(id) {
+    const f = allFuncs.find(x => x.id === id);
+    if(!f) return;
+    document.getElementById('f-nome').value = f.nome;
+    document.getElementById('f-senha').value = f.senha || '';
+    document.getElementById('f-telefone').value = f.telefone;
+    document.getElementById('f-email').value = f.email;
+    document.getElementById('f-nascimento').value = f.nasc;
+    document.getElementById('f-funcao').value = f.funcao;
+    document.getElementById('f-nacionalidade').value = f.nac;
+    document.getElementById('f-estado-func').value = f.estado;
+    document.getElementById('f-morada').value = f.morada;
+    document.getElementById('f-editing-id').value = f.id;
+    document.getElementById('func-form-titulo').innerText = 'Editar Funcionário';
+    document.getElementById('func-btn-txt').innerText = 'Actualizar Funcionário';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function delFunc(id) {
+    if(!confirm('Deseja eliminar este funcionário?')) return;
+    allFuncs = allFuncs.filter(f => f.id !== id);
+    saveFuncs();
+    renderFuncionarios();
+    showToast('Funcionário eliminado.');
+}
+function verFunc(id) {
+    const f = allFuncs.find(x => x.id === id);
+    if(!f) return;
+    alert(\DETALHES DO FUNCIONÁRIO:\\n\\nNome: \\\nCargo: \\\nTelefone: \\\nEmail: \\\nNasc: \\\nMorada: \\\nEstado: \\);
+}
+
+/* --- MORADORES --- */
+let allMors = JSON.parse(localStorage.getItem('nz_moradores_admin') || '[]');
+function saveMors() { localStorage.setItem('nz_moradores_admin', JSON.stringify(allMors)); }
+function resetMorForm() {
+    document.getElementById('m-nome').value = '';
+    document.getElementById('m-senha').value = '';
+    document.getElementById('m-telefone').value = '';
+    document.getElementById('m-email').value = '';
+    document.getElementById('m-nascimento').value = '';
+    document.getElementById('m-nacionalidade').value = 'Angolana';
+    document.getElementById('m-morada').value = '';
+    document.getElementById('m-numbi').value = '';
+    document.getElementById('m-estado').value = 'Activo';
+    document.getElementById('m-editing-id').value = '';
+    document.getElementById('mor-form-titulo').innerText = 'Novo Morador';
+    document.getElementById('mor-btn-txt').innerText = 'Registar Morador';
+}
+function salvarMorador() {
+    const idField = document.getElementById('m-editing-id').value;
+    const item = {
+        id: idField ? parseInt(idField) : Date.now(),
+        nome: document.getElementById('m-nome').value.trim(),
+        senha: document.getElementById('m-senha').value,
+        telefone: document.getElementById('m-telefone').value,
+        email: document.getElementById('m-email').value,
+        nasc: document.getElementById('m-nascimento').value,
+        nac: document.getElementById('m-nacionalidade').value,
+        morada: document.getElementById('m-morada').value,
+        numbi: document.getElementById('m-numbi').value,
+        estado: document.getElementById('m-estado').value
+    };
+    if(!item.nome || !item.telefone || !item.numbi) { showToast('Preencha os campos obrigatórios (*)', true); return; }
+    if(idField) {
+        const idx = allMors.findIndex(f => f.id === item.id);
+        if(idx >= 0) allMors[idx] = item;
+    } else {
+        allMors.push(item);
+    }
+    saveMors();
+    resetMorForm();
+    renderMoradoresAdmin();
+    showToast('Morador guardado com sucesso!');
+}
+function renderMoradoresAdmin() {
+    const tbody = document.getElementById('moradores-admin-tbody');
+    if(!tbody) return;
+    if(!allMors.length) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--text-muted);">Sem moradores registados</td></tr>';
+        return;
+    }
+    tbody.innerHTML = allMors.map(m => \
+        <tr>
+            <td><strong>\</strong></td>
+            <td>\</td>
+            <td>\</td>
+            <td style="font-family:monospace;font-size:.78rem;">\</td>
+            <td><span class="badge \">\</span></td>
+            <td>
+                <div style="display:flex;gap:.4rem;">
+                    <button class="btn-secondary btn-sm" onclick="verMor(\)" title="Ver"><i class="fa-solid fa-eye"></i></button>
+                    <button class="btn-secondary btn-sm" onclick="editMor(\)" title="Editar"><i class="fa-solid fa-pen"></i></button>
+                    <button class="btn-danger btn-sm" onclick="delMor(\)" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+                </div>
+            </td>
+        </tr>
+    \).join('');
+}
+function editMor(id) {
+    const m = allMors.find(x => x.id === id);
+    if(!m) return;
+    document.getElementById('m-nome').value = m.nome;
+    document.getElementById('m-senha').value = m.senha || '';
+    document.getElementById('m-telefone').value = m.telefone;
+    document.getElementById('m-email').value = m.email;
+    document.getElementById('m-nascimento').value = m.nasc;
+    document.getElementById('m-nacionalidade').value = m.nac;
+    document.getElementById('m-morada').value = m.morada;
+    document.getElementById('m-numbi').value = m.numbi;
+    document.getElementById('m-estado').value = m.estado;
+    document.getElementById('m-editing-id').value = m.id;
+    document.getElementById('mor-form-titulo').innerText = 'Editar Morador';
+    document.getElementById('mor-btn-txt').innerText = 'Actualizar Morador';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function delMor(id) {
+    if(!confirm('Deseja eliminar este morador?')) return;
+    allMors = allMors.filter(x => x.id !== id);
+    saveMors();
+    renderMoradoresAdmin();
+    showToast('Morador eliminado.');
+}
+function verMor(id) {
+    const m = allMors.find(x => x.id === id);
+    if(!m) return;
+    alert(\DETALHES DO MORADOR:\\n\\nNome: \\\nTelefone: \\\nEmail: \\\nBI: \\\nNasc: \\\nMorada: \\\nEstado: \\);
+}
+
+window.addEventListener('load', () => {
+    localStorage.setItem('nz_test', '1'); // Force check
+    renderFuncionarios();
+    renderMoradoresAdmin();
+});
+
+</script>
 </head>
 <body>
 
@@ -149,223 +949,187 @@ window.BLCOES_DATA = <?php echo json_encode($blocos); ?>;
         <p class="stat-hint">De um total de casas V3</p>
       </div>
     </div>
-  </section>
+  <!-- ── CADASTRO DE FUNCIONÁRIOS (CRUD) ── -->
+  <section class="tab-section" id="tab-pedidos">
+    <div class="page-header">
+      <h1 class="page-title">💼 Gestão de Funcionários</h1>
+      <p class="page-sub">Cadastre e gira a sua equipa administrativa e de campo</p>
+    </div>
 
-  
-
-</nav>
-
-<section class="tab-section" id="tab-pedidos">
-  <form action="funcionarios.php" method="POST">
-    <div class="card">
-      <div class="card-head"><p class="card-title"><i class="fa-solid fa-plus"></i> Adicionar Novo Funcionário</p></div>
-        <br>
-          <h2 class="step-title">Dados Pessoais</h2>
+    <div style="display:grid; grid-template-columns: 1fr 1.5fr; gap: 2rem;">
+      <!-- Form Column -->
+      <div class="card">
+        <div class="card-head"><p class="card-title"><i class="fa-solid fa-user-plus"></i> <span id="func-form-titulo">Novo Funcionário</span></p></div>
+        <div class="card-body">
+          <input type="hidden" id="f-editing-id" value="">
           <div class="form-grid">
             <div class="form-group full">
               <label>Nome Completo *</label>
-              <input type="text" name="nome" placeholder="Ex: Maria da Silva Santos" maxlength="60" />
+              <input type="text" id="f-nome" placeholder="Ex: Maria da Silva Santos" required />
             </div>
             <div class="form-group">
               <label>Senha *</label>
-              <input type="password" name="senha" maxlength="60" />
+              <input type="password" id="f-senha" placeholder="Senha de acesso" />
             </div>
             <div class="form-group">
               <label>Telefone *</label>
-              <input type="tel" name="telefone" placeholder="9XX XXX XXX" maxlength="9" />
+              <input type="tel" id="f-telefone" placeholder="9XX XXX XXX" />
             </div>
             <div class="form-group">
               <label>Email</label>
-              <input type="email" name="email" placeholder="email@exemplo.com" />
+              <input type="email" id="f-email" placeholder="email@exemplo.com" />
             </div>
             <div class="form-group">
-              <label>Data de Nascimento *</label>
-              <input type="date" name="nasc" />
+              <label>Data Nasc. *</label>
+              <input type="date" id="f-nascimento" />
             </div>
-            <div class="form-group">
-              <label>Nacionalidade *</label>
-              <input type="text" name="nacionalidade" placeholder="Angolana" value="Angolana" />
-            </div>
-            <div class="form-group full">
-              <label>Morada Actual *</label>
-              <input type="text" name="morada" placeholder="Rua, bairro, município, província" />
-            </div>
-          <br>
-          <br>
-          <br>
-        <!-- STEP 2: Identificação -->
-          <h2 class="step-title">Documento de Identificação</h2>
-          <p class="step-desc">Para segurança do condomínio, precisamos dos seus dados de identificação. Os documentos serão enviados ao administrador.</p>
-          
-            <div class="form-group">
-              <label>Nº do Bilhete de Identidade *</label>
-              <input type="text" name="numbi" placeholder="000XXXXXX LA 000" />
-            </div>
-            <div class="form-group">
-              <label>Data de Emissão *</label>
-              <input type="date" name="emissao" />
-            </div>
-            <div class="form-group">
-              <label>Data de Validade *</label>
-              <input type="date" name="validade" />
-            </div>
-            <div class="form-group">
-              <label>Local de Emissão *</label>
-              <input type="text" name="locale" placeholder="Luanda, SAE Patriota" />
-            </div>
-
             <div class="form-group">
               <label>Função *</label>
-              <select name="funcao">
-                    <option value="adm">Administrador</option>
-                    <option value="rh">Recursos Humanos</option>
-                    <option value="seguranca">Segurança</option>
-                    <option value="at">Area Tecnica</option>
-                  </select>
+              <select id="f-funcao">
+                <option value="">Seleccione...</option>
+                <option value="Administrador">Administrador</option>
+                <option value="RH">Recursos Humanos</option>
+                <option value="Segurança">Segurança</option>
+                <option value="Área Técnica">Área Técnica</option>
+                <option value="Limpeza">Limpeza</option>
+              </select>
             </div>
             <div class="form-group">
-              <label>IBAN de Pagamento</label>
-              <input type="text" name="iban" placeholder="AO06XXXXXXXXXXXXXXXXXXXXX">
+              <label>Nacionalidade</label>
+              <input type="text" id="f-nacionalidade" value="Angolana" />
             </div>
-
-          <div class="reg-consent">
-            <input type="checkbox" id="reg-consent-check" />
-            <label for="reg-consent-check">Declaro que os dados fornecidos são verdadeiros e autorizo o Condomínio Nosso Zimbo a processar as minhas informações para fins de registo e contrato.</label>
+            <div class="form-group">
+              <label>Estado</label>
+              <select id="f-estado-func">
+                <option value="Activo">Activo</option>
+                <option value="Inactivo">Inactivo</option>
+                <option value="Férias">Férias</option>
+              </select>
+            </div>
+            <div class="form-group full">
+              <label>Morada Actual</label>
+              <input type="text" id="f-morada" placeholder="Bairro, Rua, Casa nº" />
+            </div>
           </div>
-          <br>
-    </div>
-    </div>
-            <a href="index.html" target="_blank"><button class="btn-secondary"><i class="fa-solid fa-arrow-left"></i> Cancelar</button></a>
-            <a href="nosso-zimbo-admin.html" target="_blank"><button class="btn-primary" onclick="submitRegistration()"><i class="fa-solid fa-paper-plane"></i> Enviar Registo</button></a>
-          
+          <div style="display:flex; gap:.75rem; margin-top:1.5rem;">
+            <button class="btn-primary" style="flex:1;" onclick="salvarFuncionario()">
+              <i class="fa-solid fa-floppy-disk"></i> <span id="func-btn-txt">Registar Funcionário</span>
+            </button>
+            <button class="btn-secondary" onclick="resetFuncForm()">Limpar</button>
+          </div>
         </div>
-      </form> 
+      </div>
 
-    <div class="card" style="margin-top:20px;">
-      <div class="card-head"><p class="card-title"><i class="fa-solid fa-users-gear"></i> Funcionários Registados</p></div>
-      <div style="overflow-x:auto;">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Nome</th>
-              <th>Função</th>
-              <th>Email</th>
-              <th>Status</th>
-              <th>Acção</th>
-            </tr>
-          </thead>
-          <tbody id="admins-tbody">
-            <tr><td colspan="6" style="text-align:center;padding:20px;">Carregando...</td></tr>
-          </tbody>
-        </table>
+      <!-- List Column -->
+      <div class="card">
+        <div class="card-head"><p class="card-title"><i class="fa-solid fa-list-ul"></i> Lista de Colaboradores</p></div>
+        <div style="overflow-x:auto;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>Cargo</th>
+                <th>Telefone</th>
+                <th>Estado</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="funcionarios-tbody">
+              <tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--text-muted);">Sem funcionários registados</td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
-</section>
+  </section>
 
-  <!-- ── CADASTRO DE MORADORES ── -->
+  <!-- ── CADASTRO DE MORADORES (CRUD) ── -->
   <section class="tab-section" id="tab-registos">
     <div class="page-header">
-      <h1 class="page-title">Cadastro de Moradores</h1>
+      <h1 class="page-title">🏠 Gestão de Moradores</h1>
+      <p class="page-sub">Controle os acessos e dados de todos os residentes</p>
     </div>
 
-    <!-- <div class="filter-bar"> -->
-      <div class="tab">
-      <button class="filter-btn active" onclick="carregarMoradores()">Novo</button>
-      <button class="filter-btn" onclick="filterRegs('pendente', this)">Todos</button>
-    </div>
-
-    
-      <!-- STEP 1: Dados Pessoais -->
-      <form action="dadospessoais.php" method="POST">
-  
-      <h2 class="step-title">Dados Pessoais</h2>
-      <div class="form-grid">
-        <div class="form-group full">
-          <label>Nome Completo *</label>
-          <input type="text" name="nome" placeholder="Ex: Maria da Silva Santos" maxlength="60" />
+    <div style="display:grid; grid-template-columns: 1fr 1.5fr; gap: 2rem;">
+      <!-- Form Column -->
+      <div class="card">
+        <div class="card-head"><p class="card-title"><i class="fa-solid fa-user-plus"></i> <span id="mor-form-titulo">Novo Morador</span></p></div>
+        <div class="card-body">
+          <input type="hidden" id="m-editing-id" value="">
+          <div class="form-grid">
+            <div class="form-group full">
+              <label>Nome Completo *</label>
+              <input type="text" id="m-nome" required />
+            </div>
+            <div class="form-group">
+              <label>Senha *</label>
+              <input type="password" id="m-senha" />
+            </div>
+            <div class="form-group">
+              <label>Telefone *</label>
+              <input type="tel" id="m-telefone" />
+            </div>
+            <div class="form-group">
+              <label>Email</label>
+              <input type="email" id="m-email" />
+            </div>
+            <div class="form-group">
+              <label>Nº Bilhete (BI) *</label>
+              <input type="text" id="m-numbi" placeholder="000XXXXXX LA 000" />
+            </div>
+            <div class="form-group">
+              <label>Data Nasc. *</label>
+              <input type="date" id="m-nascimento" />
+            </div>
+            <div class="form-group">
+              <label>Nacionalidade</label>
+              <input type="text" id="m-nacionalidade" value="Angolana" />
+            </div>
+            <div class="form-group">
+              <label>Estado da Conta</label>
+              <select id="m-estado">
+                <option value="Activo">Activo</option>
+                <option value="Suspenso">Suspenso</option>
+              </select>
+            </div>
+            <div class="form-group full">
+               <label>Morada Anterior / Contacto</label>
+               <input type="text" id="m-morada" />
+            </div>
+          </div>
+          <div style="display:flex; gap:.75rem; margin-top:1.5rem;">
+            <button class="btn-primary" style="flex:1;" onclick="salvarMorador()">
+              <i class="fa-solid fa-floppy-disk"></i> <span id="mor-btn-txt">Registar Morador</span>
+            </button>
+            <button class="btn-secondary" onclick="resetMorForm()">Limpar</button>
+          </div>
         </div>
-        <div class="form-group">
-          <label>Senha *</label>
-          <input type="password" name="senha" maxlength="60" />
-        </div>
-        <div class="form-group">
-          <label>Telefone *</label>
-          <input type="tel" name="telefone" placeholder="9XX XXX XXX" maxlength="9" />
-        </div>
-        <div class="form-group">
-          <label>Email</label>
-          <input type="email" name="email" placeholder="email@exemplo.com" />
-        </div>
-        <div class="form-group">
-          <label>Data de Nascimento *</label>
-          <input type="date" name="nasc" />
-        </div>
-        <div class="form-group">
-          <label>Nacionalidade *</label>
-          <input type="text" name="nacionalidade" placeholder="Angolana" value="Angolana" />
-        </div>
-        <div class="form-group full">
-          <label>Morada Actual *</label>
-          <input type="text" name="morada" placeholder="Rua, bairro, município, província" />
-        </div>
-      
-    <!-- STEP 2: Identificação -->
-      <h2 class="step-title">Documento de Identificação</h2>
-      <p class="step-desc">Para segurança do condomínio, precisamos dos seus dados de identificação. Os documentos serão enviados ao administrador.</p>
-      
-        <div class="form-group">
-          <label>Nº do Bilhete de Identidade *</label>
-          <input type="text" name="numbi" placeholder="000XXXXXX LA 000" />
-        </div>
-        <div class="form-group">
-          <label>Data de Emissão *</label>
-          <input type="date" name="emissao" />
-        </div>
-        <div class="form-group">
-          <label>Data de Validade *</label>
-          <input type="date" name="validade" />
-        </div>
-<div class="form-group">
-          <label>Local de Emissão *</label>
-          <input type="text" name="locale" placeholder="Luanda, SAE Patriota" />
-        </div>
-        <div class="form-group full">
-          <label>Apartamento (Opcional)</label>
-          <select name="id_apartamento" id="select-apartamento">
-            <option value="">Seleccione um apartamento (após registo poderá associar)</option>
-          </select>
-        </div>
-
-      <div class="reg-consent">
-        <input type="checkbox" id="reg-consent-check" />
-        <label for="reg-consent-check">Declaro que os dados fornecidos são verdadeiros e autorizo o Condomínio Nosso Zimbo a processar as minhas informações para fins de registo e contrato.</label>
       </div>
-      <br>
-        <a href="index.html" target="_blank"><button class="btn-secondary"><i class="fa-solid fa-arrow-left"></i> Cancelar</button></a>
-        <a href="nosso-zimbo-admin.html" target="_blank"><button class="btn-primary" onclick="submitRegistration()"><i class="fa-solid fa-paper-plane"></i> Enviar Registo</button></a>
-      
+
+      <!-- List Column -->
+      <div class="card">
+        <div class="card-head"><p class="card-title"><i class="fa-solid fa-users"></i> Lista de Moradores Administrativa</p></div>
+        <div style="overflow-x:auto;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>Telefone</th>
+                <th>Email</th>
+                <th>BI</th>
+                <th>Estado</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="moradores-admin-tbody">
+              <tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--text-muted);">Sem moradores registados</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
-  </form> 
-      
-  <div class="card" style="margin-top:20px;">
-    <div class="card-head"><p class="card-title"><i class="fa-solid fa-list"></i> Lista de Moradores</p></div>
-    <div style="overflow-x:auto;">
-      <table class="data-table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Nome</th>
-            <th>BI</th>
-            <th>Telefone</th>
-            <th>Email</th>
-            <th>Status</th>
-            <th>Casa</th>
-            <th>Acção</th>
-          </tr>
-        </thead>
-        <tbody id="corpoTabela">
-          <tr><td colspan="8" style="text-align:center;padding:20px;">Carregando moradores...</td></tr>
+  </section>
+adores...</td></tr>
         </tbody>
       </table>
     </div>
@@ -2307,6 +3071,206 @@ if (chatForm) {
     };
     };
 }
+
+/* --- FUNCIONARIOS --- */
+let allFuncs = JSON.parse(localStorage.getItem('nz_funcionarios') || '[]');
+function saveFuncs() { localStorage.setItem('nz_funcionarios', JSON.stringify(allFuncs)); }
+function resetFuncForm() {
+    document.getElementById('f-nome').value = '';
+    document.getElementById('f-senha').value = '';
+    document.getElementById('f-telefone').value = '';
+    document.getElementById('f-email').value = '';
+    document.getElementById('f-nascimento').value = '';
+    document.getElementById('f-funcao').value = '';
+    document.getElementById('f-nacionalidade').value = 'Angolana';
+    document.getElementById('f-estado-func').value = 'Activo';
+    document.getElementById('f-morada').value = '';
+    document.getElementById('f-editing-id').value = '';
+    document.getElementById('func-form-titulo').innerText = 'Novo Funcionário';
+    document.getElementById('func-btn-txt').innerText = 'Registar Funcionário';
+}
+function salvarFuncionario() {
+    const idField = document.getElementById('f-editing-id').value;
+    const item = {
+        id: idField ? parseInt(idField) : Date.now(),
+        nome: document.getElementById('f-nome').value.trim(),
+        senha: document.getElementById('f-senha').value,
+        telefone: document.getElementById('f-telefone').value,
+        email: document.getElementById('f-email').value,
+        nasc: document.getElementById('f-nascimento').value,
+        funcao: document.getElementById('f-funcao').value,
+        nac: document.getElementById('f-nacionalidade').value,
+        estado: document.getElementById('f-estado-func').value,
+        morada: document.getElementById('f-morada').value
+    };
+    if(!item.nome || !item.telefone || !item.funcao) { showToast('Preencha os campos obrigatórios (*)', true); return; }
+    if(idField) {
+        const idx = allFuncs.findIndex(f => f.id === item.id);
+        if(idx >= 0) allFuncs[idx] = item;
+    } else {
+        allFuncs.push(item);
+    }
+    saveFuncs();
+    resetFuncForm();
+    renderFuncionarios();
+    showToast('Funcionário guardado com sucesso!');
+}
+function renderFuncionarios() {
+    const tbody = document.getElementById('funcionarios-tbody');
+    if(!tbody) return;
+    if(!allFuncs.length) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--text-muted);">Sem funcionários registados</td></tr>';
+        return;
+    }
+    tbody.innerHTML = allFuncs.map(f => \
+        <tr>
+            <td><strong>\</strong></td>
+            <td>\</td>
+            <td>\</td>
+            <td><span class="badge \">\</span></td>
+            <td>
+                <div style="display:flex;gap:.4rem;">
+                    <button class="btn-secondary btn-sm" onclick="verFunc(\)" title="Ver"><i class="fa-solid fa-eye"></i></button>
+                    <button class="btn-secondary btn-sm" onclick="editFunc(\)" title="Editar"><i class="fa-solid fa-pen"></i></button>
+                    <button class="btn-danger btn-sm" onclick="delFunc(\)" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+                </div>
+            </td>
+        </tr>
+    \).join('');
+}
+function editFunc(id) {
+    const f = allFuncs.find(x => x.id === id);
+    if(!f) return;
+    document.getElementById('f-nome').value = f.nome;
+    document.getElementById('f-senha').value = f.senha || '';
+    document.getElementById('f-telefone').value = f.telefone;
+    document.getElementById('f-email').value = f.email;
+    document.getElementById('f-nascimento').value = f.nasc;
+    document.getElementById('f-funcao').value = f.funcao;
+    document.getElementById('f-nacionalidade').value = f.nac;
+    document.getElementById('f-estado-func').value = f.estado;
+    document.getElementById('f-morada').value = f.morada;
+    document.getElementById('f-editing-id').value = f.id;
+    document.getElementById('func-form-titulo').innerText = 'Editar Funcionário';
+    document.getElementById('func-btn-txt').innerText = 'Actualizar Funcionário';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function delFunc(id) {
+    if(!confirm('Deseja eliminar este funcionário?')) return;
+    allFuncs = allFuncs.filter(f => f.id !== id);
+    saveFuncs();
+    renderFuncionarios();
+    showToast('Funcionário eliminado.');
+}
+function verFunc(id) {
+    const f = allFuncs.find(x => x.id === id);
+    if(!f) return;
+    alert(\DETALHES DO FUNCIONÁRIO:\\n\\nNome: \\\nCargo: \\\nTelefone: \\\nEmail: \\\nNasc: \\\nMorada: \\\nEstado: \\);
+}
+
+/* --- MORADORES --- */
+let allMors = JSON.parse(localStorage.getItem('nz_moradores_admin') || '[]');
+function saveMors() { localStorage.setItem('nz_moradores_admin', JSON.stringify(allMors)); }
+function resetMorForm() {
+    document.getElementById('m-nome').value = '';
+    document.getElementById('m-senha').value = '';
+    document.getElementById('m-telefone').value = '';
+    document.getElementById('m-email').value = '';
+    document.getElementById('m-nascimento').value = '';
+    document.getElementById('m-nacionalidade').value = 'Angolana';
+    document.getElementById('m-morada').value = '';
+    document.getElementById('m-numbi').value = '';
+    document.getElementById('m-estado').value = 'Activo';
+    document.getElementById('m-editing-id').value = '';
+    document.getElementById('mor-form-titulo').innerText = 'Novo Morador';
+    document.getElementById('mor-btn-txt').innerText = 'Registar Morador';
+}
+function salvarMorador() {
+    const idField = document.getElementById('m-editing-id').value;
+    const item = {
+        id: idField ? parseInt(idField) : Date.now(),
+        nome: document.getElementById('m-nome').value.trim(),
+        senha: document.getElementById('m-senha').value,
+        telefone: document.getElementById('m-telefone').value,
+        email: document.getElementById('m-email').value,
+        nasc: document.getElementById('m-nascimento').value,
+        nac: document.getElementById('m-nacionalidade').value,
+        morada: document.getElementById('m-morada').value,
+        numbi: document.getElementById('m-numbi').value,
+        estado: document.getElementById('m-estado').value
+    };
+    if(!item.nome || !item.telefone || !item.numbi) { showToast('Preencha os campos obrigatórios (*)', true); return; }
+    if(idField) {
+        const idx = allMors.findIndex(f => f.id === item.id);
+        if(idx >= 0) allMors[idx] = item;
+    } else {
+        allMors.push(item);
+    }
+    saveMors();
+    resetMorForm();
+    renderMoradoresAdmin();
+    showToast('Morador guardado com sucesso!');
+}
+function renderMoradoresAdmin() {
+    const tbody = document.getElementById('moradores-admin-tbody');
+    if(!tbody) return;
+    if(!allMors.length) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--text-muted);">Sem moradores registados</td></tr>';
+        return;
+    }
+    tbody.innerHTML = allMors.map(m => \
+        <tr>
+            <td><strong>\</strong></td>
+            <td>\</td>
+            <td>\</td>
+            <td style="font-family:monospace;font-size:.78rem;">\</td>
+            <td><span class="badge \">\</span></td>
+            <td>
+                <div style="display:flex;gap:.4rem;">
+                    <button class="btn-secondary btn-sm" onclick="verMor(\)" title="Ver"><i class="fa-solid fa-eye"></i></button>
+                    <button class="btn-secondary btn-sm" onclick="editMor(\)" title="Editar"><i class="fa-solid fa-pen"></i></button>
+                    <button class="btn-danger btn-sm" onclick="delMor(\)" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+                </div>
+            </td>
+        </tr>
+    \).join('');
+}
+function editMor(id) {
+    const m = allMors.find(x => x.id === id);
+    if(!m) return;
+    document.getElementById('m-nome').value = m.nome;
+    document.getElementById('m-senha').value = m.senha || '';
+    document.getElementById('m-telefone').value = m.telefone;
+    document.getElementById('m-email').value = m.email;
+    document.getElementById('m-nascimento').value = m.nasc;
+    document.getElementById('m-nacionalidade').value = m.nac;
+    document.getElementById('m-morada').value = m.morada;
+    document.getElementById('m-numbi').value = m.numbi;
+    document.getElementById('m-estado').value = m.estado;
+    document.getElementById('m-editing-id').value = m.id;
+    document.getElementById('mor-form-titulo').innerText = 'Editar Morador';
+    document.getElementById('mor-btn-txt').innerText = 'Actualizar Morador';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function delMor(id) {
+    if(!confirm('Deseja eliminar este morador?')) return;
+    allMors = allMors.filter(x => x.id !== id);
+    saveMors();
+    renderMoradoresAdmin();
+    showToast('Morador eliminado.');
+}
+function verMor(id) {
+    const m = allMors.find(x => x.id === id);
+    if(!m) return;
+    alert(\DETALHES DO MORADOR:\\n\\nNome: \\\nTelefone: \\\nEmail: \\\nBI: \\\nNasc: \\\nMorada: \\\nEstado: \\);
+}
+
+window.addEventListener('load', () => {
+    localStorage.setItem('nz_test', '1'); // Force check
+    renderFuncionarios();
+    renderMoradoresAdmin();
+});
+
 </script>
 </body>
 </html>

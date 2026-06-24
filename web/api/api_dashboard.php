@@ -78,13 +78,16 @@ switch ($acao) {
         break;
 
     case 'pagamentos':
+        // Inclui o recibo submetido (se existir) para permitir aprovação do admin
         $sql = "SELECT mp.id, mor.nome as morador, a.codigo as apartamento,
                        mp.valor_pago, mp.metodo, mp.referencia,
-                       mp.data_pagamento, mp.estado, mp.notas_admin
+                       mp.data_pagamento, mp.estado, mp.notas_admin,
+                       r.file_path as recibo_path
                 FROM mensalidade_pagamento mp
                 JOIN mensalidade men ON men.id = mp.id_mensalidade
                 JOIN morador mor ON mor.id = men.id_morador
                 JOIN apartamento a ON a.id = men.id_apartamento
+                LEFT JOIN mensalidade_recibo r ON r.id_mensalidade = men.id
                 ORDER BY mp.data_pagamento DESC";
         $res = mysqli_query($conexao, $sql);
         $rows = [];
@@ -221,6 +224,44 @@ switch ($acao) {
         mysqli_query($conexao, "DELETE FROM morador_apartamento WHERE id_apartamento=$id");
         $res = mysqli_query($conexao, "DELETE FROM apartamento WHERE id=$id");
         echo json_encode(['sucesso' => $res]);
+        break;
+
+    case 'atualizar_morador':
+        $id = intval($_POST['id'] ?? 0);
+        $nome = trim($_POST['nome'] ?? '');
+        $telefone = trim($_POST['telefone'] ?? '');
+        $email = trim($_POST['email'] ?? '');
+        $numbi = trim($_POST['numbi'] ?? '');
+        
+        if (!$id) { echo json_encode(['sucesso'=>false,'erro'=>'ID inválido']); exit; }
+        
+        $stmt = $conexao->prepare("UPDATE morador SET nome=?, telefone=?, email=?, numbi=? WHERE id=?");
+        $stmt->bind_param("sssssi", $nome, $telefone, $email, $numbi, $id);
+        if ($stmt->execute()) {
+            echo json_encode(['sucesso' => true]);
+        } else {
+            echo json_encode(['sucesso' => false, 'erro' => $stmt->error]);
+        }
+        $stmt->close();
+        break;
+
+    case 'atualizar_admin':
+        $id = intval($_POST['id'] ?? 0);
+        $nome = trim($_POST['nome'] ?? '');
+        $email = trim($_POST['email'] ?? '');
+        $funcao = trim($_POST['funcao'] ?? '');
+        $activo = isset($_POST['activo']) ? 1 : 0;
+        
+        if (!$id) { echo json_encode(['sucesso'=>false,'erro'=>'ID inválido']); exit; }
+        
+        $stmt = $conexao->prepare("UPDATE administrador SET nome=?, email=?, funcao=?, activo=? WHERE id=?");
+        $stmt->bind_param("sssii", $nome, $email, $funcao, $activo, $id);
+        if ($stmt->execute()) {
+            echo json_encode(['sucesso' => true]);
+        } else {
+            echo json_encode(['sucesso' => false, 'erro' => $stmt->error]);
+        }
+        $stmt->close();
         break;
 
     case 'eliminar_admin':

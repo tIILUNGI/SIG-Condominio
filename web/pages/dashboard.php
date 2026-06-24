@@ -79,6 +79,10 @@ $nome_cond = htmlspecialchars($cond['nome'] ?? 'Condomínio Nosso Zimbo');
     <button class="nav-item" onclick="switchTab('relatorio', this)">
       <i class="fa-solid fa-chart-pie"></i><span>Relatório Mensal</span>
     </button>
+    <p class="nav-section">Ajustes</p>
+    <button class="nav-item" onclick="window.location.href='meu_perfil.php'">
+      <i class="fa-solid fa-user-gear"></i><span>Meu Perfil</span>
+    </button>
   </nav>
   <div class="sidebar-footer">
     <div class="avatar-admin"><?= strtoupper(substr($nome_admin, 0, 2)) ?></div>
@@ -208,7 +212,7 @@ $nome_cond = htmlspecialchars($cond['nome'] ?? 'Condomínio Nosso Zimbo');
       <div class="card">
         <div class="card-head"><p class="card-title"><i class="fa-solid fa-list"></i> Funcionários Registados</p></div>
         <div style="overflow-x:auto;">
-          <table class="data-table"><thead><tr><th>Nome</th><th>BI</th><th>Função</th><th>Email</th><th>Estado</th></tr></thead>
+          <table class="data-table"><thead><tr><th>Nome</th><th>BI</th><th>Função</th><th>Email</th><th>Estado</th><th>Acção</th></tr></thead>
           <tbody id="func-tbody"><tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--text-muted);">A carregar...</td></tr></tbody></table>
         </div>
       </div>
@@ -264,7 +268,7 @@ $nome_cond = htmlspecialchars($cond['nome'] ?? 'Condomínio Nosso Zimbo');
       <div class="card">
         <div class="card-head"><p class="card-title"><i class="fa-solid fa-list"></i> Moradores Registados</p></div>
         <div style="overflow-x:auto;">
-          <table class="data-table"><thead><tr><th>Nome</th><th>BI</th><th>Apartamento</th><th>Telefone</th><th>Email</th><th>Estado</th></tr></thead>
+          <table class="data-table"><thead><tr><th>Nome</th><th>BI</th><th>Apartamento</th><th>Telefone</th><th>Email</th><th>Estado</th><th>Acção</th></tr></thead>
           <tbody id="corpoTabela"><tr><td colspan="6" style="text-align:center;padding:2rem;color:var(--text-muted);">A carregar...</td></tr></tbody></table>
         </div>
       </div>
@@ -340,8 +344,8 @@ $nome_cond = htmlspecialchars($cond['nome'] ?? 'Condomínio Nosso Zimbo');
       </div>
       <div style="overflow-x:auto;">
         <table class="data-table">
-          <thead><tr><th>Morador</th><th>Apartamento</th><th>Valor</th><th>Método</th><th>Data</th><th>Estado</th><th>Ação</th></tr></thead>
-          <tbody id="pays-tbody"><tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--text-muted);">A carregar...</td></tr></tbody>
+          <thead><tr><th>Morador</th><th>Apartamento</th><th>Valor</th><th>Método</th><th>Recibo</th><th>Data</th><th>Estado</th><th>Ação</th></tr></thead>
+          <tbody id="pays-tbody"><tr><td colspan="8" style="text-align:center;padding:2rem;color:var(--text-muted);">A carregar...</td></tr></tbody>
         </table>
       </div>
     </div>
@@ -600,6 +604,13 @@ function carregarMoradores() {
         <td>${m.telefone}</td>
         <td>${m.email}</td>
         <td><span class="${m.estado_conta==='Activo'?'badge-ok':'badge-err'}">${m.estado_conta}</span></td>
+<td>
+           <div style="display:flex;gap:.4rem;">
+             <button class="btn-secondary btn-sm" onclick="verMorador(${JSON.stringify(m)})" title="Ver"><i class="fa-solid fa-eye"></i></button>
+             <button class="btn-secondary btn-sm" onclick="editarMorador(${JSON.stringify(m)})" title="Editar"><i class="fa-solid fa-pen"></i></button>
+             <button class="btn-danger btn-sm" onclick="eliminarMorador(${m.id})" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+           </div>
+         </td>
       </tr>`).join('');
     document.getElementById('badge-reg').textContent = d.dados.length;
   }).catch(() => {});
@@ -618,6 +629,13 @@ function carregarFuncionarios() {
         <td>${a.funcao}</td>
         <td>${a.email}</td>
         <td><span class="${a.activo?'badge-ok':'badge-err'}">${a.activo?'Activo':'Inactivo'}</span></td>
+<td>
+           <div style="display:flex;gap:.4rem;">
+             <button class="btn-secondary btn-sm" onclick="verFuncionario(${JSON.stringify(a)})" title="Ver"><i class="fa-solid fa-eye"></i></button>
+             <button class="btn-secondary btn-sm" onclick="editarFuncionario(${JSON.stringify(a)})" title="Editar"><i class="fa-solid fa-pen"></i></button>
+             <button class="btn-danger btn-sm" onclick="eliminarFuncionario(${a.id})" title="Eliminar"><i class="fa-solid fa-trash"></i></button>
+           </div>
+         </td>
       </tr>`).join('');
     document.getElementById('badge-pedidos').textContent = d.dados.length;
   }).catch(() => {});
@@ -631,20 +649,27 @@ function carregarPagamentos() {
     const tb = document.getElementById('pays-tbody');
     if (!d.sucesso || !d.dados.length) { tb.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--text-muted);">Sem pagamentos submetidos</td></tr>'; return; }
     const bc = { confirmado:'badge-ok', pendente:'badge-warn', rejeitado:'badge-err' };
-    tb.innerHTML = d.dados.map(p => `
+    tb.innerHTML = d.dados.map(p => {
+      const reciboLink = p.recibo_path
+        ? `<a href="../${p.recibo_path}" target="_blank" rel="noopener" style="color:var(--gold);font-weight:800;">Ver</a>`
+        : `<span style="color:#888;font-weight:700;">—</span>`;
+
+      return `
       <tr>
         <td>${p.morador}</td>
         <td>${p.apartamento||'—'}</td>
         <td>${fmt(p.valor_pago)} Kz</td>
         <td>${p.metodo}</td>
-        <td>${new Date(p.data_pagamento).toLocaleDateString('pt-AO')}</td>
+        <td>${reciboLink}</td>
+        <td>${p.data_pagamento ? new Date(p.data_pagamento).toLocaleDateString('pt-AO') : '—'}</td>
         <td><span class="${bc[p.estado]||'badge-info'}">${p.estado}</span></td>
         <td>
           ${p.estado==='pendente' ? `
           <button class="btn-primary btn-sm" onclick="confirmarPag(${p.id},'confirmado')"><i class="fa-solid fa-check"></i></button>
           <button class="btn-secondary btn-sm" onclick="confirmarPag(${p.id},'rejeitado')"><i class="fa-solid fa-xmark"></i></button>` : '—'}
         </td>
-      </tr>`).join('');
+      </tr>`;
+    }).join('');
   }).catch(() => {});
 }
 
@@ -789,6 +814,171 @@ style.textContent = `
   .btn-sm { padding:.3rem .65rem; font-size:.78rem; }
 `;
 document.head.appendChild(style);
+
+// ═══════════════════════════════════════════════════════════
+// MODAL CRUD - MORADORES
+// ═══════════════════════════════════════════════════════════
+let moradorAtualId = null;
+let funcionarioAtualId = null;
+
+function verMorador(m) {
+  moradorAtualId = m.id;
+  document.getElementById('view-morador-nome').textContent = m.nome || '—';
+  document.getElementById('view-morador-numbi').textContent = m.numbi || '—';
+  document.getElementById('view-morador-telefone').textContent = m.telefone || '—';
+  document.getElementById('view-morador-email').textContent = m.email || '—';
+  document.getElementById('view-morador-apartamento').textContent = m.apartamento || '—';
+  document.getElementById('view-morador-estado').textContent = m.estado_conta || '—';
+  document.getElementById('modal-view-morador').classList.add('open');
+}
+
+function editarMorador(m) {
+  moradorAtualId = m.id;
+  document.getElementById('edit-morador-nome').value = m.nome || '';
+  document.getElementById('edit-morador-numbi').value = m.numbi || '';
+  document.getElementById('edit-morador-telefone').value = m.telefone || '';
+  document.getElementById('edit-morador-email').value = m.email || '';
+  document.getElementById('modal-edit-morador').classList.add('open');
+}
+
+async function salvarMorador() {
+  if (!moradorAtualId) return;
+  const res = await apiPost('atualizar_morador', {
+    id: moradorAtualId,
+    nome: document.getElementById('edit-morador-nome').value,
+    numbi: document.getElementById('edit-morador-numbi').value,
+    telefone: document.getElementById('edit-morador-telefone').value,
+    email: document.getElementById('edit-morador-email').value
+  });
+  if (res.sucesso) { showToast('Morador actualizado!'); fecharModal('modal-edit-morador'); carregarMoradores(); }
+  else showToast(res.erro || 'Erro ao actualizar', true);
+}
+
+async function eliminarMorador(id) {
+  if (!confirm('Eliminar este morador?')) return;
+  const res = await apiPost('eliminar_morador', { id });
+  if (res.sucesso) { showToast('Morador eliminado!'); carregarMoradores(); carregarDashboard(); }
+  else showToast(res.erro || 'Erro ao eliminar', true);
+}
+
+// ═══════════════════════════════════════════════════════════
+// MODAL CRUD - FUNCIONÁRIOS
+// ═══════════════════════════════════════════════════════════
+
+function verFuncionario(a) {
+  funcionarioAtualId = a.id;
+  document.getElementById('view-funcionario-nome').textContent = a.nome || '—';
+  document.getElementById('view-funcionario-email').textContent = a.email || '—';
+  document.getElementById('view-funcionario-funcao').textContent = a.funcao || '—';
+  document.getElementById('view-funcionario-activo').textContent = a.activo ? 'Activo' : 'Inactivo';
+  document.getElementById('modal-view-funcionario').classList.add('open');
+}
+
+function editarFuncionario(a) {
+  funcionarioAtualId = a.id;
+  document.getElementById('edit-funcionario-nome').value = a.nome || '';
+  document.getElementById('edit-funcionario-email').value = a.email || '';
+  document.getElementById('edit-funcionario-funcao').value = a.funcao || '';
+  document.getElementById('edit-funcionario-activo').checked = !!a.activo;
+  document.getElementById('modal-edit-funcionario').classList.add('open');
+}
+
+async function salvarFuncionario() {
+  if (!funcionarioAtualId) return;
+  const fd = new FormData();
+  fd.append('id', funcionarioAtualId);
+  fd.append('nome', document.getElementById('edit-funcionario-nome').value);
+  fd.append('email', document.getElementById('edit-funcionario-email').value);
+  fd.append('funcao', document.getElementById('edit-funcionario-funcao').value);
+  fd.append('activo', document.getElementById('edit-funcionario-activo').checked ? 1 : 0);
+  const res = await apiPost('atualizar_admin', fd);
+  if (res.sucesso) { showToast('Funcionário actualizado!'); fecharModal('modal-edit-funcionario'); carregarFuncionarios(); }
+  else showToast(res.erro || 'Erro ao actualizar', true);
+}
+
+async function eliminarFuncionario(id) {
+  if (!confirm('Eliminar este funcionário?')) return;
+  const res = await apiPost('eliminar_admin', { id });
+  if (res.sucesso) { showToast('Funcionário eliminado!'); carregarFuncionarios(); }
+  else showToast(res.erro || 'Erro ao eliminar', true);
+}
+
+function fecharModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
 </script>
+
+<!-- ── MODAL Ver Morador ── -->
+<div class="modal-overlay" id="modal-view-morador">
+  <div class="modal-box">
+    <button class="modal-close" onclick="fecharModal('modal-view-morador')"><i class="fa-solid fa-xmark"></i></button>
+    <h2 class="modal-title">Detalhes do Morador</h2>
+    <div class="form-grid" style="gap:.75rem;">
+      <div><strong>Nome:</strong> <span id="view-morador-nome">—</span></div>
+      <div><strong>Nº BI:</strong> <span id="view-morador-numbi">—</span></div>
+      <div><strong>Telefone:</strong> <span id="view-morador-telefone">—</span></div>
+      <div><strong>Email:</strong> <span id="view-morador-email">—</span></div>
+      <div><strong>Apartamento:</strong> <span id="view-morador-apartamento">—</span></div>
+      <div><strong>Estado:</strong> <span id="view-morador-estado">—</span></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary btn-sm" onclick="fecharModal('modal-view-morador')"><i class="fa-solid fa-xmark"></i> Fechar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODAL Editar Morador ── -->
+<div class="modal-overlay" id="modal-edit-morador">
+  <div class="modal-box">
+    <button class="modal-close" onclick="fecharModal('modal-edit-morador')"><i class="fa-solid fa-xmark"></i></button>
+    <h2 class="modal-title">Editar Morador</h2>
+    <div class="form-grid">
+      <div class="form-group"><label>Nome</label><input type="text" id="edit-morador-nome"></div>
+      <div class="form-group"><label>Nº BI</label><input type="text" id="edit-morador-numbi"></div>
+      <div class="form-group"><label>Telefone</label><input type="tel" id="edit-morador-telefone"></div>
+      <div class="form-group"><label>Email</label><input type="email" id="edit-morador-email"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary btn-sm" onclick="fecharModal('modal-edit-morador')"><i class="fa-solid fa-xmark"></i> Cancelar</button>
+      <button class="btn-primary btn-sm" onclick="salvarMorador()"><i class="fa-solid fa-floppy-disk"></i> Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODAL Ver Funcionário ── -->
+<div class="modal-overlay" id="modal-view-funcionario">
+  <div class="modal-box">
+    <button class="modal-close" onclick="fecharModal('modal-view-funcionario')"><i class="fa-solid fa-xmark"></i></button>
+    <h2 class="modal-title">Detalhes do Funcionário</h2>
+    <div class="form-grid" style="gap:.75rem;">
+      <div><strong>Nome:</strong> <span id="view-funcionario-nome">—</span></div>
+      <div><strong>Email:</strong> <span id="view-funcionario-email">—</span></div>
+      <div><strong>Função:</strong> <span id="view-funcionario-funcao">—</span></div>
+      <div><strong>Estado:</strong> <span id="view-funcionario-activo">—</span></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary btn-sm" onclick="fecharModal('modal-view-funcionario')"><i class="fa-solid fa-xmark"></i> Fechar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODAL Editar Funcionário ── -->
+<div class="modal-overlay" id="modal-edit-funcionario">
+  <div class="modal-box">
+    <button class="modal-close" onclick="fecharModal('modal-edit-funcionario')"><i class="fa-solid fa-xmark"></i></button>
+    <h2 class="modal-title">Editar Funcionário</h2>
+    <div class="form-grid">
+      <div class="form-group"><label>Nome</label><input type="text" id="edit-funcionario-nome"></div>
+      <div class="form-group"><label>Email</label><input type="email" id="edit-funcionario-email"></div>
+      <div class="form-group"><label>Função</label><input type="text" id="edit-funcionario-funcao"></div>
+      <div class="form-group"><label style="display:flex;align-items:center;gap:.5rem;cursor:pointer;"><input type="checkbox" id="edit-funcionario-activo"> Ativo</label></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary btn-sm" onclick="fecharModal('modal-edit-funcionario')"><i class="fa-solid fa-xmark"></i> Cancelar</button>
+      <button class="btn-primary btn-sm" onclick="salvarFuncionario()"><i class="fa-solid fa-floppy-disk"></i> Salvar</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

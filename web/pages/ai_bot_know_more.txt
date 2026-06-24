@@ -1,0 +1,35 @@
+Nosso Zimbo — Base de conhecimento (local, sem internet)
+
+1) Sobre o condomínio
+- Nome: Condomínio Nosso Zimbo
+- Local: Viana, Luanda, Angola (referência do sistema)
+- Valores base (referência): Quota mensal 140.000 Kz (a página de informação usa este valor como default)
+
+2) Mensalidades (procedimento)
+- O morador vê em "Mensalidades" as quotas em estado 'pendente' ou 'atrasado'.
+- Clicando em "Pagar" abre "pagar_mensalidade.php?id=...".
+- O morador preenche o comprovativo/recibo com upload:
+  - arquivo obrigatório
+  - mínimo 1MB
+  - aceita: PDF, JPG, PNG
+- Após envio, a mensalidade fica em estado 'pendente' para aprovação do admin.
+- O admin vê "Pagamentos Submetidos" e confirma ou rejeita.
+- Quando aprovado, o admin deve marcar como 'pago'.
+
+3) Endpoints relevantes (interno)
+- Upload do recibo do morador: ../api/upload_recibo_mensalidade.php
+- Página detalhada do pagamento: pagar_mensalidade.php
+- Listagem do histórico do morador: minhas_mensalidades.php
+
+4) Comunicação
+- Existe comunicação para morador em comunicacao.php (chat e comunicados).
+
+5) Faturação/Estados esperados (tabelas do sistema)
+- mensalidade.estado: 'pendente' | 'atrasado' | 'pago'
+- mensalidade_pagamento.estado: 'pendente' | 'confirmado' | 'rejeitado'
+
+6) Contatos (exemplo do sistema)
+- Telefone/apoio: +244 923 000 000 (referência do dashboard)
+
+Regra geral de resposta do bot:
+- Se a pergunta não estiver nesta base, responder que a administração pode ajudar e indicar que a página de Comunicação está disponível.

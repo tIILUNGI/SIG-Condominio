@@ -173,7 +173,7 @@ $nome = $_SESSION['nome'] ?? 'Morador';
                             </td>
                             <td>
                                 <?php if ($pode_pagar): ?>
-                                    <button class="btn btn-pagar" onclick="pagar(<?php echo (int)$m['id']; ?>)">
+                                    <button class="btn btn-pagar" onclick="abrirPagamento(<?php echo (int)$m['id']; ?>)" title="Pagar esta mensalidade">
                                         <i class="fas fa-check"></i> Pagar
                                     </button>
                                 <?php else: ?>
@@ -203,10 +203,9 @@ function toggleSidebar() {
     document.getElementById('sidebar').classList.toggle('open');
 }
 
-function pagar(id) {
-    if (confirm('Confirmar pagamento da mensalidade?')) {
-        window.location.href = 'pagar_mensalidade.php?id=' + id;
-    }
+function abrirPagamento(id){
+    // abre a página/fluxo de pagamento detalhado (com envio de recibo)
+    window.location.href = 'pagar_mensalidade.php?id=' + id;
 }
 
 function clock() {

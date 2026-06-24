@@ -3,89 +3,266 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Condomínio Nosso Zimbo - Gestão de Pagamentos</title>
+<title>Condomínio Nosso Zimbo - Informações Financeiras</title>
 <link rel="stylesheet" href="../css/index.css">
+<link rel="stylesheet" href="../css/nosso-zimbo-admin.css">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 <body>
-<!-- NAVBAR -->
 <div class="navbar">
     <div class="logo">Condomínio Nosso Zimbo</div>
     <div class="nav-links">
         <a href="../index.html">Início</a>
         <a href="../sobre.html">Sobre nós</a>
         <a href="../login.html">Login</a>
-        <a href="morador-gest.html">Pagamentos</a>
+        <a href="morador-gest.html" class="active">Informações</a>
     </div>
 </div>
 
 <section class="principal">
     <div>
-        <h1 class="text">Gestão de Pagamentos</h1>
-        <p>Aqui pode gerenciar as suas mensalidades e ver histórico de pagamentos.</p>
+        <h1 class="text">Informações Financeiras</h1>
+        <p>Dados e valores referentes à renda, preços de entrada e informações financeiras do condomínio.</p>
     </div>
 </section>
 
 <section style="padding:2rem; max-width:1200px; margin:0 auto;">
-    <h2>Histórico de Mensalidades</h2>
-    <table class="data-table" style="width:100%; margin-top:1rem;">
-        <thead>
-            <tr>
-                <th>Mês</th>
-                <th>Ano</th>
-                <th>Valor</th>
-                <th>Serviço</th>
-                <th>Estado</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td>Janeiro</td>
-                <td>2025</td>
-                <td>140.000,00 Kz</td>
-                <td>Quota Condominal</td>
-                <td><span style="color:green; font-weight:bold;">Pago</span></td>
-            </tr>
-            <tr>
-                <td>Fevereiro</td>
-                <td>2025</td>
-                <td>140.000,00 Kz</td>
-                <td>Quota Condominal</td>
-                <td><span style="color:red; font-weight:bold;">Pendente</span></td>
-            </tr>
-            <tr>
-                <td>Março</td>
-                <td>2025</td>
-                <td>140.000,00 Kz</td>
-                <td>Quota Condominal</td>
-                <td><span style="color:red; font-weight:bold;">Pendente</span></td>
-            </tr>
-        </tbody>
-    </table>
-    
-    <h2 style="margin-top:2rem;">Pagar Mensalidade</h2>
-    <form action="../pagar.php" method="POST" style="margin-top:1rem;">
-        <div class="form-group">
-            <label>Selecione a Mês a pagar:</label>
-            <select name="id" required>
-                <option value="">-- Selecione --</option>
-                <option value="1">Janeiro 2025 - 140.000,00 Kz</option>
-                <option value="2">Fevereiro 2025 - 140.000,00 Kz</option>
-                <option value="3">Março 2025 - 140.000,00 Kz</option>
-            </select>
+    <h2 style="margin-bottom:1.5rem; color:var(--gold);"><i class="fa-solid fa-sack-dollar"></i> Valores de Renda</h2>
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); gap:1.5rem; margin-bottom:2rem;">
+        <div class="card" style="padding:1.5rem; text-align:center;">
+            <div style="font-size:2.5rem; color:var(--gold); margin-bottom:.5rem;"><i class="fa-solid fa-home"></i></div>
+            <h3 style="font-size:1.2rem; margin-bottom:.5rem;">Renda Mensal</h3>
+            <p style="font-size:2rem; font-weight:800; color:var(--text);">140.000,00 Kz</p>
+            <p style="color:var(--text-muted); font-size:.9rem;">Quota condominal mensal</p>
         </div>
-        <button type="submit" name="pagar" class="btn-primary" style="margin-top:1rem;">Pagar Agora</button>
-    </form>
+        <div class="card" style="padding:1.5rem; text-align:center;">
+            <div style="font-size:2.5rem; color:var(--gold); margin-bottom:.5rem;"><i class="fa-solid fa-building"></i></div>
+            <h3 style="font-size:1.2rem; margin-bottom:.5rem;">Taxa de Serviços</h3>
+            <p style="font-size:2rem; font-weight:800; color:var(--text);">15.000,00 Kz</p>
+            <p style="color:var(--text-muted); font-size:.9rem;">Água, electricidade, limpeza</p>
+        </div>
+        <div class="card" style="padding:1.5rem; text-align:center;">
+            <div style="font-size:2.5rem; color:var(--gold); margin-bottom:.5rem;"><i class="fa-solid fa-shield-halved"></i></div>
+            <h3 style="font-size:1.2rem; margin-bottom:.5rem;">Segurança</h3>
+            <p style="font-size:2rem; font-weight:800; color:var(--text);">25.000,00 Kz</p>
+            <p style="color:var(--text-muted); font-size:.9rem;">Vigilância 24h</p>
+        </div>
+        <div class="card" style="padding:1.5rem; text-align:center;">
+            <div style="font-size:2.5rem; color:var(--gold); margin-bottom:.5rem;"><i class="fa-solid fa-bolt"></i></div>
+            <h3 style="font-size:1.2rem; margin-bottom:.5rem;">Manutenção</h3>
+            <p style="font-size:2rem; font-weight:800; color:var(--text);">10.000,00 Kz</p>
+            <p style="color:var(--text-muted); font-size:.9rem;">Pequenos reparos</p>
+        </div>
+    </div>
+
+    <h2 style="margin-bottom:1rem; color:var(--gold);"><i class="fa-solid fa-key"></i> Preços de Entrada para Compra de Imóveis</h2>
+    <div style="overflow-x:auto; margin-bottom:2rem;">
+        <table class="data-table" style="width:100%;">
+            <thead>
+                <tr>
+                    <th>Tipologia</th>
+                    <th>Área (m²)</th>
+                    <th>Preço de Entrada</th>
+                    <th>Parcelamento Mínimo</th>
+                    <th>Prazo Máximo</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>T1</strong></td>
+                    <td>55 m²</td>
+                    <td>1.200.000,00 Kz</td>
+                    <td>150.000,00 Kz</td>
+                    <td>6 meses</td>
+                </tr>
+                <tr>
+                    <td><strong>T2</strong></td>
+                    <td>75 m²</td>
+                    <td>1.800.000,00 Kz</td>
+                    <td>200.000,00 Kz</td>
+                    <td>8 meses</td>
+                </tr>
+                <tr>
+                    <td><strong>T3</strong></td>
+                    <td>100 m²</td>
+                    <td>2.500.000,00 Kz</td>
+                    <td>300.000,00 Kz</td>
+                    <td>12 meses</td>
+                </tr>
+                <tr>
+                    <td><strong>T4</strong></td>
+                    <td>130 m²</td>
+                    <td>3.200.000,00 Kz</td>
+                    <td>400.000,00 Kz</td>
+                    <td>15 meses</td>
+                </tr>
+                <tr>
+                    <td><strong>T5</strong></td>
+                    <td>180 m²</td>
+                    <td>4.500.000,00 Kz</td>
+                    <td>500.000,00 Kz</td>
+                    <td>18 meses</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h2 style="margin-bottom:1rem; color:var(--gold);"><i class="fa-solid fa-receipt"></i> Taxas e Comissões</h2>
+    <div style="overflow-x:auto; margin-bottom:2rem;">
+        <table class="data-table" style="width:100%;">
+            <thead>
+                <tr>
+                    <th>Descrição</th>
+                    <th>Valor</th>
+                    <th>Observações</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Taxa de Fiança</td>
+                    <td>50.000,00 Kz</td>
+                    <td>Devolução ao fim do contrato</td>
+                </tr>
+                <tr>
+                    <td>Taxa de Administração</td>
+                    <td>100.000,00 Kz</td>
+                    <td>Paga no primeiro mês</td>
+                </tr>
+                <tr>
+                    <td>Taxa de Cancelamento Antecipado</td>
+                    <td>150.000,00 Kz</td>
+                    <td>Mínimo 30 dias de aviso</td>
+                </tr>
+                <tr>
+                    <td>Taxa de Reembolso de Reclamações</td>
+                    <td>Isenta</td>
+                    <td>Até 30 dias após entrada</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h2 style="margin-bottom:1rem; color:var(--gold);"><i class="fa-solid fa-chart-line"></i> Como Ler os Valores</h2>
+    <div class="card" style="padding:1.5rem; margin-bottom:2rem;">
+        <ul style="line-height:2; color:var(--text-muted);">
+            <li><strong>Kz</strong> - Kwanza Angolana (moeda oficial de Angola)</li>
+            <li>Os valores estão sujeitos a alterações conforme o mercado imobiliário</li>
+            <li>Pagamentos podem ser feitos via transferência bancária ou depósito</li>
+            <li>Contacte a administração para mais informações sobre preços atualizados</li>
+        </ul>
+    </div>
 </section>
 
-<!-- FOOTER -->
-<footer class="footer">
+<!-- BOT/IA LOCAL (sem internet) - Mensalidades/Condomínio -->
+<section style="padding:2rem; max-width:1200px; margin:0 auto; display:grid; grid-template-columns:1fr; gap:1rem;">
+  <div class="card" style="padding:1.5rem;">
+    <div class="card-head" style="margin-bottom:1rem;">
+      <p class="card-title"><i class="fa-solid fa-robot"></i> Assistente (IA local) — Pergunte sobre mensalidades</p>
+    </div>
+
+    <div style="display:grid; grid-template-columns:1fr 0.8fr; gap:1rem; align-items:start;">
+      <div>
+        <div style="height:260px; overflow-y:auto; padding:1rem; border:1px solid var(--border); border-radius:12px; background:var(--surface);" id="bot-chat">
+          <div style="color:var(--text-muted); font-weight:700;">Olá! Pergunte sobre como pagar mensalidade, o que é pendente/atrasado, ou como funciona o upload do recibo.</div>
+        </div>
+        <div style="display:flex; gap:.75rem; margin-top:1rem;">
+          <input id="bot-input" type="text" placeholder="Escreva a sua pergunta..." style="flex:1; background:var(--dark3); border:1px solid var(--border); color:var(--text); padding:.75rem 1rem; border-radius:10px; outline:none;" />
+          <button id="bot-send" class="btn-primary" style="padding:.75rem 1rem; white-space:nowrap;"><i class="fa-solid fa-paper-plane"></i> Enviar</button>
+        </div>
+      </div>
+
+      <div style="border:1px dashed var(--border); border-radius:12px; padding:1rem; background:rgba(180,145,74,0.03);">
+        <div style="font-weight:900; margin-bottom:.5rem; color:var(--gold);">Sugestões rápidas</div>
+        <div style="display:flex; flex-direction:column; gap:.5rem;">
+          <button class="btn-secondary btn-sm" onclick="botAsk('Como faço para pagar a mensalidade?')">Como pagar?</button>
+          <button class="btn-secondary btn-sm" onclick="botAsk('O que significa pendente e pago?')">Pendente vs Pago</button>
+          <button class="btn-secondary btn-sm" onclick="botAsk('Qual é o tamanho mínimo do recibo?')">Tamanho mínimo do recibo</button>
+          <button class="btn-secondary btn-sm" onclick="botAsk('Eu envio o recibo e o que acontece depois?')">Depois do upload</button>
+          <button class="btn-secondary btn-sm" onclick="botAsk('Onde posso falar com a administração?')">Falar com admin</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+// IA local (sem internet) para responder perguntas com base em texto (ai_bot_know_more.txt)
+function botAsk(q){
+  const input = document.getElementById('bot-input');
+  if(input) input.value = q;
+  botSend();
+}
+
+async function botSend(){
+  const input = document.getElementById('bot-input');
+  const chat = document.getElementById('bot-chat');
+  if(!input || !chat) return;
+
+  const question = (input.value || '').trim();
+  if(!question) return;
+  input.value = '';
+
+  chat.innerHTML += `\n    <div style="margin:6px 0; text-align:right;">\n      <span style="display:inline-block;background:rgba(180,145,74,.15);border:1px solid var(--border);padding:8px 10px;border-radius:10px;max-width:90%;">${escapeHtml(question)}</span>\n    </div>`;
+
+  let answer = '';
+  try{
+    const res = await fetch('./ai_bot_know_more.txt');
+    const txt = await res.text();
+
+    const q = question.toLowerCase();
+
+    // Regras simples (keyword-based) usando o conhecimento local
+    if(q.includes('pagar') && q.includes('mensal')){
+      answer = 'Para pagar: vá em "Mensalidades" → clique em "Pagar" na mensalidade pendente/atrasada → na página do pagamento faça upload do recibo (mín. 1MB) → envia para aprovação do admin.';
+    } else if(q.includes('pendente') || q.includes('atrasado')){
+      answer = 'Pendente/atrasado significa que a mensalidade ainda não foi confirmada pelo admin. Após o upload do recibo, ela fica pendente e o admin aprova/rejeita.';
+    } else if(q.includes('tamanho') && q.includes('recibo')){
+      answer = 'O recibo/comprovativo deve ter pelo menos 1MB. Aceita PDF, JPG ou PNG.';
+    } else if(q.includes('upload') || q.includes('comprovativo') || q.includes('recibo')){
+      answer = 'Depois do upload: o sistema guarda o recibo, marca a mensalidade como "pendente" e o admin vai analisar em "Pagamentos Submetidos".';
+    } else if(q.includes('admin') || q.includes('comunica') || q.includes('fala')){
+      answer = 'Pode falar com a administração pela página de Comunicação (no menu do morador) ou aguardar a aprovação em Mensalidades. Se for algo urgente, use a Comunicação.';
+    } else if(q.includes('iban') || q.includes('bai')){
+      answer = 'O IBAN/BAI para transferência fica na página do pagamento (pagar_mensalidade.php) dentro do cartão do comprovativo.';
+    } else if(q.includes('onde') && q.includes('mensalidades')){
+      answer = 'As mensalidades ficam no menu do morador em "Mensalidades".';
+    } else {
+      // fallback: tenta buscar frases relevantes no texto local
+      answer = 'Para essa dúvida, consulte a secção de Mensalidades no site ou a página de Comunicação. Se precisar, a administração pode ajudar.';
+    }
+
+  } catch(e){
+    answer = 'Erro ao carregar conhecimento local. Tente novamente.';
+  }
+
+  chat.innerHTML += `\n    <div style="margin:6px 0; text-align:left;">\n      <span style="display:inline-block;background:var(--dark4);border:1px solid var(--border);color:var(--text);padding:8px 10px;border-radius:10px;max-width:90%;">${escapeHtml(answer)}</span>\n    </div>`;
+
+  chat.scrollTop = chat.scrollHeight;
+}
+
+function escapeHtml(str){
+  return String(str)
+    .replaceAll('&','&amp;')
+    .replaceAll('<','<')
+    .replaceAll('>','>')
+    .replaceAll('"','"')
+    .replaceAll("'",'&#039;');
+}
+
+window.addEventListener('DOMContentLoaded', ()=>{
+  const btn = document.getElementById('bot-send');
+  const inp = document.getElementById('bot-input');
+  if(btn) btn.addEventListener('click', (e)=>{e.preventDefault(); botSend();});
+  if(inp) inp.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ e.preventDefault(); botSend(); } });
+});
+</script>
+
+<div class="footer">
     <div>
         <h3>Links úteis</h3>
-        <a href="#">Início</a>
-        <a href="#">Sobre nós</a>
-        <a href="#">Serviços</a>
-        <a href="#">Contato</a>
+        <a href="../index.html">Início</a>
+        <a href="../sobre.html">Sobre nós</a>
+        <a href="../login.html">Login</a>
     </div>
     <div>
         <h3>Sobre nós</h3>
@@ -96,7 +273,48 @@
         <p>Email: contato@condominionossozimbo.com</p>
         <p>Telefone: +244 931 612 489</p>
     </div>
-</footer>
+</div>
 <script src="../js/index.js"></script>
+<style>
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: .9rem;
+    }
+    .data-table th {
+        background: var(--gold);
+        color: #000;
+        padding: 1rem;
+        text-align: left;
+        font-weight: 600;
+    }
+    .data-table td {
+        padding: 1rem;
+        border-bottom: 1px solid var(--border);
+    }
+    .data-table tr:hover {
+        background: rgba(180, 145, 74, 0.05);
+    }
+    .card {
+        background: var(--surface);
+        border-radius: 12px;
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border);
+    }
+    :root {
+        --gold: #b4914a;
+        --surface: #ffffff;
+        --border: #e2e8f0;
+        --text: #1e293b;
+        --text-muted: #64748b;
+        --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+    [data-theme="dark"] {
+        --surface: #1e293b;
+        --border: #334155;
+        --text: #f1f5f9;
+        --text-muted: #94a3b8;
+    }
+</style>
 </body>
 </html>
