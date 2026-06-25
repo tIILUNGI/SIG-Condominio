@@ -81,31 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao'])) {
     </script>
 </head>
 <body>
-<aside class="sidebar" id="sidebar">
-    <div class="sidebar-brand">
-        <div class="brand-icon"><i class="fa-solid fa-building-columns"></i></div>
-        <div>
-            <p class="brand-name">Nosso Zimbo</p>
-            <p class="brand-sub">Administrativo</p>
-        </div>
-    </div>
-    <nav class="sidebar-nav">
-        <button class="nav-item" onclick="window.location.href='../dashboard.php'">
-            <i class="fa-solid fa-gauge-high"></i><span>Dashboard</span>
-        </button>
-        <button class="nav-item active">
-            <i class="fa-solid fa-user-shield"></i><span>Meu Perfil</span>
-        </button>
-    </nav>
-    <div class="sidebar-footer">
-        <div class="avatar-admin"><?php echo strtoupper(substr($admin_nome, 0, 2)); ?></div>
-        <div style="flex:1;">
-            <p class="af-name"><?php echo htmlspecialchars($admin_nome); ?></p>
-            <p class="af-role"><?php echo ucfirst($_SESSION['tipo']); ?></p>
-        </div>
-        <a href="../api/logout.php" title="Sair" style="color:var(--text-muted); font-size:1rem;"><i class="fa-solid fa-right-from-bracket"></i></a>
-    </div>
-</aside>
+<?php include('sidebar_admin.php'); ?>
 
 <main class="main-content">
     <header class="topbar">

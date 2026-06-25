@@ -1,0 +1,83 @@
+[25-Jun-2026 11:58:23 UTC] [2026-06-25 11:58:23] === TENTATIVA DE LOGIN ADMIN ===
+[25-Jun-2026 11:58:23 UTC] [2026-06-25 11:58:23] BI recebido: '000000000' | Senha recebida: (não exibida por segurança)
+[25-Jun-2026 11:58:23 UTC] [2026-06-25 11:58:23] ✅ Conexão com BD estabelecida
+[25-Jun-2026 11:58:23 UTC] [2026-06-25 11:58:23] Query executada - Registros encontrados: 1
+[25-Jun-2026 11:58:23 UTC] [2026-06-25 11:58:23] Admin encontrado:
+[25-Jun-2026 11:58:23 UTC] [2026-06-25 11:58:23]   ID: 1
+[25-Jun-2026 11:58:23 UTC] [2026-06-25 11:58:23]   Nome: Administrador Principal
+[25-Jun-2026 11:58:23 UTC] [2026-06-25 11:58:23]   BI: 000000000
+[25-Jun-2026 11:58:23 UTC] [2026-06-25 11:58:23]   Función: Super Admin
+[25-Jun-2026 11:58:23 UTC] [2026-06-25 11:58:23]   Activo: SIM
+[25-Jun-2026 11:58:23 UTC] [2026-06-25 11:58:23] ✅ Conta está ativa
+[25-Jun-2026 11:58:24 UTC] [2026-06-25 11:58:24] Password_verify: TRUE
+[25-Jun-2026 11:58:24 UTC] [2026-06-25 11:58:24] Senha válida: SIM
+[25-Jun-2026 11:58:24 UTC] [2026-06-25 11:58:24] ✅ LOGIN BEM-SUCEDIDO!
+[25-Jun-2026 11:58:24 UTC] [2026-06-25 11:58:24] Sessão criada com sucesso
+[25-Jun-2026 11:58:24 UTC] [2026-06-25 11:58:24] Último login atualizado
+[25-Jun-2026 11:58:24 UTC] [2026-06-25 11:58:24] Redirecionando para dashboard...
+[25-Jun-2026 13:08:14 UTC] [2026-06-25 13:08:14] === TENTATIVA DE LOGIN ADMIN ===
+[25-Jun-2026 13:08:14 UTC] [2026-06-25 13:08:14] BI recebido: '000000000' | Senha recebida: (não exibida por segurança)
+[25-Jun-2026 13:08:14 UTC] [2026-06-25 13:08:14] ✅ Conexão com BD estabelecida
+[25-Jun-2026 13:08:14 UTC] [2026-06-25 13:08:14] Query executada - Registros encontrados: 1
+[25-Jun-2026 13:08:14 UTC] [2026-06-25 13:08:14] Admin encontrado:
+[25-Jun-2026 13:08:14 UTC] [2026-06-25 13:08:14]   ID: 1
+[25-Jun-2026 13:08:14 UTC] [2026-06-25 13:08:14]   Nome: Administrador Principal
+[25-Jun-2026 13:08:14 UTC] [2026-06-25 13:08:14]   BI: 000000000
+[25-Jun-2026 13:08:14 UTC] [2026-06-25 13:08:14]   Función: Super Admin
+[25-Jun-2026 13:08:14 UTC] [2026-06-25 13:08:14]   Activo: SIM
+[25-Jun-2026 13:08:14 UTC] [2026-06-25 13:08:14] ✅ Conta está ativa
+[25-Jun-2026 13:08:15 UTC] [2026-06-25 13:08:15] Password_verify: TRUE
+[25-Jun-2026 13:08:15 UTC] [2026-06-25 13:08:15] Senha válida: SIM
+[25-Jun-2026 13:08:15 UTC] [2026-06-25 13:08:15] ✅ LOGIN BEM-SUCEDIDO!
+[25-Jun-2026 13:08:15 UTC] [2026-06-25 13:08:15] Sessão criada com sucesso
+[25-Jun-2026 13:08:15 UTC] [2026-06-25 13:08:15] Último login atualizado
+[25-Jun-2026 13:08:15 UTC] [2026-06-25 13:08:15] Redirecionando para dashboard...
+[25-Jun-2026 13:20:40 UTC] [2026-06-25 13:20:40] === TENTATIVA DE LOGIN ADMIN ===
+[25-Jun-2026 13:20:40 UTC] [2026-06-25 13:20:40] BI recebido: '000000000' | Senha recebida: (não exibida por segurança)
+[25-Jun-2026 13:20:40 UTC] [2026-06-25 13:20:40] ✅ Conexão com BD estabelecida
+[25-Jun-2026 13:20:40 UTC] [2026-06-25 13:20:40] Query executada - Registros encontrados: 1
+[25-Jun-2026 13:20:40 UTC] [2026-06-25 13:20:40] Admin encontrado:
+[25-Jun-2026 13:20:40 UTC] [2026-06-25 13:20:40]   ID: 1
+[25-Jun-2026 13:20:40 UTC] [2026-06-25 13:20:40]   Nome: Administrador Principal
+[25-Jun-2026 13:20:40 UTC] [2026-06-25 13:20:40]   BI: 000000000
+[25-Jun-2026 13:20:40 UTC] [2026-06-25 13:20:40]   Función: Super Admin
+[25-Jun-2026 13:20:40 UTC] [2026-06-25 13:20:40]   Activo: SIM
+[25-Jun-2026 13:20:40 UTC] [2026-06-25 13:20:40] ✅ Conta está ativa
+[25-Jun-2026 13:20:41 UTC] [2026-06-25 13:20:41] Password_verify: TRUE
+[25-Jun-2026 13:20:41 UTC] [2026-06-25 13:20:41] Senha válida: SIM
+[25-Jun-2026 13:20:41 UTC] [2026-06-25 13:20:41] ✅ LOGIN BEM-SUCEDIDO!
+[25-Jun-2026 13:20:41 UTC] [2026-06-25 13:20:41] Sessão criada com sucesso
+[25-Jun-2026 13:20:41 UTC] [2026-06-25 13:20:41] Último login atualizado
+[25-Jun-2026 13:20:41 UTC] [2026-06-25 13:20:41] Redirecionando para dashboard...
+[25-Jun-2026 13:25:30 UTC] [2026-06-25 13:25:30] === TENTATIVA DE LOGIN ADMIN ===
+[25-Jun-2026 13:25:30 UTC] [2026-06-25 13:25:30] BI recebido: '000000000' | Senha recebida: (não exibida por segurança)
+[25-Jun-2026 13:25:30 UTC] [2026-06-25 13:25:30] ✅ Conexão com BD estabelecida
+[25-Jun-2026 13:25:30 UTC] [2026-06-25 13:25:30] Query executada - Registros encontrados: 1
+[25-Jun-2026 13:25:30 UTC] [2026-06-25 13:25:30] Admin encontrado:
+[25-Jun-2026 13:25:30 UTC] [2026-06-25 13:25:30]   ID: 1
+[25-Jun-2026 13:25:30 UTC] [2026-06-25 13:25:30]   Nome: Administrador Principal
+[25-Jun-2026 13:25:30 UTC] [2026-06-25 13:25:30]   BI: 000000000
+[25-Jun-2026 13:25:30 UTC] [2026-06-25 13:25:30]   Función: Super Admin
+[25-Jun-2026 13:25:30 UTC] [2026-06-25 13:25:30]   Activo: SIM
+[25-Jun-2026 13:25:30 UTC] [2026-06-25 13:25:30] ✅ Conta está ativa
+[25-Jun-2026 13:25:31 UTC] [2026-06-25 13:25:31] Password_verify: FALSE
+[25-Jun-2026 13:25:31 UTC] [2026-06-25 13:25:31] Senha válida: NÃO
+[25-Jun-2026 13:25:31 UTC] [2026-06-25 13:25:31] ❌ ERRO: Senha incorreta para BI: 000000000
+[25-Jun-2026 13:25:31 UTC] [2026-06-25 13:25:31] === FIM DA TENTATIVA (FALHA) ===
+[25-Jun-2026 13:25:44 UTC] [2026-06-25 13:25:44] === TENTATIVA DE LOGIN ADMIN ===
+[25-Jun-2026 13:25:44 UTC] [2026-06-25 13:25:44] BI recebido: '000000000' | Senha recebida: (não exibida por segurança)
+[25-Jun-2026 13:25:44 UTC] [2026-06-25 13:25:44] ✅ Conexão com BD estabelecida
+[25-Jun-2026 13:25:44 UTC] [2026-06-25 13:25:44] Query executada - Registros encontrados: 1
+[25-Jun-2026 13:25:44 UTC] [2026-06-25 13:25:44] Admin encontrado:
+[25-Jun-2026 13:25:44 UTC] [2026-06-25 13:25:44]   ID: 1
+[25-Jun-2026 13:25:44 UTC] [2026-06-25 13:25:44]   Nome: Administrador Principal
+[25-Jun-2026 13:25:44 UTC] [2026-06-25 13:25:44]   BI: 000000000
+[25-Jun-2026 13:25:44 UTC] [2026-06-25 13:25:44]   Función: Super Admin
+[25-Jun-2026 13:25:44 UTC] [2026-06-25 13:25:44]   Activo: SIM
+[25-Jun-2026 13:25:44 UTC] [2026-06-25 13:25:44] ✅ Conta está ativa
+[25-Jun-2026 13:25:45 UTC] [2026-06-25 13:25:45] Password_verify: TRUE
+[25-Jun-2026 13:25:45 UTC] [2026-06-25 13:25:45] Senha válida: SIM
+[25-Jun-2026 13:25:45 UTC] [2026-06-25 13:25:45] ✅ LOGIN BEM-SUCEDIDO!
+[25-Jun-2026 13:25:45 UTC] [2026-06-25 13:25:45] Sessão criada com sucesso
+[25-Jun-2026 13:25:45 UTC] [2026-06-25 13:25:45] Último login atualizado
+[25-Jun-2026 13:25:45 UTC] [2026-06-25 13:25:45] Redirecionando para dashboard...

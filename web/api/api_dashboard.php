@@ -277,6 +277,52 @@ switch ($acao) {
         echo json_encode(['sucesso' => true, 'dados' => $rows]);
         break;
 
+    case 'cadastrar_admin':
+        $nome = trim($_POST['nome'] ?? '');
+        $email = trim($_POST['email'] ?? '');
+        $senha = $_POST['senha'] ?? '123456';
+        $funcao = $_POST['funcao'] ?? 'Funcionário';
+        $telefone = $_POST['telefone'] ?? '';
+        $hash = password_hash($senha, PASSWORD_DEFAULT);
+        
+        $stmt = $conexao->prepare("INSERT INTO administrador (nome, email, senha_hash, funcao, telefone, activo) VALUES (?, ?, ?, ?, ?, 1)");
+        $stmt->bind_param("sssss", $nome, $email, $hash, $funcao, $telefone);
+        if ($stmt->execute()) echo json_encode(['sucesso' => true]);
+        else echo json_encode(['sucesso' => false, 'erro' => $stmt->error]);
+        $stmt->close();
+        break;
+
+    case 'cadastrar_morador':
+        $nome = trim($_POST['nome'] ?? '');
+        $email = trim($_POST['email'] ?? '');
+        $senha = $_POST['senha'] ?? '123456';
+        $telefone = $_POST['telefone'] ?? '';
+        $numbi = $_POST['numbi'] ?? '';
+        $nascimento = $_POST['nascimento'] ?? null;
+        $hash = password_hash($senha, PASSWORD_DEFAULT);
+        
+        $stmt = $conexao->prepare("INSERT INTO morador (nome, email, senha_hash, telefone, numbi, data_nasc, estado_conta) VALUES (?, ?, ?, ?, ?, ?, 'Activo')");
+        $stmt->bind_param("ssssss", $nome, $email, $hash, $telefone, $numbi, $nascimento);
+        if ($stmt->execute()) echo json_encode(['sucesso' => true]);
+        else echo json_encode(['sucesso' => false, 'erro' => $stmt->error]);
+        $stmt->close();
+        break;
+
+    case 'cadastrar_casa':
+        $id_bloco = intval($_POST['id_bloco'] ?? 0);
+        $numero = trim($_POST['numero'] ?? '');
+        $tipologia = $_POST['tipologia'] ?? 'V3';
+        $andar = $_POST['andar'] ?? '';
+        $estado = $_POST['estado'] ?? 'Disponivel';
+        $codigo = "APT-" . ($numero ?: rand(100,999));
+        
+        $stmt = $conexao->prepare("INSERT INTO apartamento (id_bloco, numero, tipologia, andar, estado, codigo) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("isssss", $id_bloco, $numero, $tipologia, $andar, $estado, $codigo);
+        if ($stmt->execute()) echo json_encode(['sucesso' => true]);
+        else echo json_encode(['sucesso' => false, 'erro' => $stmt->error]);
+        $stmt->close();
+        break;
+
     default:
         echo json_encode(['sucesso' => false, 'erro' => 'Acção desconhecida']);
 }
