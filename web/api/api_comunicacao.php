@@ -9,156 +9,142 @@ if (!isset($_SESSION['id'])) {
 }
 
 $id_user = intval($_SESSION['id']);
-$tipo_user = $_SESSION['tipo']; // 'morador' ou 'admin' (ou 'funcionario')
+$tipo_user = $_SESSION['tipo']; // 'morador', 'admin' or 'funcionario'
 $acao = $_GET['acao'] ?? 'listar_comunicados';
+
+// Map session 'admin'/'funcionario' to database 'administrador'
+$db_tipo_user = ($tipo_user === 'morador') ? 'morador' : 'administrador';
 
 switch ($acao) {
     case 'listar_comunicados':
-        $res = mysqli_query($conexao, "SELECT * FROM comunicado ORDER BY criado_em DESC");
+        $res = mysqli_query($conexao, "SELECT c.*, a.nome as autor FROM comunicado c LEFT JOIN administrador a ON a.id = c.criado_por ORDER BY c.criado_em DESC");
         $rows = [];
         while ($row = mysqli_fetch_assoc($res)) $rows[] = $row;
         echo json_encode(['sucesso' => true, 'dados' => $rows]);
         break;
 
     case 'enviar_comunicado':
-        if ($tipo_user !== 'admin' && $tipo_user !== 'funcionario') {
+        if ($db_tipo_user !== 'administrador') {
             echo json_encode(['sucesso' => false, 'erro' => 'Acesso negado']);
             exit;
         }
-        $titulo = $_POST['titulo'] ?? '';
-        $conteudo = $_POST['conteudo'] ?? '';
+        $titulo = trim($_POST['titulo'] ?? '');
+        $conteudo = trim($_POST['conteudo'] ?? '');
         $tipo = $_POST['tipo'] ?? 'informativo';
         
+        if (!$titulo || !$conteudo) {
+            echo json_encode(['sucesso' => false, 'erro' => 'Preencha todos os campos']);
+            exit;
+        }
+
         $stmt = $conexao->prepare("INSERT INTO comunicado (titulo, conteudo, tipo, criado_por) VALUES (?, ?, ?, ?)");
         $stmt->bind_param("sssi", $titulo, $conteudo, $tipo, $id_user);
         if ($stmt->execute()) echo json_encode(['sucesso' => true]);
         else echo json_encode(['sucesso' => false, 'erro' => $conexao->error]);
         break;
 
-    case 'listar_mensagens':
-        // Usa o schema atual: tabelas mensagem/conversa/conversa_participante
-        // Para simplificar o UI atual, filtramos por morador (id_morador) e mostramos mensagens.
-        $id_morador = ($tipo_user === 'morador') ? $id_user : intval($_GET['id_morador'] ?? 0);
+    case 'listar_conversas':
+        // List all private conversations for the current admin/user
+        if ($db_tipo_user === 'administrador') {
+            $sql = "SELECT c.id as conversa_id, m.nome as morador_nome, m.id as morador_id,
+                           (SELECT msg.conteudo FROM mensagem msg WHERE msg.id_conversa = c.id ORDER BY msg.enviada_em DESC LIMIT 1) as ultima_msg,
+                           (SELECT COUNT(*) FROM mensagem msg WHERE msg.id_conversa = c.id AND msg.lida = 0 AND msg.tipo_remetente = 'morador') as nao_lidas
+                    FROM conversa c
+                    JOIN conversa_participante cp ON cp.id_conversa = c.id
+                    JOIN morador m ON m.id = cp.id_user AND cp.tipo_user = 'morador'
+                    WHERE c.tipo = 'privada'
+                    ORDER BY (SELECT MAX(enviada_em) FROM mensagem WHERE id_conversa = c.id) DESC";
+            $res = mysqli_query($conexao, $sql);
+        } else {
+            // Morador sees only their conversation with admin
+            $sql = "SELECT c.id as conversa_id, 'Administração' as morador_nome,
+                           (SELECT msg.conteudo FROM mensagem msg WHERE msg.id_conversa = c.id ORDER BY msg.enviada_em DESC LIMIT 1) as ultima_msg,
+                           (SELECT COUNT(*) FROM mensagem msg WHERE msg.id_conversa = c.id AND msg.lida = 0 AND msg.tipo_remetente = 'administrador') as nao_lidas
+                    FROM conversa c
+                    JOIN conversa_participante cp ON cp.id_conversa = c.id
+                    WHERE cp.tipo_user = 'morador' AND cp.id_user = $id_user
+                    LIMIT 1";
+            $res = mysqli_query($conexao, $sql);
+        }
+        $rows = [];
+        while ($row = mysqli_fetch_assoc($res)) $rows[] = $row;
+        echo json_encode(['sucesso' => true, 'dados' => $rows]);
+        break;
 
+    case 'listar_mensagens':
+        $id_morador = ($db_tipo_user === 'morador') ? $id_user : intval($_GET['id_morador'] ?? 0);
         if (!$id_morador) {
-            echo json_encode(['sucesso' => false, 'erro' => 'Morador não especificado']);
+            echo json_encode(['sucesso' => false, 'erro' => 'Identificador inválido']);
             exit;
         }
 
-        $stmt = $conexao->prepare(
-            "SELECT msg.id,
-                    msg.id_conversa,
-                    msg.tipo_remetente,
-                    msg.id_remetente,
-                    msg.conteudo,
-                    msg.lida,
-                    msg.enviada_em,
-                    conv.id AS conversa_id
-             FROM mensagem msg
-             JOIN conversa conv ON conv.id = msg.id_conversa
-             WHERE (
-                (msg.tipo_remetente = 'morador' AND msg.id_remetente = ?)
-                OR (msg.tipo_remetente = 'administrador' AND conv.id IN (
-                    SELECT cp.id_conversa
-                    FROM conversa_participante cp
-                    WHERE cp.tipo_user = 'morador' AND cp.id_user = ?
-                ))
-             )
-             AND conv.id IN (
-                SELECT cp2.id_conversa
-                FROM conversa_participante cp2
-                WHERE cp2.tipo_user = 'morador' AND cp2.id_user = ?
-             )
-             ORDER BY msg.enviada_em ASC"
-        );
+        // Mark messages as read
+        $upd = $conexao->prepare("
+            UPDATE mensagem SET lida = 1 
+            WHERE id_conversa IN (SELECT id_conversa FROM conversa_participante WHERE tipo_user='morador' AND id_user=?)
+            AND tipo_remetente != ?
+        ");
+        $upd->bind_param("is", $id_morador, $db_tipo_user);
+        $upd->execute();
 
-        // bind: morador_id para 3 placeholders
-        $stmt->bind_param("iii", $id_morador, $id_morador, $id_morador);
+        $stmt = $conexao->prepare("
+            SELECT msg.id, msg.tipo_remetente, msg.id_remetente, msg.conteudo, msg.lida, msg.enviada_em
+            FROM mensagem msg
+            JOIN conversa conv ON conv.id = msg.id_conversa
+            JOIN conversa_participante cp ON cp.id_conversa = conv.id
+            WHERE cp.tipo_user = 'morador' AND cp.id_user = ?
+            ORDER BY msg.enviada_em ASC
+        ");
+        $stmt->bind_param("i", $id_morador);
         $stmt->execute();
         $res = $stmt->get_result();
 
         $rows = [];
         while ($row = $res->fetch_assoc()) {
-            // Compat: o front espera `remetente` e `conteudo`
+            // Frontend expects 'remetente'
             $row['remetente'] = ($row['tipo_remetente'] === 'morador') ? 'morador' : 'funcionario';
             $rows[] = $row;
         }
-
         echo json_encode(['sucesso' => true, 'dados' => $rows]);
         break;
 
     case 'enviar_mensagem':
         $conteudo = trim($_POST['conteudo'] ?? '');
-        if (!$conteudo) { echo json_encode(['sucesso' => false, 'erro' => 'Mensagem vazia']); exit; }
+        if (!$conteudo) { echo json_encode(['sucesso' => false, 'erro' => 'Vazio']); exit; }
 
-        // O UI atual envia apenas 'conteudo' quando é morador.
-        // Para admin/funcionario, esperamos opcionalmente id_morador.
-        if ($tipo_user === 'morador') {
-            // Conversa pública do admin pode ter vários admins, mas o nosso UI só precisa da conversa privada do morador.
-            $id_morador = $id_user;
-            $tipo_remetente = 'morador';
-            $id_remetente = $id_user;
-        } else {
-            $id_morador = intval($_POST['id_morador'] ?? 0);
-            $tipo_remetente = 'administrador';
-            $id_remetente = $id_user;
-        }
+        $id_morador = ($db_tipo_user === 'morador') ? $id_user : intval($_POST['id_morador'] ?? 0);
+        if (!$id_morador) { echo json_encode(['sucesso' => false, 'erro' => 'Destinatário inválido']); exit; }
 
-        // Para garantir que o backend sempre cria/reutiliza a conversa privada do morador,
-        // e não falhe caso o UI (morador) não envie id_morador.
-        if ($tipo_user === 'morador') {
-            $id_morador = $id_user;
-        }
-
-        if (!$id_morador) {
-            echo json_encode(['sucesso' => false, 'erro' => 'Destinatário inválido']);
-            exit;
-        }
-
-        // Criar/assegurar conversa privada por morador.
-        // Estratégia simples: conversa do tipo 'privada' com título NULL, e participante morador.
-        // Se existir uma conversa já, reutiliza.
-        $stmt = $conexao->prepare(
-            "SELECT c.id
-             FROM conversa c
-             JOIN conversa_participante cp ON cp.id_conversa = c.id
-             WHERE c.tipo='privada' AND cp.tipo_user='morador' AND cp.id_user=?
-             ORDER BY c.id DESC
-             LIMIT 1"
-        );
+        // Find or create conversation
+        $stmt = $conexao->prepare("SELECT id_conversa FROM conversa_participante WHERE tipo_user='morador' AND id_user=? LIMIT 1");
         $stmt->bind_param("i", $id_morador);
         $stmt->execute();
-        $res = $stmt->get_result();
-        $conv_id = null;
-        if ($res && $res->num_rows > 0) {
-            $conv_id = (int)$res->fetch_assoc()['id'];
-        }
+        $conv_id = $stmt->get_result()->fetch_assoc()['id_conversa'] ?? null;
         $stmt->close();
 
         if (!$conv_id) {
-            $ins = $conexao->prepare("INSERT INTO conversa (tipo, titulo, criado_por) VALUES ('privada', NULL, NULL)");
-            if (!$ins) { echo json_encode(['sucesso'=>false,'erro'=>$conexao->error]); exit; }
-            $ins->execute();
-            $conv_id = (int)$ins->insert_id;
-            $ins->close();
-
-            $insP = $conexao->prepare("INSERT INTO conversa_participante (id_conversa, tipo_user, id_user) VALUES (?, 'morador', ?)");
-            $insP->bind_param("ii", $conv_id, $id_morador);
-            $insP->execute();
-            $insP->close();
+            $conexao->begin_transaction();
+            try {
+                $ins = $conexao->prepare("INSERT INTO conversa (tipo) VALUES ('privada')");
+                $ins->execute();
+                $conv_id = $ins->insert_id;
+                
+                $insP = $conexao->prepare("INSERT INTO conversa_participante (id_conversa, tipo_user, id_user) VALUES (?, 'morador', ?)");
+                $insP->bind_param("ii", $conv_id, $id_morador);
+                $insP->execute();
+                
+                $conexao->commit();
+            } catch (Exception $e) {
+                $conexao->rollback();
+                echo json_encode(['sucesso' => false, 'erro' => $e->getMessage()]);
+                exit;
+            }
         }
 
-        $insMsg = $conexao->prepare(
-            "INSERT INTO mensagem (id_conversa, tipo_remetente, id_remetente, conteudo)
-             VALUES (?, ?, ?, ?)"
-        );
-        $insMsg->bind_param("issi", $conv_id, $tipo_remetente, $id_remetente, $conteudo);
-        if ($insMsg->execute()) {
-            echo json_encode(['sucesso' => true]);
-        } else {
-            echo json_encode(['sucesso' => false, 'erro' => $conexao->error]);
-        }
-        $insMsg->close();
+        $insMsg = $conexao->prepare("INSERT INTO mensagem (id_conversa, tipo_remetente, id_remetente, conteudo) VALUES (?, ?, ?, ?)");
+        $insMsg->bind_param("isis", $conv_id, $db_tipo_user, $id_user, $conteudo);
+        if ($insMsg->execute()) echo json_encode(['sucesso' => true]);
+        else echo json_encode(['sucesso' => false, 'erro' => $conexao->error]);
         break;
 
     default:

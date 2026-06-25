@@ -1,35 +1,57 @@
-Nosso Zimbo — Base de conhecimento (local, sem internet)
+Condomínio Nosso Zimbo - Base de Conhecimento (Offline)
 
-1) Sobre o condomínio
+===========================================
+📍 LOCALIZAÇÃO E CONTATO
+===========================================
 - Nome: Condomínio Nosso Zimbo
-- Local: Viana, Luanda, Angola (referência do sistema)
-- Valores base (referência): Quota mensal 140.000 Kz (a página de informação usa este valor como default)
+- Endereço: Luanda, Camama, Angola
+- Telefone: +244 931 612 489
+- Email: contacto@condominionossozimbo.com
+- Horário: Segunda a Sexta, 08h00 às 16h30
 
-2) Mensalidades (procedimento)
-- O morador vê em "Mensalidades" as quotas em estado 'pendente' ou 'atrasado'.
-- Clicando em "Pagar" abre "pagar_mensalidade.php?id=...".
-- O morador preenche o comprovativo/recibo com upload:
-  - arquivo obrigatório
-  - mínimo 1MB
-  - aceita: PDF, JPG, PNG
-- Após envio, a mensalidade fica em estado 'pendente' para aprovação do admin.
-- O admin vê "Pagamentos Submetidos" e confirma ou rejeita.
-- Quando aprovado, o admin deve marcar como 'pago'.
+===========================================
+🏠 TIPOLOGIAS E PREÇOS
+===========================================
+T1: 55m² - Preço entrada: 1.200.000 Kz (Parcelamento mínimo: 150.000 Kz, Prazo: 6 meses)
+T2: 75m² - Preço entrada: 1.800.000 Kz (Parcelamento mínimo: 200.000 Kz, Prazo: 8 meses)
+T3: 100m² - Preço entrada: 2.500.000 Kz (Parcelamento mínimo: 300.000 Kz, Prazo: 12 meses)
+T4: 130m² - Preço entrada: 3.200.000 Kz (Parcelamento mínimo: 400.000 Kz, Prazo: 15 meses)
+T5: 180m² - Preço entrada: 4.500.000 Kz (Parcelamento mínimo: 500.000 Kz, Prazo: 18 meses)
 
-3) Endpoints relevantes (interno)
-- Upload do recibo do morador: ../api/upload_recibo_mensalidade.php
-- Página detalhada do pagamento: pagar_mensalidade.php
-- Listagem do histórico do morador: minhas_mensalidades.php
+===========================================
+💰 VALORES DE RENDA (MENSALIDADE)
+===========================================
+- Quota condominal mensal: 140.000 Kz
+- Taxa de serviços (água, electricidade, limpeza): 15.000 Kz
+- Segurança (vigilância 24h): 25.000 Kz
+- Manutenção (pequenos reparos): 10.000 Kz
+- TOTAL MENSAL: 190.000 Kz
 
-4) Comunicação
-- Existe comunicação para morador em comunicacao.php (chat e comunicados).
+===========================================
+💳 FORMAS DE PAGAMENTO
+===========================================
+- Transferência bancária via IBAN
+- Depósito bancário
+- IBAN disponível no portal do morador (pagar_mensalidade.php)
 
-5) Faturação/Estados esperados (tabelas do sistema)
-- mensalidade.estado: 'pendente' | 'atrasado' | 'pago'
-- mensalidade_pagamento.estado: 'pendente' | 'confirmado' | 'rejeitado'
+===========================================
+🏊 INSTALAÇÕES
+===========================================
+- Piscina para moradores
+- Áreas verdes
+- Estacionamento privado
+- Segurança 24h com vigilância e portaria
 
-6) Contatos (exemplo do sistema)
-- Telefone/apoio: +244 923 000 000 (referência do dashboard)
+===========================================
+💻 ACESSO À PLATAFORMA
+===========================================
+- Menu: "Login" no site principal
+- Após login, acesse "Mensalidades" para ver pendentes/atrasados
+- "Pagar" em mensalidade pendente → upload do recibo → envia para aprovação
+- Recibo: mínimo 1MB, aceita PDF, JPG, PNG
 
-Regra geral de resposta do bot:
-- Se a pergunta não estiver nesta base, responder que a administração pode ajudar e indicar que a página de Comunicação está disponível.
+===========================================
+📅 VISITAS
+===========================================
+- Para marcar visita: +244 931 612 489
+- Horário: 08h00 às 16h30

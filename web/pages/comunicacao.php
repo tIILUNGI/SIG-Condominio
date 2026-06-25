@@ -278,7 +278,7 @@ window.onload = function() {
     setInterval(clock, 1000);
     loadComunicados();
     loadMessages();
-    setInterval(loadMessages, 5000); // Polling simples
+    setInterval(loadMessages, 3000); // Polling 3s
 };
 </script>
 </body>

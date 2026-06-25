@@ -141,7 +141,7 @@ if ($res->num_rows > 0) {
         // Redirecionar para dashboard
         $stmt->close();
         debug_log("Redirecionando para dashboard...");
-        header("Location: ../pages/dashboard.php");
+        header("Location: ../pages/admin_portal.php");
         exit;
     } else {
         debug_log("❌ ERRO: Senha incorreta para BI: $numbi");

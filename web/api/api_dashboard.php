@@ -78,16 +78,15 @@ switch ($acao) {
         break;
 
     case 'pagamentos':
-        // Inclui o recibo submetido (se existir) para permitir aprovação do admin
+        // Inclui o recibo submetido para permitir aprovação do admin
         $sql = "SELECT mp.id, mor.nome as morador, a.codigo as apartamento,
                        mp.valor_pago, mp.metodo, mp.referencia,
                        mp.data_pagamento, mp.estado, mp.notas_admin,
-                       r.file_path as recibo_path
+                       mp.comprovativo_url as recibo_path
                 FROM mensalidade_pagamento mp
                 JOIN mensalidade men ON men.id = mp.id_mensalidade
                 JOIN morador mor ON mor.id = men.id_morador
                 JOIN apartamento a ON a.id = men.id_apartamento
-                LEFT JOIN mensalidade_recibo r ON r.id_mensalidade = men.id
                 ORDER BY mp.data_pagamento DESC";
         $res = mysqli_query($conexao, $sql);
         $rows = [];
@@ -213,7 +212,7 @@ switch ($acao) {
         mysqli_query($conexao, "DELETE FROM morador_apartamento WHERE id_morador=$id");
         mysqli_query($conexao, "DELETE FROM mensalidade_pagamento WHERE id_mensalidade IN (SELECT id FROM mensalidade WHERE id_morador=$id)");
         mysqli_query($conexao, "DELETE FROM mensalidade WHERE id_morador=$id");
-        mysqli_query($conexao, "DELETE FROM chat_mensagem WHERE id_morador=$id");
+        mysqli_query($conexao, "DELETE FROM mensagem WHERE id_remetente=$id AND tipo_remetente='morador'");
         $res = mysqli_query($conexao, "DELETE FROM morador WHERE id=$id");
         echo json_encode(['sucesso' => $res]);
         break;
@@ -236,7 +235,7 @@ switch ($acao) {
         if (!$id) { echo json_encode(['sucesso'=>false,'erro'=>'ID inválido']); exit; }
         
         $stmt = $conexao->prepare("UPDATE morador SET nome=?, telefone=?, email=?, numbi=? WHERE id=?");
-        $stmt->bind_param("sssssi", $nome, $telefone, $email, $numbi, $id);
+        $stmt->bind_param("ssssi", $nome, $telefone, $email, $numbi, $id);
         if ($stmt->execute()) {
             echo json_encode(['sucesso' => true]);
         } else {

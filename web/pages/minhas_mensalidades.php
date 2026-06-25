@@ -22,14 +22,25 @@ $mensalidades = $stmt->get_result();
 
 $total_pendente = 0;
 $total_pago = 0;
+$total_pago_ate_junho = 0;
+
+$nome_mes = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+
 while ($row = $mensalidades->fetch_assoc()) {
-    if ($row['estado'] === 'pendente' || $row['estado'] === 'atrasado') {
-        $total_pendente += (float)$row['valor'];
-    } elseif ($row['estado'] === 'pago') {
-        $total_pago += (float)$row['valor'];
+    if (($row['estado'] ?? '') === 'pendente' || ($row['estado'] ?? '') === 'atrasado') {
+        $total_pendente += (float)($row['valor'] ?? 0);
+    } elseif (($row['estado'] ?? '') === 'pago') {
+        $valor = (float)($row['valor'] ?? 0);
+        $total_pago += $valor;
+        // Pago até Junho (mes 1..6). Mantém também o critério de ano/mes do registo.
+        $mes = (int)($row['mes'] ?? 0);
+        if ($mes >= 1 && $mes <= 6) {
+            $total_pago_ate_junho += $valor;
+        }
     }
 }
 $mensalidades->data_seek(0);
+
 
 $nome = $_SESSION['nome'] ?? 'Morador';
 ?>
@@ -116,6 +127,7 @@ $nome = $_SESSION['nome'] ?? 'Morador';
             <div class="card-head">
                 <p class="card-title"><i class="fa-solid fa-chart-line"></i> Resumo Financeiro</p>
             </div>
+
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
                 <div class="stat-card red" style="margin:0;">
                     <div class="stat-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
@@ -125,10 +137,13 @@ $nome = $_SESSION['nome'] ?? 'Morador';
                 </div>
                 <div class="stat-card green" style="margin:0;">
                     <div class="stat-icon"><i class="fa-solid fa-circle-check"></i></div>
-                    <p class="stat-label">Pago</p>
-                    <p class="stat-value">Kz <?php echo number_format($total_pago, 2); ?></p>
-                    <p class="stat-hint">Pagamentos confirmados</p>
+                    <p class="stat-label">Pago (acumulado)</p>
+                    <p class="stat-value">Kz <?php echo number_format($total_pago_ate_junho, 2); ?></p>
+                    <p class="stat-hint">Acumulado pago (Junho incluso): <?php echo number_format($total_pago_ate_junho, 2); ?> Kz</p>
+
+
                 </div>
+
             </div>
         </div>
 
@@ -137,7 +152,70 @@ $nome = $_SESSION['nome'] ?? 'Morador';
                 <p class="card-title"><i class="fa-solid fa-file-invoice"></i> Histórico de Mensalidades</p>
             </div>
 
+            <div style="margin-top:16px; padding:14px; border:1px solid var(--border); border-radius:14px; background:rgba(100,149,237,0.06);">
+                <div style="display:flex; gap:12px; align-items:flex-end; flex-wrap:wrap; justify-content:space-between;">
+                    <div style="min-width:240px; flex:1;">
+                        <p style="margin:0 0 8px 0; font-weight:800;">Simular Pagamento de Mensalidade</p>
+                        <p style="margin:0; color:var(--text-muted); font-size:.9rem;">Escolha o mês e submeta o talão (recibo).</p>
+                    </div>
+
+                    <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                        <div>
+                            <label style="display:block; font-size:.85rem; color:var(--text-muted); margin-bottom:6px;">Mensalidade</label>
+                            <select id="sim_mensalidade" style="padding:10px 12px; border-radius:10px; border:1px solid var(--border); background:var(--dark3); color:var(--text); min-width:260px;">
+
+
+                                <?php
+                                    // Opções para simulação (sempre mostrando os meses do ano atual; seleciona o mês correspondente à mensalidade do morador)
+                                    $opts = [];
+
+                                    // Agrupa por ano+mes para encontrar a mensalidade ID
+                                    $mensByYM = [];
+                                    if ($mensalidades && $mensalidades->num_rows > 0) {
+                                        while ($mm = $mensalidades->fetch_assoc()) {
+                                            $ano = (int)($mm['ano'] ?? 0);
+                                            $mes = (int)($mm['mes'] ?? 0);
+                                            $idMens = (int)($mm['id'] ?? 0);
+                                            if ($ano > 0 && $mes > 0 && $idMens > 0) {
+                                                $mensByYM[$ano][$mes] = $idMens;
+                                            }
+                                        }
+                                    }
+
+                                    // volta para início para não quebrar o loop do histórico
+                                    if ($mensalidades) {
+                                        $mensalidades->data_seek(0);
+                                    }
+
+                                    $anoAtual = (int)date('Y');
+                                    // Lista completa de meses para seleção
+                                    $mesesSim = [1,2,3,4,5,6,7,8,9,10,11,12];
+
+                                    // Preenche as opções com um ID (quando existir) para cada mês do ano atual
+                                    $nome_mes_local = $nome_mes ?? ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+                                    foreach ($mesesSim as $mesX) {
+                                        $idSelecionada = isset($mensByYM[$anoAtual][$mesX]) ? (int)$mensByYM[$anoAtual][$mesX] : 0;
+                                        $mesTxtX = $nome_mes_local[$mesX-1] ?? ('M' . $mesX);
+                                        $disabled = $idSelecionada <= 0 ? ' disabled' : '';
+                                        $labelX = $mesTxtX . '/' . $anoAtual;
+                                        $valueX = $idSelecionada > 0 ? (string)$idSelecionada : '';
+                                        echo '<option value="'.$valueX.'"'.$disabled.'>'.$labelX.' '.($idSelecionada>0?'':'(indisponível)').'</option>';
+                                    }
+
+                                ?>
+                            </select>
+                        </div>
+
+                        <button class="btn btn-pagar" type="button" style="height:42px; padding:0 18px;" onclick="simularPagamento()" id="btn_simular">
+                            <i class="fas fa-receipt"></i> Simular & Pagar
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+
             <div style="overflow-x:auto;">
+
                 <table class="data-table" style="width:100%;">
                     <thead>
                         <tr>
@@ -207,6 +285,18 @@ function abrirPagamento(id){
     // abre a página/fluxo de pagamento detalhado (com envio de recibo)
     window.location.href = 'pagar_mensalidade.php?id=' + id;
 }
+
+function simularPagamento(){
+    const sel = document.getElementById('sim_mensalidade');
+    if (!sel) return;
+    const id = sel.value;
+    if (!id) {
+        alert('Não há mensalidades pendentes para simular pagamento.');
+        return;
+    }
+    abrirPagamento(parseInt(id, 10));
+}
+
 
 function clock() {
     const now = new Date();

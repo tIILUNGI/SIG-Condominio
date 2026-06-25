@@ -95,7 +95,7 @@ if ($res->num_rows > 0) {
 
         // Redirecionar para dashboard do morador
         $stmt->close();
-        header("Location: ../pages/dashboard_morador.php");
+        header("Location: ../pages/morador_portal.php");
         exit;
     }
 }

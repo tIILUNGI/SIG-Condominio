@@ -4,7 +4,6 @@ if (!isset($_SESSION['tipo']) || ($_SESSION['tipo'] !== 'admin' && $_SESSION['ti
     header("Location: ../login.html?erro=acesso");
     exit;
 }
-
 $admin_nome = $_SESSION['nome'] ?? 'Admin';
 ?>
 <!DOCTYPE html>
@@ -13,9 +12,29 @@ $admin_nome = $_SESSION['nome'] ?? 'Admin';
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin — Comunicação</title>
-  <link rel="stylesheet" href="../css/admin.css">
+  <link rel="stylesheet" href="../css/nosso-zimbo-admin.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet" />
+  <style>
+    .com-layout { display: grid; grid-template-columns: 320px 1fr; gap: 24px; height: calc(100vh - 160px); }
+    .chat-sidebar { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); display: flex; flex-direction: column; overflow: hidden; }
+    .chat-sidebar-header { padding: 1.25rem; border-bottom: 1px solid var(--border); background: var(--bg); font-weight: 700; color: var(--text); }
+    .conversa-list { flex: 1; overflow-y: auto; }
+    .conversa-item { padding: 1rem 1.25rem; border-bottom: 1px solid var(--border); cursor: pointer; transition: all .2s; }
+    .conversa-item:hover { background: var(--primary-light); }
+    .conversa-item.active { background: var(--primary-light); border-left: 4px solid var(--primary); }
+    .conversa-name { font-weight: 600; font-size: .9rem; color: var(--text); margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center; }
+    .conversa-msg { font-size: .78rem; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .unread-badge { background: var(--danger); color: #fff; font-size: .7rem; padding: 2px 6px; border-radius: 10px; font-weight: 700; }
+
+    .chat-main { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); display: flex; flex-direction: column; overflow: hidden; }
+    .chat-header { padding: 1rem 1.25rem; border-bottom: 1px solid var(--border); background: var(--bg); display: flex; align-items: center; justify-content: space-between; }
+    .chat-messages { flex: 1; padding: 1.5rem; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; background: var(--bg); }
+    .msg { max-width: 75%; padding: 10px 14px; border-radius: 12px; font-size: .9rem; line-height: 1.5; box-shadow: var(--shadow-sm); }
+    .msg.sent { align-self: flex-end; background: var(--primary); color: #fff; border-bottom-right-radius: 2px; }
+    .msg.received { align-self: flex-start; background: var(--surface); color: var(--text); border-bottom-left-radius: 2px; border: 1px solid var(--border); }
+    .chat-foooter { padding: 1.25rem; border-top: 1px solid var(--border); background: var(--surface); }
+  </style>
 </head>
 <body>
 
@@ -24,12 +43,12 @@ $admin_nome = $_SESSION['nome'] ?? 'Admin';
     <div class="brand-icon"><i class="fa-solid fa-building-columns"></i></div>
     <div>
       <p class="brand-name">Nosso Zimbo</p>
-      <p class="brand-sub">Admin — Comunicação</p>
+      <p class="brand-sub">Comunicação Admin</p>
     </div>
   </div>
   <nav class="sidebar-nav">
-    <button class="nav-item" onclick="window.location.href='admin-gestao.html'">
-      <i class="fa-solid fa-diagram-project"></i><span>Gestão</span>
+    <button class="nav-item" onclick="window.location.href='../dashboard.php'">
+      <i class="fa-solid fa-gauge-high"></i><span>Dashboard</span>
     </button>
     <button class="nav-item active" onclick="window.location.href='admin-comunicacao.php'">
       <i class="fa-solid fa-comments"></i><span>Comunicação</span>
@@ -39,299 +58,220 @@ $admin_nome = $_SESSION['nome'] ?? 'Admin';
     <div class="avatar-admin"><?php echo strtoupper(substr($admin_nome, 0, 2)); ?></div>
     <div style="flex:1;">
       <p class="af-name"><?php echo htmlspecialchars($admin_nome); ?></p>
-      <p class="af-role"><?php echo htmlspecialchars($_SESSION['tipo']); ?></p>
+      <p class="af-role"><?php echo ucfirst(htmlspecialchars($_SESSION['tipo'])); ?></p>
     </div>
-    <a href="../api/logout.php" title="Sair" style="color:var(--text-muted); font-size:1rem;">
-      <i class="fa-solid fa-right-from-bracket"></i>
-    </a>
+    <a href="../api/logout.php" title="Sair" style="color:var(--text-muted); font-size:1rem;"><i class="fa-solid fa-right-from-bracket"></i></a>
   </div>
 </aside>
 
 <main class="main-content">
   <header class="topbar">
     <button class="menu-toggle" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
-    <span class="topbar-title"><i class="fa-solid fa-building-columns"></i> Nosso Zimbo — Comunicação</span>
-    <div class="topbar-right">
-      <div class="clock-display" id="clock-display"></div>
-    </div>
+    <span class="topbar-title">📢 Central de Comunicação</span>
   </header>
 
-  <section class="tab-section active">
-    <div class="page-header">
-      <h1 class="page-title">📢 Central de Comunicação</h1>
-      <p class="page-sub">Comunicados e chat com moradores</p>
+  <div style="padding: 24px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+      <h1 class="page-title">Chat e Comunicados</h1>
+      <button class="btn-primary" onclick="abrirModalComunicado()"><i class="fa-solid fa-plus"></i> Novo Comunicado</button>
     </div>
 
-    <div class="card" style="padding:1rem; margin-bottom:1rem;">
-      <div style="display:flex; gap:1rem; flex-wrap:wrap; align-items:flex-end;">
-        <div style="flex:1; min-width:260px;">
-          <label style="display:block; font-weight:700; color:var(--text-muted); font-size:.85rem;">Destinatário (morador)</label>
-          <select id="morador-destino" style="width:100%; padding:.7rem; border:1px solid var(--border); border-radius:10px;">
-            <option value="">— Selecione —</option>
-          </select>
+    <div class="com-layout">
+      <!-- SIDEBAR: Conversas -->
+      <div class="chat-sidebar">
+        <div class="chat-sidebar-header">Conversas Ativas</div>
+        <div class="conversa-list" id="conversa-list">
+          <p style="padding: 20px; text-align: center; color: var(--text-muted);">Carregando...</p>
         </div>
-        <div style="flex:2; min-width:320px;">
-          <label style="display:block; font-weight:700; color:var(--text-muted); font-size:.85rem;">Escrever mensagem</label>
-          <div style="display:flex; gap:.6rem;">
-            <input id="chat-input" type="text" placeholder="Escreva a sua mensagem..." style="flex:1; padding:.7rem; border:1px solid var(--border); border-radius:10px; background:var(--surface); color:var(--text);" />
-            <button class="btn-primary" id="btn-enviar-msg" style="white-space:nowrap; height:44px; padding:0 1rem;">
-              <i class="fa-solid fa-paper-plane"></i> Enviar
+        <div style="padding: 1rem; border-top: 1px solid var(--border);">
+            <select id="morador-novo" style="width:100%;" onchange="selecionarNovoMorador(this.value)">
+                <option value="">Iniciar nova conversa...</option>
+            </select>
+        </div>
+      </div>
+
+      <!-- MAIN: Chat -->
+      <div class="chat-main" id="chat-panel">
+        <div class="chat-header">
+          <div id="chat-target-name" style="font-weight: 700; color: var(--text);">Selecione uma conversa</div>
+          <div style="font-size: .8rem; color: var(--text-muted);" id="chat-target-apt"></div>
+        </div>
+        <div class="chat-messages" id="chat-messages">
+          <div style="margin: auto; text-align: center; color: var(--text-muted);">
+            <i class="fa-solid fa-comments" style="font-size: 3rem; opacity: .1; margin-bottom: 1rem;"></i>
+            <p>Selecione um morador para visualizar as mensagens.</p>
+          </div>
+        </div>
+        <div class="chat-foooter">
+          <div style="display:flex; gap:12px;">
+            <input id="chat-input" type="text" placeholder="Escreva a sua mensagem..." disabled style="flex:1;" />
+            <button class="btn-primary" id="btn-enviar-msg" disabled>
+              <i class="fa-solid fa-paper-plane"></i>
             </button>
           </div>
         </div>
       </div>
     </div>
-
-    <div style="display:grid; grid-template-columns:1fr 1.4fr; gap:20px;">
-
-      <!-- COMUNICADOS -->
-      <div>
-        <div class="card">
-          <div class="card-head">
-            <p class="card-title"><i class="fa-solid fa-bullhorn"></i> Comunicados</p>
-          </div>
-          <div style="padding:1rem;">
-            <form id="form-comunicado" style="display:grid; gap:.75rem;">
-              <div>
-                <label style="display:block; font-weight:700; color:var(--text-muted); font-size:.85rem;">Título</label>
-                <input name="titulo" type="text" required style="width:100%; padding:.7rem; border:1px solid var(--border); border-radius:10px; background:var(--surface); color:var(--text);" />
-              </div>
-              <div>
-                <label style="display:block; font-weight:700; color:var(--text-muted); font-size:.85rem;">Conteúdo</label>
-                <textarea name="conteudo" required rows="4" style="width:100%; padding:.7rem; border:1px solid var(--border); border-radius:10px; background:var(--surface); color:var(--text);"></textarea>
-              </div>
-              <div style="display:flex; gap:1rem; align-items:center; flex-wrap:wrap;">
-                <div style="min-width:220px; flex:1;">
-                  <label style="display:block; font-weight:700; color:var(--text-muted); font-size:.85rem;">Tipo</label>
-                  <select name="tipo" style="width:100%; padding:.7rem; border:1px solid var(--border); border-radius:10px; background:var(--surface); color:var(--text);">
-                    <option value="informativo">informativo</option>
-                    <option value="urgente">urgente</option>
-                    <option value="manutencao">manutencao</option>
-                  </select>
-                </div>
-                <button class="btn-secondary" type="submit" style="white-space:nowrap;">
-                  <i class="fa-solid fa-square-plus"></i> Publicar
-                </button>
-              </div>
-            </form>
-
-            <hr style="border:none; border-top:1px solid var(--border); margin:1rem 0;" />
-
-            <div id="comunicados-list" style="display:grid; gap:0.8rem;">
-              <p style="text-align:center; color:var(--text-muted);">Carregando comunicados...</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- CHAT -->
-      <div>
-        <div class="card">
-          <div class="card-head">
-            <p class="card-title"><i class="fa-solid fa-comments"></i> Chat</p>
-          </div>
-          <div style="padding:1rem;">
-            <div class="chat-container">
-              <div class="chat-messages" id="chat-messages">
-                <p style="text-align:center; color:var(--text-muted);">Selecione um morador para ver/mandar mensagens.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-  </section>
+  </div>
 </main>
 
-<!-- TOAST -->
-<div class="toast" id="toast"><i class="fa-solid fa-circle-check"></i> <span id="toast-msg"></span></div>
+<!-- MODAL COMUNICADO -->
+<div class="modal-overlay" id="modal-comunicado">
+  <div class="modal-box">
+    <button class="modal-close" onclick="fecharModalComunicado()"><i class="fa-solid fa-xmark"></i></button>
+    <h3 class="modal-title">Publicar Comunicado</h3>
+    <form id="form-comunicado" class="form-grid" style="margin-top: 1rem;">
+      <div class="form-group full">
+        <label>Título</label>
+        <input name="titulo" type="text" required placeholder="Ex: Manutenção de Elevadores" />
+      </div>
+      <div class="form-group full">
+        <label>Conteúdo</label>
+        <textarea name="conteudo" required rows="4" placeholder="Detalhes do comunicado..."></textarea>
+      </div>
+      <div class="form-group full">
+        <label>Urgência</label>
+        <select name="tipo">
+          <option value="informativo">Informativo</option>
+          <option value="importante">Importante</option>
+          <option value="urgente">Urgente</option>
+        </select>
+      </div>
+      <div class="modal-footer" style="grid-column: 1/-1;">
+        <button type="button" class="btn-secondary" onclick="fecharModalComunicado()">Cancelar</button>
+        <button type="submit" class="btn-primary">Publicar para Todos</button>
+      </div>
+    </form>
+  </div>
+</div>
 
-<style>
-  .chat-container{
-    display:flex; flex-direction:column; height:460px;
-    background: var(--dark3); border-radius:12px; border:1px solid var(--border); overflow:hidden;
-  }
-  .chat-messages{ flex:1; padding:16px; overflow-y:auto; display:flex; flex-direction:column; gap:10px; }
-  .msg{ max-width:78%; padding:10px 14px; border-radius:15px; font-size:.9rem; line-height:1.4; }
-  .msg.sent{ align-self:flex-end; background:var(--gold); color:#000; border-bottom-right-radius:2px; }
-  .msg.received{ align-self:flex-start; background:var(--dark4); color:var(--text); border-bottom-left-radius:2px; border:1px solid var(--border); }
-</style>
+<div class="toast" id="toast"></div>
 
 <script>
+  const API = '../api/api_comunicacao.php';
   const API_MORADORES = '../api/api_moradores.php';
-  const API_CHAT = '../api/api_comunicacao.php';
+  let activeMoradorId = null;
 
-  let destinatarioId = '';
-
-  function abrirToast(msg, isErr=false){
-    const t = document.getElementById('toast');
-    const el = document.getElementById('toast-msg');
-    el.textContent = msg;
-    t.className = 'toast' + (isErr ? ' error' : '') + ' show';
-    setTimeout(()=>t.classList.remove('show'), 3200);
+  function abrirToast(m, err=false){
+      const t = document.getElementById('toast');
+      t.textContent = m;
+      t.className = 'toast show ' + (err ? 'error' : '');
+      setTimeout(()=>t.classList.remove('show'), 3000);
   }
 
   function toggleSidebar(){ document.getElementById('sidebar').classList.toggle('open'); }
+  function abrirModalComunicado(){ document.getElementById('modal-comunicado').classList.add('open'); }
+  function fecharModalComunicado(){ document.getElementById('modal-comunicado').classList.remove('open'); }
 
-  function escapeHtml(str){
-    return String(str)
-      .replaceAll('&','&amp;')
-      .replaceAll('<','<')
-      .replaceAll('>','>')
-      .replaceAll('"','"')
-      .replaceAll("'",'&#039;');
-  }
-
-  function clock(){
-    const el = document.getElementById('clock-display');
-    if(!el) return;
-    el.textContent = new Date().toLocaleTimeString('pt-AO');
-  }
-
-  async function carregarMoradores(){
-    const sel = document.getElementById('morador-destino');
-    sel.innerHTML = '<option value="">— Selecione —</option>';
-
-    const res = await fetch(API_MORADORES + '?acao=listar');
+  async function loadConversas(){
+    const res = await fetch(API + '?acao=listar_conversas');
     const data = await res.json();
-    if(!data.sucesso){
-      abrirToast(data.erro || 'Erro ao carregar moradores', true);
-      return;
+    const list = document.getElementById('conversa-list');
+    
+    if(data.sucesso){
+        list.innerHTML = data.dados.map(c => `
+            <div class="conversa-item ${activeMoradorId == c.morador_id ? 'active' : ''}" onclick="selectChat(${c.morador_id}, '${c.morador_nome}')">
+                <div class="conversa-name">
+                    ${c.morador_nome}
+                    ${c.nao_lidas > 0 ? `<span class="unread-badge">${c.nao_lidas}</span>` : ''}
+                </div>
+                <div class="conversa-msg">${c.ultima_msg || 'Sem mensagens'}</div>
+            </div>
+        `).join('');
     }
-
-    (data.dados||[]).forEach(m=>{
-      const texto = `${m.nome || '—'} (BI: ${m.numbi || '—'})`;
-      const apt = m.apartamento ? ` - ${m.apartamento}` : '';
-      const opt = document.createElement('option');
-      opt.value = m.id;
-      opt.textContent = texto + apt;
-      sel.appendChild(opt);
-    });
   }
 
-  async function loadMessages(id_morador){
-    const chat = document.getElementById('chat-messages');
-    chat.innerHTML = '<p style="text-align:center; color:var(--text-muted);">Carregando mensagens...</p>';
+  async function loadMoradores(){
+      const res = await fetch(API_MORADORES + '?acao=listar');
+      const data = await res.json();
+      const sel = document.getElementById('morador-novo');
+      if(data.sucesso){
+          data.dados.forEach(m => {
+              const opt = document.createElement('option');
+              opt.value = m.id;
+              opt.dataset.nome = m.nome;
+              opt.textContent = m.nome + ' (' + (m.apartamento || 'S/ Casa') + ')';
+              sel.appendChild(opt);
+          });
+      }
+  }
 
-    const url = API_CHAT + '?acao=listar_mensagens&id_morador=' + encodeURIComponent(id_morador);
-    const res = await fetch(url);
+  function selecionarNovoMorador(id){
+      if(!id) return;
+      const opt = document.querySelector(`#morador-novo option[value="${id}"]`);
+      selectChat(id, opt.dataset.nome);
+  }
+
+  function selectChat(id, nome){
+    activeMoradorId = id;
+    document.getElementById('chat-target-name').textContent = nome;
+    document.getElementById('chat-input').disabled = false;
+    document.getElementById('btn-enviar-msg').disabled = false;
+    loadMessages();
+    loadConversas();
+  }
+
+  async function loadMessages(){
+    if(!activeMoradorId) return;
+    const res = await fetch(`${API}?acao=listar_mensagens&id_morador=${activeMoradorId}`);
     const data = await res.json();
-
-    if(!data.sucesso){
-      chat.innerHTML = '<p style="text-align:center; color:var(--text-muted);">'+escapeHtml(data.erro || 'Erro ao carregar')+'</p>';
-      return;
+    const box = document.getElementById('chat-messages');
+    
+    if(data.sucesso){
+        const oldContent = box.innerHTML;
+        const newHtml = data.dados.map(m => `
+            <div class="msg ${m.remetente == 'funcionario' ? 'sent' : 'received'}">${m.conteudo}</div>
+        `).join('');
+        
+        if(oldContent !== newHtml){
+            box.innerHTML = newHtml;
+            box.scrollTop = box.scrollHeight;
+        }
     }
-
-    if(!data.dados || data.dados.length === 0){
-      chat.innerHTML = '<p style="text-align:center; color:var(--text-muted);">Sem mensagens ainda.</p>';
-      return;
-    }
-
-    chat.innerHTML = data.dados.map(m=>{
-      const sent = (m.remetente === 'funcionario');
-      return `<div class="msg ${sent ? 'sent' : 'received'}">${escapeHtml(m.conteudo || '')}</div>`;
-    }).join('');
-
-    chat.scrollTop = chat.scrollHeight;
   }
 
-  function getInput(){ return document.getElementById('chat-input'); }
-
-  async function enviarMensagem(){
-    const input = getInput();
+  async function sendMsg(){
+    const input = document.getElementById('chat-input');
     const msg = input.value.trim();
-    if(!destinatarioId){ abrirToast('Selecione um morador', true); return; }
-    if(!msg){ abrirToast('Mensagem vazia', true); return; }
+    if(!msg || !activeMoradorId) return;
 
     const fd = new FormData();
-    fd.append('id_morador', destinatarioId);
+    fd.append('id_morador', activeMoradorId);
     fd.append('conteudo', msg);
 
-    const res = await fetch(API_CHAT + '?acao=enviar_mensagem', { method:'POST', body: fd });
+    const res = await fetch(API + '?acao=enviar_mensagem', { method:'POST', body: fd });
     const data = await res.json();
-
-    if(!data.sucesso){
-      abrirToast(data.erro || 'Erro ao enviar mensagem', true);
-      return;
-    }
-
-    input.value = '';
-    await loadMessages(destinatarioId);
-  }
-
-  async function loadComunicados(){
-    const list = document.getElementById('comunicados-list');
-    list.innerHTML = '<p style="text-align:center; color:var(--text-muted);">Carregando comunicados...</p>';
-
-    const res = await fetch(API_CHAT + '?acao=listar_comunicados');
-    const data = await res.json();
-
-    if(!data.sucesso){
-      list.innerHTML = '<p style="text-align:center; color:var(--text-muted);">Erro ao carregar</p>';
-      return;
-    }
-
-    if(!data.dados || data.dados.length === 0){
-      list.innerHTML = '<p style="text-align:center; color:var(--text-muted);">Nenhum comunicado.</p>';
-      return;
-    }
-
-    list.innerHTML = data.dados.map(c=>{
-      const cor = c.tipo === 'urgente' ? 'var(--danger)' : (c.tipo === 'manutencao' ? '#3498db' : 'var(--gold)');
-      return `
-        <div class="comunicado-card ${escapeHtml(c.tipo||'')}" style="border-left-color:${cor};">
-          <h3 style="margin:0 0 8px; color:${cor}; font-size:1rem;">${escapeHtml(c.titulo||'')}</h3>
-          <p style="margin:0 0 10px; color:var(--text-muted); white-space:pre-wrap;">${escapeHtml(c.conteudo||'')}</p>
-          <span style="font-size:12px;color:var(--text-muted);"><i class="fa-regular fa-clock"></i> ${c.criado_em ? new Date(c.criado_em).toLocaleString('pt-AO') : ''}</span>
-        </div>
-      `;
-    }).join('');
-  }
-
-  document.getElementById('morador-destino').addEventListener('change', async (e)=>{
-    destinatarioId = e.target.value;
-    if(destinatarioId){
-      await loadMessages(destinatarioId);
-    } else {
-      document.getElementById('chat-messages').innerHTML = '<p style="text-align:center; color:var(--text-muted);">Selecione um morador para ver/mandar mensagens.</p>';
-    }
-  });
-
-  document.getElementById('btn-enviar-msg').addEventListener('click', enviarMensagem);
-  document.getElementById('chat-input').addEventListener('keydown', (e)=>{
-    if(e.key === 'Enter'){
-      e.preventDefault();
-      enviarMensagem();
-    }
-  });
-
-  document.getElementById('form-comunicado').addEventListener('submit', async (e)=>{
-    e.preventDefault();
-    const form = e.target;
-    const fd = new FormData(form);
-
-    const res = await fetch(API_CHAT + '?acao=enviar_comunicado', { method:'POST', body: fd });
-    const data = await res.json();
-
     if(data.sucesso){
-      abrirToast('Comunicado publicado!');
-      form.reset();
-      await loadComunicados();
-    } else {
-      abrirToast(data.erro || 'Erro ao publicar comunicado', true);
+        input.value = '';
+        loadMessages();
+        loadConversas();
     }
-  });
+  }
 
-  window.onload = async ()=>{
-    clock();
-    setInterval(clock, 1000);
-    await carregarMoradores();
-    await loadComunicados();
-    // polling mensagens
-    setInterval(()=>{
-      if(destinatarioId) loadMessages(destinatarioId);
-    }, 5000);
+  document.getElementById('btn-enviar-msg').onclick = sendMsg;
+  document.getElementById('chat-input').onkeydown = e => { if(e.key=='Enter') sendMsg(); };
+
+  document.getElementById('form-comunicado').onsubmit = async (e) => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      const res = await fetch(API + '?acao=enviar_comunicado', { method:'POST', body: fd });
+      const data = await res.json();
+      if(data.sucesso){
+          abrirToast('Comunicado enviado!');
+          fecharModalComunicado();
+          e.target.reset();
+      } else {
+          abrirToast(data.erro || 'Erro!', true);
+      }
+  };
+
+  window.onload = () => {
+    loadConversas();
+    loadMoradores();
+    setInterval(() => {
+        loadConversas();
+        if(activeMoradorId) loadMessages();
+    }, 3000);
   };
 </script>
 </body>
