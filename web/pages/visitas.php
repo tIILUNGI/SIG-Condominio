@@ -99,7 +99,7 @@ $stmt->close();
                 <div class="form-grid">
                     <div class="form-group">
                         <label>Nome do Visitante</label>
-                        <input type="text" name="nome" placeholder="Nome completo" required>
+                        <input type="text" name="nome" placeholder="Nome completo" required pattern="[A-Za-zÀ-ÖØ-öø-ÿ\s]+" title="O nome deve conter apenas letras e espaços.">
                     </div>
                     <div class="form-group">
                         <label>BI do Visitante (Opcional)</label>

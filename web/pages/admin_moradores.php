@@ -95,7 +95,7 @@ include("../api/conexao.php");
                     <form id="form-mor" class="form-grid">
                         <div class="form-group full">
                             <label>Nome Completo *</label>
-                            <input type="text" id="m-nome" required />
+                            <input type="text" id="m-nome" required pattern="[A-Za-zÀ-ÖØ-öø-ÿ\s]+" title="O nome deve conter apenas letras e espaços." />
                         </div>
                         <div class="form-group">
                             <label>Email *</label>
@@ -103,7 +103,7 @@ include("../api/conexao.php");
                         </div>
                         <div class="form-group">
                             <label>Telefone *</label>
-                            <input type="text" id="m-telefone" required />
+                            <input type="text" id="m-telefone" required placeholder="9XX-XXX-XXX" pattern="9[0-9]{2}-[0-9]{3}-[0-9]{3}" title="Formato esperado: 9xx-xxx-xxx" oninput="maskPhone(this)" />
                         </div>
                         <div class="form-group">
                             <label>Nº Bilhete (BI)</label>
@@ -150,6 +150,16 @@ include("../api/conexao.php");
 <div class="toast" id="toast"></div>
 
 <script>
+function maskPhone(i) {
+    let v = i.value.replace(/\D/g, "");
+    if (v.length > 9) v = v.substring(0, 9);
+    let r = "";
+    if (v.length > 0) r += v.substring(0, 3);
+    if (v.length > 3) r += "-" + v.substring(3, 6);
+    if (v.length > 6) r += "-" + v.substring(6, 9);
+    i.value = r;
+}
+
 const API_URL = '../api/api_dashboard.php';
 
 function showToast(msg, isError = false) {

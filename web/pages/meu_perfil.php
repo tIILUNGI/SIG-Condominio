@@ -241,7 +241,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao'])) {
             <input type="hidden" name="acao" value="editar_perfil">
             <div class="form-group">
                 <label>Nome Completo *</label>
-                <input type="text" name="novo_nome" value="<?php echo htmlspecialchars($morador['nome'] ?? ''); ?>" required maxlength="60" />
+                <input type="text" name="novo_nome" value="<?php echo htmlspecialchars($morador['nome'] ?? ''); ?>" required maxlength="60" pattern="[A-Za-zÀ-ÖØ-öø-ÿ\s]+" title="O nome deve conter apenas letras e espaços." />
             </div>
             <div class="form-group">
                 <label>Email *</label>
@@ -249,7 +249,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao'])) {
             </div>
             <div class="form-group">
                 <label>Telefone *</label>
-                <input type="tel" name="novo_telefone" value="<?php echo htmlspecialchars($morador['telefone'] ?? ''); ?>" required maxlength="9" placeholder="9XX XXX XXX" />
+                <input type="tel" name="novo_telefone" value="<?php echo htmlspecialchars($morador['telefone'] ?? ''); ?>" required maxlength="11" placeholder="9XX-XXX-XXX" pattern="9[0-9]{2}-[0-9]{3}-[0-9]{3}" title="Formato esperado: 9xx-xxx-xxx" oninput="maskPhone(this)" />
             </div>
             <div class="form-group">
                 <label>Morada Actual</label>
@@ -292,6 +292,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao'])) {
 </div>
 
 <script>
+function maskPhone(i) {
+    let v = i.value.replace(/\D/g, "");
+    if (v.length > 9) v = v.substring(0, 9);
+    let r = "";
+    if (v.length > 0) r += v.substring(0, 3);
+    if (v.length > 3) r += "-" + v.substring(3, 6);
+    if (v.length > 6) r += "-" + v.substring(6, 9);
+    i.value = r;
+}
+
 function toggleSidebar() {
     document.getElementById('sidebar').classList.toggle('open');
 }

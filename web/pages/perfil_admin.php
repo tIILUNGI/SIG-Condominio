@@ -109,7 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao'])) {
                     <input type="hidden" name="acao" value="editar_perfil">
                     <div class="form-group">
                         <label>Nome Completo</label>
-                        <input type="text" name="novo_nome" value="<?php echo htmlspecialchars($admin['nome']); ?>" required>
+                        <input type="text" name="novo_nome" value="<?php echo htmlspecialchars($admin['nome']); ?>" required pattern="[A-Za-zÀ-ÖØ-öø-ÿ\s]+" title="O nome deve conter apenas letras e espaços.">
                     </div>
                     <div class="form-group">
                         <label>Email Corporativo</label>
@@ -117,7 +117,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao'])) {
                     </div>
                     <div class="form-group">
                         <label>Telefone</label>
-                        <input type="text" name="novo_telefone" value="<?php echo htmlspecialchars($admin['telefone']); ?>">
+                        <input type="text" name="novo_telefone" value="<?php echo htmlspecialchars($admin['telefone']); ?>" placeholder="9XX-XXX-XXX" pattern="9[0-9]{2}-[0-9]{3}-[0-9]{3}" title="Formato esperado: 9xx-xxx-xxx" oninput="maskPhone(this)">
                     </div>
                     <button type="submit" class="btn-primary" style="width:100%; margin-top:10px;">Salvar Alterações</button>
                 </form>
@@ -147,6 +147,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao'])) {
 </main>
 
 <script>
+function maskPhone(i) {
+    let v = i.value.replace(/\D/g, "");
+    if (v.length > 9) v = v.substring(0, 9);
+    let r = "";
+    if (v.length > 0) r += v.substring(0, 3);
+    if (v.length > 3) r += "-" + v.substring(3, 6);
+    if (v.length > 6) r += "-" + v.substring(6, 9);
+    i.value = r;
+}
+
 function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
 function clock() {
     const now = new Date();
