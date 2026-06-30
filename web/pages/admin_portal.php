@@ -441,7 +441,7 @@ window.BLCOES_DATA = <?php echo json_encode($blocos); ?>;
         </div>
         <div style="overflow-x:auto;">
           <table class="data-table">
-            <thead><tr><th>Morador</th><th>Apt</th><th>Tipo</th><th>Valor</th><th>Método</th><th>Data</th><th>Estado</th></tr></thead>
+            <thead><tr><th>Morador</th><th>Apartamento</th><th>Valor Pago</th><th>Método de Pagamento</th><th>Data de Envio</th><th>Estado</th><th>Ações</th></tr></thead>
             <tbody id="mor-tbody"></tbody>
           </table>
         </div>
@@ -1423,11 +1423,11 @@ async function buildReport() {
   container.innerHTML = '<div class="empty-state"><i class="fa-solid fa-circle-notch fa-spin"></i><p>Gerando relatório consolidado...</p></div>';
 
   try {
-    const res = await fetch('api/api_dashboard.php?acao=resumo');
+    const res = await fetch(`${API_URL}?acao=resumo`);
     const data = await res.json();
     const stats = data.dados;
 
-    const resPag = await fetch('api/api_dashboard.php?acao=pagamentos');
+    const resPag = await fetch(`${API_URL}?acao=pagamentos`);
     const dataPag = await resPag.json();
     const pagamentos = dataPag.dados.filter(p => {
         const d = new Date(p.data_pagamento);
@@ -1964,7 +1964,7 @@ function abrirNegarPedido() {
 }
 
 // --- CONFIGURAÇÃO GLOBAL ---
-const API_URL = 'api/api_dashboard.php';
+const API_URL = '../api/api_dashboard.php';
 let chartReceitas = null;
 let chartServicos = null;
 
@@ -2040,10 +2040,10 @@ function initCharts(stats) {
         chartReceitas = new Chart(ctx1, {
             type: 'line',
             data: {
-                labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
+                labels: stats.labels_6meses || ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
                 datasets: [{
                     label: 'Receitas (Kz)',
-                    data: [stats.receitas_mes * 0.8, stats.receitas_mes * 0.9, stats.receitas_mes * 0.85, stats.receitas_mes * 0.95, stats.receitas_mes * 1.1, stats.receitas_mes],
+                    data: stats.receitas_6meses || [0, 0, 0, 0, 0, 0],
                     borderColor: '#b4914a',
                     tension: 0.4,
                     fill: true,
@@ -2061,7 +2061,7 @@ function initCharts(stats) {
             data: {
                 labels: ['Ocupados', 'Disponíveis', 'Manutenção'],
                 datasets: [{
-                    data: [stats.apartamentos_ocupados, stats.apartamentos_disponiveis, 2],
+                    data: [stats.apartamentos_ocupados || 0, stats.apartamentos_disponiveis || 0, stats.apartamentos_manutencao || 0],
                     backgroundColor: ['#2563eb', '#10b981', '#f59e0b']
                 }]
             },
@@ -2143,18 +2143,57 @@ async function carregarPagamentos() {
     try {
         const res = await fetch(`${API_URL}?acao=pagamentos`);
         const data = await res.json();
-        tbody.innerHTML = data.dados.map(p => `
-            <tr>
-                <td>${p.morador}</td>
-                <td><span class="house-tag">${p.apartamento}</span></td>
-                <td>Confirmado</td>
-                <td><strong>${fmt(p.valor_pago)} Kz</strong></td>
-                <td>${p.metodo}</td>
-                <td>${new Date(p.data_pagamento).toLocaleDateString()}</td>
-                <td><span class="badge ${p.estado === 'confirmado' ? 'pago' : 'pendente'}">${p.estado}</span></td>
-            </tr>
-        `).join('') || '<tr><td colspan="7" style="text-align:center;">Nenhum pagamento registado.</td></tr>';
-    } catch (e) { }
+        tbody.innerHTML = data.dados.map(p => {
+            let badgeClass = 'pendente';
+            if (p.estado === 'confirmado') badgeClass = 'pago';
+            if (p.estado === 'rejeitado') badgeClass = 'vencido';
+            
+            return `
+                <tr>
+                    <td><strong>${p.morador}</strong></td>
+                    <td><span class="house-tag">${p.apartamento || 'Sem atribuição'}</span></td>
+                    <td><strong>${fmt(p.valor_pago)} Kz</strong></td>
+                    <td>${p.metodo}</td>
+                    <td>${new Date(p.data_pagamento).toLocaleDateString('pt-AO')}</td>
+                    <td><span class="badge ${badgeClass}">${p.estado.toUpperCase()}</span></td>
+                    <td>
+                        ${p.estado === 'pendente' ? `
+                          <button class="btn-success btn-sm" onclick="processarPagamentoAdmin(${p.id}, 'confirmado')" title="Confirmar Pagamento"><i class="fa-solid fa-check"></i></button>
+                          <button class="btn-danger btn-sm" onclick="processarPagamentoAdmin(${p.id}, 'rejeitado')" title="Rejeitar Pagamento"><i class="fa-solid fa-xmark"></i></button>
+                        ` : `
+                          <span style="font-size:0.75rem; color:var(--text-muted); font-weight:700;">PROCESSED</span>
+                        `}
+                    </td>
+                </tr>
+            `;
+        }).join('') || '<tr><td colspan="7" style="text-align:center;">Nenhum pagamento registado.</td></tr>';
+    } catch (e) {
+        tbody.innerHTML = '<tr><td colspan="7">Erro ao obter pagamentos.</td></tr>';
+    }
+}
+
+async function processarPagamentoAdmin(id, estado) {
+    const notas = prompt('Insira alguma observação para este pagamento (opcional):');
+    if (notas === null) return;
+    
+    const fd = new FormData();
+    fd.append('id', id);
+    fd.append('estado', estado);
+    fd.append('notas', notas);
+    
+    try {
+        const r = await fetch(`${API_URL}?acao=confirmar_pagamento`, { method: 'POST', body: fd });
+        const d = await r.json();
+        if (d.sucesso) {
+            showToast('Pagamento ' + (estado === 'confirmado' ? 'confirmado' : 'rejeitado') + ' com sucesso!');
+            carregarPagamentos();
+            loadDashboard();
+        } else {
+            showToast(d.erro || 'Erro ao processar', true);
+        }
+    } catch (e) {
+        showToast('Erro de conexão ao servidor', true);
+    }
 }
 
 async function carregarVisitas() {

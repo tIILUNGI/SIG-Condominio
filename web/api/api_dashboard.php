@@ -16,21 +16,49 @@ $acao = $_GET['acao'] ?? 'resumo';
 switch ($acao) {
 
     case 'resumo':
-        // KPIs do dashboard
+        // ── KPIs principais ──
         $r = [];
+        $r['total_moradores']          = (int)(mysqli_fetch_row(mysqli_query($conexao, "SELECT COUNT(*) FROM morador"))[0] ?? 0);
+        $r['total_admins']             = (int)(mysqli_fetch_row(mysqli_query($conexao, "SELECT COUNT(*) FROM administrador"))[0] ?? 0);
+        $r['total_apartamentos']       = (int)(mysqli_fetch_row(mysqli_query($conexao, "SELECT COUNT(*) FROM apartamento"))[0] ?? 0);
+        $r['apartamentos_disponiveis'] = (int)(mysqli_fetch_row(mysqli_query($conexao, "SELECT COUNT(*) FROM apartamento WHERE estado='Disponivel'"))[0] ?? 0);
+        $r['apartamentos_ocupados']    = (int)(mysqli_fetch_row(mysqli_query($conexao, "SELECT COUNT(*) FROM apartamento WHERE estado IN ('Ocupado','ocupada','Ocupada')"))[0] ?? 0);
+        $r['apartamentos_manutencao']  = (int)(mysqli_fetch_row(mysqli_query($conexao, "SELECT COUNT(*) FROM apartamento WHERE estado IN ('Manutencao','Em Manutenção','manutencao')"))[0] ?? 0);
+        $r['mensalidades_pendentes']   = (int)(mysqli_fetch_row(mysqli_query($conexao, "SELECT COUNT(*) FROM mensalidade WHERE estado='pendente'"))[0] ?? 0);
+        $r['mensalidades_pagas']       = (int)(mysqli_fetch_row(mysqli_query($conexao, "SELECT COUNT(*) FROM mensalidade WHERE estado='paga'"))[0] ?? 0);
+        $r['mensalidades_vencidas']    = (int)(mysqli_fetch_row(mysqli_query($conexao, "SELECT COUNT(*) FROM mensalidade WHERE estado='vencida'"))[0] ?? 0);
+        $r['receitas_mes']             = (float)(mysqli_fetch_row(mysqli_query($conexao, "SELECT COALESCE(SUM(valor_pago),0) FROM mensalidade_pagamento WHERE MONTH(data_pagamento)=MONTH(NOW()) AND YEAR(data_pagamento)=YEAR(NOW()) AND estado='confirmado'"))[0] ?? 0);
+        $r['total_receitas']           = (float)(mysqli_fetch_row(mysqli_query($conexao, "SELECT COALESCE(SUM(valor_pago),0) FROM mensalidade_pagamento WHERE estado='confirmado'"))[0] ?? 0);
 
-        $r['total_moradores']   = mysqli_fetch_row(mysqli_query($conexao, "SELECT COUNT(*) FROM morador"))[0] ?? 0;
-        $r['total_admins']      = mysqli_fetch_row(mysqli_query($conexao, "SELECT COUNT(*) FROM administrador"))[0] ?? 0;
-        $r['total_apartamentos'] = mysqli_fetch_row(mysqli_query($conexao, "SELECT COUNT(*) FROM apartamento"))[0] ?? 0;
-        $r['apartamentos_disponiveis'] = mysqli_fetch_row(mysqli_query($conexao, "SELECT COUNT(*) FROM apartamento WHERE estado='Disponivel'"))[0] ?? 0;
-        $r['apartamentos_ocupados'] = mysqli_fetch_row(mysqli_query($conexao, "SELECT COUNT(*) FROM apartamento WHERE estado='Ocupado' OR estado='ocupada'"))[0] ?? 0;
-        $r['mensalidades_pendentes'] = mysqli_fetch_row(mysqli_query($conexao, "SELECT COUNT(*) FROM mensalidade WHERE estado='pendente'"))[0] ?? 0;
-        $r['receitas_mes'] = mysqli_fetch_row(mysqli_query($conexao, "SELECT COALESCE(SUM(valor_pago),0) FROM mensalidade_pagamento WHERE MONTH(data_pagamento)=MONTH(NOW()) AND YEAR(data_pagamento)=YEAR(NOW()) AND estado='confirmado'"))[0] ?? 0;
+        // ── Receitas dos últimos 6 meses (para gráfico de linha) ──
+        $receitas6 = [];
+        $labels6   = [];
+        $nomes_mes_pt = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+        for ($i = 5; $i >= 0; $i--) {
+            $ts   = mktime(0,0,0, date('n') - $i, 1, date('Y'));
+            $m    = (int)date('n', $ts);
+            $y    = (int)date('Y', $ts);
+            $val  = mysqli_fetch_row(mysqli_query($conexao,
+                "SELECT COALESCE(SUM(valor_pago),0) FROM mensalidade_pagamento
+                 WHERE MONTH(data_pagamento)=$m AND YEAR(data_pagamento)=$y AND estado='confirmado'"
+            ))[0] ?? 0;
+            $receitas6[] = (float)$val;
+            $labels6[]   = $nomes_mes_pt[$m - 1] . ' ' . $y;
+        }
+        $r['receitas_6meses'] = $receitas6;
+        $r['labels_6meses']   = $labels6;
+
+        // ── Pagamentos por estado (para gráfico doughnut de pagamentos) ──
+        $r['pag_confirmados'] = (int)(mysqli_fetch_row(mysqli_query($conexao, "SELECT COUNT(*) FROM mensalidade_pagamento WHERE estado='confirmado'"))[0] ?? 0);
+        $r['pag_pendentes']   = (int)(mysqli_fetch_row(mysqli_query($conexao, "SELECT COUNT(*) FROM mensalidade_pagamento WHERE estado='pendente'"))[0] ?? 0);
+        $r['pag_rejeitados']  = (int)(mysqli_fetch_row(mysqli_query($conexao, "SELECT COUNT(*) FROM mensalidade_pagamento WHERE estado='rejeitado'"))[0] ?? 0);
+
         $r['localizacao'] = "Viana, Luanda, Angola";
-        $r['apoio'] = "+244 923 000 000";
+        $r['apoio']       = "+244 923 000 000";
 
         echo json_encode(['sucesso' => true, 'dados' => $r]);
         break;
+
 
     case 'casas':
         $sql = "SELECT a.id, b.letra as bloco, a.numero, a.andar, a.tipologia, a.estado, a.codigo,
@@ -314,7 +342,7 @@ switch ($acao) {
             "INSERT INTO administrador (id_condominio, nome, telefone, email, nasc, nacionalidade, morada, numbi, emissao_bi, validade_bi, locale_bi, funcao, iban, senha_hash, activo)
              VALUES (?, ?, ?, ?, ?, 'Angolana', ?, ?, ?, ?, 'Luanda', ?, '', ?, 1)"
         );
-        $stmt->bind_param("isssssssssss", $id_cond, $nome, $telefone, $email, $nasc, $morada, $numbi, $emissao, $validade, $funcao, $hash);
+        $stmt->bind_param("issssssssss", $id_cond, $nome, $telefone, $email, $nasc, $morada, $numbi, $emissao, $validade, $funcao, $hash);
         if ($stmt->execute()) echo json_encode(['sucesso' => true]);
         else echo json_encode(['sucesso' => false, 'erro' => $stmt->error]);
         $stmt->close();
@@ -339,10 +367,13 @@ switch ($acao) {
         if ($chk->num_rows > 0) { echo json_encode(['sucesso'=>false,'erro'=>'Email já registado']); $chk->close(); break; }
         $chk->close();
 
+        $emissao_bi_def = date('Y-m-d');
+        $validade_bi_def = date('Y-m-d', strtotime('+10 years'));
         $stmt = $conexao->prepare(
-            "INSERT INTO morador (nome, email, senha_hash, telefone, numbi, nasc, estado_conta) VALUES (?, ?, ?, ?, ?, ?, 'Activo')"
+            "INSERT INTO morador (nome, email, senha_hash, telefone, numbi, nasc, emissao_bi, validade_bi, estado_conta)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'Activo')"
         );
-        $stmt->bind_param("ssssss", $nome, $email, $hash, $telefone, $numbi, $nascimento);
+        $stmt->bind_param("ssssssss", $nome, $email, $hash, $telefone, $numbi, $nascimento, $emissao_bi_def, $validade_bi_def);
         if ($stmt->execute()) echo json_encode(['sucesso' => true, 'id' => $stmt->insert_id]);
         else echo json_encode(['sucesso' => false, 'erro' => $stmt->error]);
         $stmt->close();

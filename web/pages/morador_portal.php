@@ -429,10 +429,7 @@ $res_logs = mysqli_query($conexao, $sql_logs);
 
     // Payment functions
     function openPay(id, serv, val) {
-        document.getElementById('m-id').value = id;
-        document.getElementById('m-serv').value = serv;
-        document.getElementById('m-val').value = val;
-        document.getElementById('payModal').classList.add('open');
+        window.location.href = 'pagar_mensalidade.php?id=' + id;
     }
     function closePay() { document.getElementById('payModal').classList.remove('open'); }
 
