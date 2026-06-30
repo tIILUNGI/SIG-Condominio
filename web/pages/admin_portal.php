@@ -82,8 +82,14 @@ window.BLCOES_DATA = <?php echo json_encode($blocos); ?>;
       <div class="stat-card">
         <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
         <p class="stat-label">Total Moradores</p>
-        <p class="stat-value" id="ds-total-reg">—</p>
-        <p class="stat-hint">Residentes registados na BD</p>
+        <p class="stat-value" id="ds-moradores">—</p>
+        <p class="stat-hint">Residentes registados</p>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon"><i class="fa-solid fa-user-tie"></i></div>
+        <p class="stat-label">Total Admins</p>
+        <p class="stat-value" id="ds-admins">—</p>
+        <p class="stat-hint">Equipa administrativa</p>
       </div>
       <div class="stat-card green">
         <div class="stat-icon"><i class="fa-solid fa-sack-dollar"></i></div>
@@ -99,8 +105,8 @@ window.BLCOES_DATA = <?php echo json_encode($blocos); ?>;
       </div>
       <div class="stat-card blue">
         <div class="stat-icon"><i class="fa-solid fa-house"></i></div>
-        <p class="stat-label">Casas Disponíveis</p>
-        <p class="stat-value" id="ds-casas">—</p>
+        <p class="stat-label">Total Apartamentos</p>
+        <p class="stat-value" id="ds-apartamentos">—</p>
         <p class="stat-hint" id="ds-casas-hint">Disponíveis / Total</p>
       </div>
     </div>
@@ -998,10 +1004,9 @@ function initLegacy() {
   seedDemoData();
   
   // Render legacy tabs that don't conflict with main tables
-  renderPedidos();
-  updateBadgePedidos();
-  renderRegistos();
-  renderPayHistory();
+  // renderPedidos(); // Element #pedidos-tbody doesn't exist in this page
+  // renderRegistos(); // Element #regs-tbody doesn't exist in this page
+  renderPayHistory(); // Has #pay-history-container
 }
 
 
@@ -1061,18 +1066,18 @@ function renderDashboard() {
     const el = document.getElementById(id);
     if (el) el.textContent = val;
   };
-  updateText('ds-total-reg', allRegs.length);
-  const totalPay = [...allPays, ...allMorPays].reduce((s,p) => s + (p.total||p.valor||0), 0);
-  updateText('ds-receitas', fmt(totalPay) + ' Kz');
-  updateText('ds-pendentes', allRegs.filter(r => r.status === 'pendente').length);
-  const disp = allHouses.filter(h => h.estado === 'disponivel').length;
-  updateText('ds-casas', disp);
-  updateText('badge-reg', allRegs.filter(r=>r.status==='pendente').length);
-  updateText('badge-pay', allPays.filter(p=>p.status==='pendente').length);
+  // Legacy fallback - uses localStorage (not used in this page, kept for compatibility)
+  // These elements don't exist in admin_portal.php - skip silently
+  const badgeReg = document.getElementById('badge-reg');
+  const badgePay = document.getElementById('badge-pay');
+  if (badgeReg) badgeReg.textContent = allRegs.filter(r=>r.status==='pendente').length;
+  if (badgePay) badgePay.textContent = allPays.filter(p=>p.status==='pendente').length;
   updateBadgePedidos();
 
-  // Recent table
+  // Recent table - element removed from this page, skip if not exists
   const tbody = document.getElementById('recent-tbody');
+  if (!tbody) return;
+  const recent = allRegs.slice(-6).reverse();
   if (tbody) {
     const recent = allRegs.slice(-6).reverse();
     if (!recent.length) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:2rem;">Sem registos</td></tr>'; return; }
@@ -1108,39 +1113,42 @@ function initCharts() {
     data.push(sum || Math.floor(Math.random()*3000000 + 500000));
   }
 
-  const ctx1 = document.getElementById('chartReceitas').getContext('2d');
-  if (chartR) chartR.destroy();
-  chartR = new Chart(ctx1, {
-    type: 'line',
-    data: {
-      labels,
-      datasets: [{
-        label: 'Receitas (Kz)',
-        data,
-        borderColor: '#c9a84c',
-        backgroundColor: 'rgba(201,168,76,0.1)',
-        borderWidth: 2.5,
-        fill: true,
-        tension: 0.4,
-        pointBackgroundColor: '#c9a84c',
-        pointRadius: 5,
-      }]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: true,
-      plugins: { legend: { display: false } },
-      scales: {
-        x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#8a8070' } },
-        y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#8a8070', callback: v => (v/1000000).toFixed(1)+'M' } }
+  const ctx1 = document.getElementById('chartReceitas');
+  if (ctx1) {
+    if (chartR) chartR.destroy();
+    chartR = new Chart(ctx1.getContext('2d'), {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [{
+          label: 'Receitas (Kz)',
+          data,
+          borderColor: '#c9a84c',
+          backgroundColor: 'rgba(201,168,76,0.1)',
+          borderWidth: 2.5,
+          fill: true,
+          tension: 0.4,
+          pointBackgroundColor: '#c9a84c',
+          pointRadius: 5,
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: true,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#8a8070' } },
+          y: { grid: { color: 'rgba(255,255,255,0.04)' }, ticks: { color: '#8a8070', callback: v => (v/1000000).toFixed(1)+'M' } }
+        }
       }
-    }
-  });
+    });
+  }
 
   const alug = allRegs.filter(r=>r.servico==='aluguel').length;
   const comp = allRegs.filter(r=>r.servico==='compra').length;
-  const ctx2 = document.getElementById('chartServicos').getContext('2d');
-  if (chartS) chartS.destroy();
-  chartS = new Chart(ctx2, {
+  const ctx2 = document.getElementById('chartServicos');
+  if (ctx2) {
+    if (chartS) chartS.destroy();
+    chartS = new Chart(ctx2.getContext('2d'), {
     type: 'doughnut',
     data: {
       labels: ['Arrendamento', 'Compra', 'Casas Livres'],
@@ -1174,6 +1182,7 @@ function filterRegs(f, btn) {
 function renderRegistos() {
   load();
   const tbody = document.getElementById('regs-tbody');
+  if (!tbody) return;
   let regs = allRegs;
   if (regFilter !== 'todos') regs = regs.filter(r => r.status === regFilter || r.servico === regFilter);
   if (!regs.length) { tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--text-muted);padding:2rem;">Sem registos</td></tr>'; return; }
@@ -1744,11 +1753,10 @@ function updateBadgePedidos() {
   const badge = document.getElementById('badge-pedidos');
   if (badge) badge.textContent = pending;
 }
-
-function renderPedidos() {
-  load();
-  const tbody = document.getElementById('pedidos-tbody');
-  let regs = [...allRegs].reverse();
+   load();
+   const tbody = document.getElementById('pedidos-tbody');
+   if (!tbody) return;
+   let regs = [...allRegs].reverse();
   if (pedidoFilter === 'pendente') regs = regs.filter(r => r.status === 'pendente');
   else if (pedidoFilter === 'aprovado') regs = regs.filter(r => r.status === 'aprovado');
   else if (pedidoFilter === 'rejeitado') regs = regs.filter(r => r.status === 'rejeitado');
@@ -2041,16 +2049,18 @@ async function loadDashboard() {
                 if (el) el.textContent = val;
             };
             // Real data from DB
-            updateText('ds-total-reg', s.total_moradores);
-            updateText('ds-receitas', fmt(s.receitas_mes) + ' Kz');
-            updateText('ds-pendentes', s.mensalidades_pendentes);
-            updateText('ds-casas', s.apartamentos_disponiveis + ' / ' + s.total_apartamentos);
-            
-            // Casas hint
-            const hintEl = document.getElementById('ds-casas-hint');
-            if (hintEl) hintEl.textContent = s.apartamentos_ocupados + ' ocupadas · ' + s.apartamentos_disponiveis + ' livres';
-            
-            // Sidebar badges
+updateText('ds-moradores', s.total_moradores);
+             updateText('ds-admins', s.total_admins);
+             updateText('ds-receitas', fmt(s.receitas_mes) + ' Kz');
+             updateText('ds-pendentes', s.mensalidades_pendentes);
+             updateText('ds-apartamentos', s.total_apartamentos);
+             updateText('ds-disponiveis', s.apartamentos_disponiveis);
+             
+// Casas hint
+             const hintEl = document.getElementById('ds-casas-hint');
+             if (hintEl) hintEl.textContent = s.apartamentos_ocupados + ' ocupadas · ' + s.apartamentos_disponiveis + ' livres';
+             
+             // Sidebar badges
             updateText('badge-reg', s.total_moradores);
             updateText('badge-pay', s.mensalidades_pendentes);
             
@@ -2530,7 +2540,7 @@ function applyPermissions() {
 
 // --- INICIALIZAÇÃO ---
 window.onload = () => {
-    initLegacy();      // localStorage/legacy rendering
+    // Skip legacy localStorage rendering - this page uses API
     loadDashboard();   // Real API stats
     carregarAdmins();
     carregarMoradores();
