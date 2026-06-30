@@ -26,13 +26,21 @@ $conexao = null;
 
 $hosts = [null, '127.0.0.1', 'localhost'];
 foreach ($hosts as $h) {
-    $conexao = @mysqli_connect($h, DB_USER, DB_PASS, DB_NAME);
-    if ($conexao) break;
+    try {
+        $conexao = @mysqli_connect($h, DB_USER, DB_PASS, DB_NAME);
+        if ($conexao) break;
+    } catch (mysqli_sql_exception $e) {
+        // Ignorar e tentar o próximo host da lista
+    }
 }
 
 // Tentar porta alternativa se conexão padrão falhar
 if (!$conexao) {
-    $conexao = @mysqli_connect('127.0.0.1', DB_USER, DB_PASS, DB_NAME, 3307);
+    try {
+        $conexao = @mysqli_connect('127.0.0.1', DB_USER, DB_PASS, DB_NAME, 3307);
+    } catch (mysqli_sql_exception $e) {
+        // Ignorar erro para deixar cair no tratamento de erro abaixo
+    }
 }
 
 // ─────────────────────────────────────────────────────────────────────────

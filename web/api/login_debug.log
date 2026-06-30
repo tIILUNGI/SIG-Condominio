@@ -115,3 +115,190 @@
 [27-Jun-2026 08:30:55 UTC] [2026-06-27 08:30:55] Sessão criada com sucesso
 [27-Jun-2026 08:30:55 UTC] [2026-06-27 08:30:55] Último login atualizado
 [27-Jun-2026 08:30:55 UTC] [2026-06-27 08:30:55] Redirecionando para dashboard...
+[27-Jun-2026 10:45:24 UTC] [2026-06-27 10:45:24] === TENTATIVA DE LOGIN ADMIN ===
+[27-Jun-2026 10:45:24 UTC] [2026-06-27 10:45:24] BI recebido: '000123456LA001' | Senha recebida: (não exibida por segurança)
+[27-Jun-2026 10:45:24 UTC] [2026-06-27 10:45:24] ✅ Conexão com BD estabelecida
+[27-Jun-2026 10:45:24 UTC] [2026-06-27 10:45:24] Query executada - Registros encontrados: 1
+[27-Jun-2026 10:45:24 UTC] [2026-06-27 10:45:24] Admin encontrado:
+[27-Jun-2026 10:45:24 UTC] [2026-06-27 10:45:24]   ID: 1
+[27-Jun-2026 10:45:24 UTC] [2026-06-27 10:45:24]   Nome: Jo??o Silva
+[27-Jun-2026 10:45:24 UTC] [2026-06-27 10:45:24]   BI: 000123456LA001
+[27-Jun-2026 10:45:24 UTC] [2026-06-27 10:45:24]   Función: Super Admin
+[27-Jun-2026 10:45:24 UTC] [2026-06-27 10:45:24]   Activo: SIM
+[27-Jun-2026 10:45:24 UTC] [2026-06-27 10:45:24] ✅ Conta está ativa
+[27-Jun-2026 10:45:24 UTC] [2026-06-27 10:45:24] Password_verify: FALSE
+[27-Jun-2026 10:45:24 UTC] [2026-06-27 10:45:24] Senha válida: NÃO
+[27-Jun-2026 10:45:24 UTC] [2026-06-27 10:45:24] ❌ ERRO: Senha incorreta para BI: 000123456LA001
+[27-Jun-2026 10:45:24 UTC] [2026-06-27 10:45:24] === FIM DA TENTATIVA (FALHA) ===
+[27-Jun-2026 10:45:45 UTC] [2026-06-27 10:45:45] === TENTATIVA DE LOGIN ADMIN ===
+[27-Jun-2026 10:45:45 UTC] [2026-06-27 10:45:45] BI recebido: '000123456LA001' | Senha recebida: (não exibida por segurança)
+[27-Jun-2026 10:45:45 UTC] [2026-06-27 10:45:45] ✅ Conexão com BD estabelecida
+[27-Jun-2026 10:45:45 UTC] [2026-06-27 10:45:45] Query executada - Registros encontrados: 1
+[27-Jun-2026 10:45:45 UTC] [2026-06-27 10:45:45] Admin encontrado:
+[27-Jun-2026 10:45:45 UTC] [2026-06-27 10:45:45]   ID: 1
+[27-Jun-2026 10:45:45 UTC] [2026-06-27 10:45:45]   Nome: Jo??o Silva
+[27-Jun-2026 10:45:45 UTC] [2026-06-27 10:45:45]   BI: 000123456LA001
+[27-Jun-2026 10:45:45 UTC] [2026-06-27 10:45:45]   Función: Super Admin
+[27-Jun-2026 10:45:45 UTC] [2026-06-27 10:45:45]   Activo: SIM
+[27-Jun-2026 10:45:45 UTC] [2026-06-27 10:45:45] ✅ Conta está ativa
+[27-Jun-2026 10:45:45 UTC] [2026-06-27 10:45:45] Password_verify: FALSE
+[27-Jun-2026 10:45:45 UTC] [2026-06-27 10:45:45] Senha válida: NÃO
+[27-Jun-2026 10:45:45 UTC] [2026-06-27 10:45:45] ❌ ERRO: Senha incorreta para BI: 000123456LA001
+[27-Jun-2026 10:45:45 UTC] [2026-06-27 10:45:45] === FIM DA TENTATIVA (FALHA) ===
+[27-Jun-2026 10:54:07 UTC] [2026-06-27 10:54:07] === TENTATIVA DE LOGIN ADMIN ===
+[27-Jun-2026 10:54:07 UTC] [2026-06-27 10:54:07] BI recebido: '000123456LA001' | Senha recebida: (não exibida por segurança)
+[27-Jun-2026 10:54:07 UTC] [2026-06-27 10:54:07] ✅ Conexão com BD estabelecida
+[27-Jun-2026 10:54:07 UTC] [2026-06-27 10:54:07] Query executada - Registros encontrados: 1
+[27-Jun-2026 10:54:07 UTC] [2026-06-27 10:54:07] Admin encontrado:
+[27-Jun-2026 10:54:07 UTC] [2026-06-27 10:54:07]   ID: 1
+[27-Jun-2026 10:54:07 UTC] [2026-06-27 10:54:07]   Nome: Jo??o Silva
+[27-Jun-2026 10:54:07 UTC] [2026-06-27 10:54:07]   BI: 000123456LA001
+[27-Jun-2026 10:54:07 UTC] [2026-06-27 10:54:07]   Función: Super Admin
+[27-Jun-2026 10:54:07 UTC] [2026-06-27 10:54:07]   Activo: SIM
+[27-Jun-2026 10:54:07 UTC] [2026-06-27 10:54:07] ✅ Conta está ativa
+[27-Jun-2026 10:54:08 UTC] [2026-06-27 10:54:08] Password_verify: TRUE
+[27-Jun-2026 10:54:08 UTC] [2026-06-27 10:54:08] Senha válida: SIM
+[27-Jun-2026 10:54:08 UTC] [2026-06-27 10:54:08] ✅ LOGIN BEM-SUCEDIDO!
+[27-Jun-2026 10:54:08 UTC] [2026-06-27 10:54:08] Sessão criada com sucesso
+[27-Jun-2026 10:54:08 UTC] [2026-06-27 10:54:08] Último login atualizado
+[27-Jun-2026 10:54:08 UTC] [2026-06-27 10:54:08] Redirecionando para dashboard...
+[27-Jun-2026 11:22:43 UTC] [2026-06-27 11:22:43] === TENTATIVA DE LOGIN ADMIN ===
+[27-Jun-2026 11:22:47 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Nenhuma conexão pôde ser feita porque a máquina de destino as recusou ativamente in C:\Users\dugas\OneDrive\Desktop\SIG-Condominio\web\api\conexao.php:29
+Stack trace:
+#0 C:\Users\dugas\OneDrive\Desktop\SIG-Condominio\web\api\conexao.php(29): mysqli_connect(NULL, 'root', Object(SensitiveParameterValue), 'condominio_nz')
+#1 C:\Users\dugas\OneDrive\Desktop\SIG-Condominio\web\api\loginfuncionario.php(26): include('C:\\Users\\dugas\\...')
+#2 {main}
+  thrown in C:\Users\dugas\OneDrive\Desktop\SIG-Condominio\web\api\conexao.php on line 29
+[27-Jun-2026 11:31:09 UTC] [2026-06-27 11:31:09] === TENTATIVA DE LOGIN ADMIN ===
+[27-Jun-2026 11:31:13 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Nenhuma conexão pôde ser feita porque a máquina de destino as recusou ativamente in C:\Users\dugas\OneDrive\Desktop\SIG-Condominio\web\api\conexao.php:29
+Stack trace:
+#0 C:\Users\dugas\OneDrive\Desktop\SIG-Condominio\web\api\conexao.php(29): mysqli_connect(NULL, 'root', Object(SensitiveParameterValue), 'condominio_nz')
+#1 C:\Users\dugas\OneDrive\Desktop\SIG-Condominio\web\api\loginfuncionario.php(26): include('C:\\Users\\dugas\\...')
+#2 {main}
+  thrown in C:\Users\dugas\OneDrive\Desktop\SIG-Condominio\web\api\conexao.php on line 29
+[27-Jun-2026 11:45:56 UTC] [2026-06-27 11:45:56] === TENTATIVA DE LOGIN ADMIN ===
+[27-Jun-2026 11:46:00 UTC] PHP Fatal error:  Uncaught mysqli_sql_exception: Nenhuma conexão pôde ser feita porque a máquina de destino as recusou ativamente in C:\Users\dugas\OneDrive\Desktop\SIG-Condominio\web\api\conexao.php:29
+Stack trace:
+#0 C:\Users\dugas\OneDrive\Desktop\SIG-Condominio\web\api\conexao.php(29): mysqli_connect(NULL, 'root', Object(SensitiveParameterValue), 'condominio_nz')
+#1 C:\Users\dugas\OneDrive\Desktop\SIG-Condominio\web\api\loginfuncionario.php(26): include('C:\\Users\\dugas\\...')
+#2 {main}
+  thrown in C:\Users\dugas\OneDrive\Desktop\SIG-Condominio\web\api\conexao.php on line 29
+[27-Jun-2026 11:49:57 UTC] [2026-06-27 11:49:57] === TENTATIVA DE LOGIN ADMIN ===
+[27-Jun-2026 11:49:57 UTC] [2026-06-27 11:49:57] BI recebido: '000123456LA001' | Senha recebida: (não exibida por segurança)
+[27-Jun-2026 11:49:57 UTC] [2026-06-27 11:49:57] ✅ Conexão com BD estabelecida
+[27-Jun-2026 11:49:57 UTC] [2026-06-27 11:49:57] Query executada - Registros encontrados: 1
+[27-Jun-2026 11:49:57 UTC] [2026-06-27 11:49:57] Admin encontrado:
+[27-Jun-2026 11:49:57 UTC] [2026-06-27 11:49:57]   ID: 1
+[27-Jun-2026 11:49:57 UTC] [2026-06-27 11:49:57]   Nome: João Silva
+[27-Jun-2026 11:49:57 UTC] [2026-06-27 11:49:57]   BI: 000123456LA001
+[27-Jun-2026 11:49:57 UTC] [2026-06-27 11:49:57]   Función: Super Admin
+[27-Jun-2026 11:49:57 UTC] [2026-06-27 11:49:57]   Activo: SIM
+[27-Jun-2026 11:49:57 UTC] [2026-06-27 11:49:57] ✅ Conta está ativa
+[27-Jun-2026 11:50:00 UTC] [2026-06-27 11:50:00] Password_verify: TRUE
+[27-Jun-2026 11:50:00 UTC] [2026-06-27 11:50:00] Senha válida: SIM
+[27-Jun-2026 11:50:00 UTC] [2026-06-27 11:50:00] ✅ LOGIN BEM-SUCEDIDO!
+[27-Jun-2026 11:50:00 UTC] [2026-06-27 11:50:00] Sessão criada com sucesso
+[27-Jun-2026 11:50:00 UTC] [2026-06-27 11:50:00] Último login atualizado
+[27-Jun-2026 11:50:00 UTC] [2026-06-27 11:50:00] Redirecionando para dashboard...
+[27-Jun-2026 11:50:26 UTC] [2026-06-27 11:50:26] === TENTATIVA DE LOGIN ADMIN ===
+[27-Jun-2026 11:50:26 UTC] [2026-06-27 11:50:26] BI recebido: '000123456LA001' | Senha recebida: (não exibida por segurança)
+[27-Jun-2026 11:50:26 UTC] [2026-06-27 11:50:26] ✅ Conexão com BD estabelecida
+[27-Jun-2026 11:50:26 UTC] [2026-06-27 11:50:26] Query executada - Registros encontrados: 1
+[27-Jun-2026 11:50:26 UTC] [2026-06-27 11:50:26] Admin encontrado:
+[27-Jun-2026 11:50:26 UTC] [2026-06-27 11:50:26]   ID: 1
+[27-Jun-2026 11:50:26 UTC] [2026-06-27 11:50:26]   Nome: João Silva
+[27-Jun-2026 11:50:26 UTC] [2026-06-27 11:50:26]   BI: 000123456LA001
+[27-Jun-2026 11:50:26 UTC] [2026-06-27 11:50:26]   Función: Super Admin
+[27-Jun-2026 11:50:26 UTC] [2026-06-27 11:50:26]   Activo: SIM
+[27-Jun-2026 11:50:26 UTC] [2026-06-27 11:50:26] ✅ Conta está ativa
+[27-Jun-2026 11:50:28 UTC] [2026-06-27 11:50:28] Password_verify: TRUE
+[27-Jun-2026 11:50:28 UTC] [2026-06-27 11:50:28] Senha válida: SIM
+[27-Jun-2026 11:50:28 UTC] [2026-06-27 11:50:28] ✅ LOGIN BEM-SUCEDIDO!
+[27-Jun-2026 11:50:28 UTC] [2026-06-27 11:50:28] Sessão criada com sucesso
+[27-Jun-2026 11:50:28 UTC] [2026-06-27 11:50:28] Último login atualizado
+[27-Jun-2026 11:50:28 UTC] [2026-06-27 11:50:28] Redirecionando para dashboard...
+[27-Jun-2026 11:53:58 UTC] [2026-06-27 11:53:58] === TENTATIVA DE LOGIN ADMIN ===
+[27-Jun-2026 11:53:58 UTC] [2026-06-27 11:53:58] BI recebido: '000123456LA001' | Senha recebida: (não exibida por segurança)
+[27-Jun-2026 11:53:58 UTC] [2026-06-27 11:53:58] ✅ Conexão com BD estabelecida
+[27-Jun-2026 11:53:58 UTC] [2026-06-27 11:53:58] Query executada - Registros encontrados: 1
+[27-Jun-2026 11:53:58 UTC] [2026-06-27 11:53:58] Admin encontrado:
+[27-Jun-2026 11:53:58 UTC] [2026-06-27 11:53:58]   ID: 1
+[27-Jun-2026 11:53:58 UTC] [2026-06-27 11:53:58]   Nome: João Silva
+[27-Jun-2026 11:53:58 UTC] [2026-06-27 11:53:58]   BI: 000123456LA001
+[27-Jun-2026 11:53:58 UTC] [2026-06-27 11:53:58]   Función: Super Admin
+[27-Jun-2026 11:53:58 UTC] [2026-06-27 11:53:58]   Activo: SIM
+[27-Jun-2026 11:53:58 UTC] [2026-06-27 11:53:58] ✅ Conta está ativa
+[27-Jun-2026 11:54:00 UTC] [2026-06-27 11:54:00] Password_verify: TRUE
+[27-Jun-2026 11:54:00 UTC] [2026-06-27 11:54:00] Senha válida: SIM
+[27-Jun-2026 11:54:00 UTC] [2026-06-27 11:54:00] ✅ LOGIN BEM-SUCEDIDO!
+[27-Jun-2026 11:54:00 UTC] [2026-06-27 11:54:00] Sessão criada com sucesso
+[27-Jun-2026 11:54:00 UTC] [2026-06-27 11:54:00] Último login atualizado
+[27-Jun-2026 11:54:00 UTC] [2026-06-27 11:54:00] Redirecionando para dashboard...
+[27-Jun-2026 11:54:33 UTC] [2026-06-27 11:54:33] === TENTATIVA DE LOGIN ADMIN ===
+[27-Jun-2026 11:54:33 UTC] [2026-06-27 11:54:33] BI recebido: '000654321LA002' | Senha recebida: (não exibida por segurança)
+[27-Jun-2026 11:54:33 UTC] [2026-06-27 11:54:33] ✅ Conexão com BD estabelecida
+[27-Jun-2026 11:54:33 UTC] [2026-06-27 11:54:33] Query executada - Registros encontrados: 1
+[27-Jun-2026 11:54:33 UTC] [2026-06-27 11:54:33] Admin encontrado:
+[27-Jun-2026 11:54:33 UTC] [2026-06-27 11:54:33]   ID: 2
+[27-Jun-2026 11:54:33 UTC] [2026-06-27 11:54:33]   Nome: Maria Santos
+[27-Jun-2026 11:54:33 UTC] [2026-06-27 11:54:33]   BI: 000654321LA002
+[27-Jun-2026 11:54:33 UTC] [2026-06-27 11:54:33]   Función: Administrador
+[27-Jun-2026 11:54:33 UTC] [2026-06-27 11:54:33]   Activo: SIM
+[27-Jun-2026 11:54:33 UTC] [2026-06-27 11:54:33] ✅ Conta está ativa
+[27-Jun-2026 11:54:35 UTC] [2026-06-27 11:54:35] Password_verify: TRUE
+[27-Jun-2026 11:54:35 UTC] [2026-06-27 11:54:35] Senha válida: SIM
+[27-Jun-2026 11:54:35 UTC] [2026-06-27 11:54:35] ✅ LOGIN BEM-SUCEDIDO!
+[27-Jun-2026 11:54:35 UTC] [2026-06-27 11:54:35] Sessão criada com sucesso
+[27-Jun-2026 11:54:35 UTC] [2026-06-27 11:54:35] Último login atualizado
+[27-Jun-2026 11:54:35 UTC] [2026-06-27 11:54:35] Redirecionando para dashboard...
+[27-Jun-2026 11:55:53 UTC] [2026-06-27 11:55:53] === TENTATIVA DE LOGIN ADMIN ===
+[27-Jun-2026 11:55:53 UTC] [2026-06-27 11:55:53] BI recebido: '000123456LA001' | Senha recebida: (não exibida por segurança)
+[27-Jun-2026 11:55:53 UTC] [2026-06-27 11:55:53] ✅ Conexão com BD estabelecida
+[27-Jun-2026 11:55:53 UTC] [2026-06-27 11:55:53] Query executada - Registros encontrados: 1
+[27-Jun-2026 11:55:53 UTC] [2026-06-27 11:55:53] Admin encontrado:
+[27-Jun-2026 11:55:53 UTC] [2026-06-27 11:55:53]   ID: 1
+[27-Jun-2026 11:55:53 UTC] [2026-06-27 11:55:53]   Nome: João Silva
+[27-Jun-2026 11:55:53 UTC] [2026-06-27 11:55:53]   BI: 000123456LA001
+[27-Jun-2026 11:55:53 UTC] [2026-06-27 11:55:53]   Función: Super Admin
+[27-Jun-2026 11:55:53 UTC] [2026-06-27 11:55:53]   Activo: SIM
+[27-Jun-2026 11:55:53 UTC] [2026-06-27 11:55:53] ✅ Conta está ativa
+[27-Jun-2026 11:55:55 UTC] [2026-06-27 11:55:55] Password_verify: TRUE
+[27-Jun-2026 11:55:55 UTC] [2026-06-27 11:55:55] Senha válida: SIM
+[27-Jun-2026 11:55:55 UTC] [2026-06-27 11:55:55] ✅ LOGIN BEM-SUCEDIDO!
+[27-Jun-2026 11:55:55 UTC] [2026-06-27 11:55:55] Sessão criada com sucesso
+[27-Jun-2026 11:55:55 UTC] [2026-06-27 11:55:55] Último login atualizado
+[27-Jun-2026 11:55:55 UTC] [2026-06-27 11:55:55] Redirecionando para dashboard...
+[27-Jun-2026 12:02:03 UTC] [2026-06-27 12:02:03] === TENTATIVA DE LOGIN ADMIN ===
+[27-Jun-2026 12:02:03 UTC] [2026-06-27 12:02:03] BI recebido: '000123456LA001' | Senha recebida: (não exibida por segurança)
+[27-Jun-2026 12:02:03 UTC] [2026-06-27 12:02:03] ✅ Conexão com BD estabelecida
+[27-Jun-2026 12:02:03 UTC] [2026-06-27 12:02:03] Query executada - Registros encontrados: 1
+[27-Jun-2026 12:02:03 UTC] [2026-06-27 12:02:03] Admin encontrado:
+[27-Jun-2026 12:02:03 UTC] [2026-06-27 12:02:03]   ID: 1
+[27-Jun-2026 12:02:03 UTC] [2026-06-27 12:02:03]   Nome: João Silva
+[27-Jun-2026 12:02:03 UTC] [2026-06-27 12:02:03]   BI: 000123456LA001
+[27-Jun-2026 12:02:03 UTC] [2026-06-27 12:02:03]   Función: Super Admin
+[27-Jun-2026 12:02:03 UTC] [2026-06-27 12:02:03]   Activo: SIM
+[27-Jun-2026 12:02:03 UTC] [2026-06-27 12:02:03] ✅ Conta está ativa
+[27-Jun-2026 12:02:07 UTC] [2026-06-27 12:02:07] Password_verify: TRUE
+[27-Jun-2026 12:02:07 UTC] [2026-06-27 12:02:07] Senha válida: SIM
+[27-Jun-2026 12:02:07 UTC] [2026-06-27 12:02:07] ✅ LOGIN BEM-SUCEDIDO!
+[27-Jun-2026 12:02:07 UTC] [2026-06-27 12:02:07] Sessão criada com sucesso
+[27-Jun-2026 12:02:07 UTC] [2026-06-27 12:02:07] Último login atualizado
+[27-Jun-2026 12:02:07 UTC] [2026-06-27 12:02:07] Redirecionando para dashboard...
+[27-Jun-2026 12:36:00 UTC] [2026-06-27 12:36:00] === TENTATIVA DE LOGIN ADMIN ===
+[27-Jun-2026 12:36:00 UTC] [2026-06-27 12:36:00] BI recebido: '000123456LA001' | Senha recebida: (não exibida por segurança)
+[27-Jun-2026 12:36:00 UTC] [2026-06-27 12:36:00] ✅ Conexão com BD estabelecida
+[27-Jun-2026 12:36:00 UTC] [2026-06-27 12:36:00] Query executada - Registros encontrados: 1
+[27-Jun-2026 12:36:00 UTC] [2026-06-27 12:36:00] Admin encontrado:
+[27-Jun-2026 12:36:00 UTC] [2026-06-27 12:36:00]   ID: 1
+[27-Jun-2026 12:36:00 UTC] [2026-06-27 12:36:00]   Nome: João Silva
+[27-Jun-2026 12:36:00 UTC] [2026-06-27 12:36:00]   BI: 000123456LA001
+[27-Jun-2026 12:36:00 UTC] [2026-06-27 12:36:00]   Función: Super Admin
+[27-Jun-2026 12:36:00 UTC] [2026-06-27 12:36:00]   Activo: SIM
+[27-Jun-2026 12:36:00 UTC] [2026-06-27 12:36:00] ✅ Conta está ativa
+[27-Jun-2026 12:36:03 UTC] [2026-06-27 12:36:03] Password_verify: TRUE
+[27-Jun-2026 12:36:03 UTC] [2026-06-27 12:36:03] Senha válida: SIM
+[27-Jun-2026 12:36:03 UTC] [2026-06-27 12:36:03] ✅ LOGIN BEM-SUCEDIDO!
+[27-Jun-2026 12:36:03 UTC] [2026-06-27 12:36:03] Sessão criada com sucesso
+[27-Jun-2026 12:36:03 UTC] [2026-06-27 12:36:03] Último login atualizado
+[27-Jun-2026 12:36:03 UTC] [2026-06-27 12:36:03] Redirecionando para dashboard...

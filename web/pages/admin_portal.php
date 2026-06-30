@@ -81,27 +81,27 @@ window.BLCOES_DATA = <?php echo json_encode($blocos); ?>;
     <div class="stat-grid">
       <div class="stat-card">
         <div class="stat-icon"><i class="fa-solid fa-users"></i></div>
-        <p class="stat-label">Total Registos</p>
-        <p class="stat-value" id="ds-total-reg">0</p>
-        <p class="stat-hint">Visitantes registados</p>
+        <p class="stat-label">Total Moradores</p>
+        <p class="stat-value" id="ds-total-reg">—</p>
+        <p class="stat-hint">Residentes registados na BD</p>
       </div>
       <div class="stat-card green">
         <div class="stat-icon"><i class="fa-solid fa-sack-dollar"></i></div>
         <p class="stat-label">Receitas do Mês</p>
-        <p class="stat-value" id="ds-receitas">0 Kz</p>
-        <p class="stat-hint">Pagamentos recebidos</p>
+        <p class="stat-value" id="ds-receitas">— Kz</p>
+        <p class="stat-hint">Pagamentos confirmados</p>
       </div>
       <div class="stat-card red">
         <div class="stat-icon"><i class="fa-solid fa-triangle-exclamation"></i></div>
-        <p class="stat-label">Pendentes</p>
-        <p class="stat-value" id="ds-pendentes">0</p>
-        <p class="stat-hint">A aguardar aprovação</p>
+        <p class="stat-label">Mensalidades Pendentes</p>
+        <p class="stat-value" id="ds-pendentes">—</p>
+        <p class="stat-hint">Aguardam confirmação</p>
       </div>
       <div class="stat-card blue">
         <div class="stat-icon"><i class="fa-solid fa-house"></i></div>
         <p class="stat-label">Casas Disponíveis</p>
-        <p class="stat-value" id="ds-casas">0</p>
-        <p class="stat-hint">De um total de casas V3</p>
+        <p class="stat-value" id="ds-casas">—</p>
+        <p class="stat-hint" id="ds-casas-hint">Disponíveis / Total</p>
       </div>
     </div>
 
@@ -308,18 +308,18 @@ window.BLCOES_DATA = <?php echo json_encode($blocos); ?>;
     </div>
     <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.25rem;">
 
+
       <!-- Form de adicionar casa -->
-      <form action="casa.php" method="POST">
       <div class="card">
         <div class="card-head"><p class="card-title"><i class="fa-solid fa-plus"></i> Adicionar Nova Residência</p></div>
         <div class="card-body">
           <div class="form-grid">
             <div class="form-group">
-              <label>Letra do Bloco / Rua *</label>
+              <label>Letra do Bloco *</label>
               <input type="text" name="bloco" placeholder="Ex: A, B, C..." maxlength="3" />
             </div>
             <div class="form-group">
-              <label>Número da Rua *</label>
+              <label>Número da Rua</label>
               <input type="text" name="rua" placeholder="Ex: Rua 3, Rua Principal..." />
             </div>
             <div class="form-group">
@@ -337,9 +337,9 @@ window.BLCOES_DATA = <?php echo json_encode($blocos); ?>;
             <div class="form-group full">
               <label>Estado Inicial</label>
               <select name="estado">
-                <option value="ocupada">Disponível</option>
-                <option value="desocupada">Ocupada</option>
-                <option value="manutencao">Em Manutenção</option>
+                <option value="Disponivel">Disponível</option>
+                <option value="Ocupado">Ocupada</option>
+                <option value="Manutencao">Em Manutenção</option>
               </select>
             </div>
             <div class="form-group full">
@@ -347,12 +347,12 @@ window.BLCOES_DATA = <?php echo json_encode($blocos); ?>;
               <input type="text" name="obs" placeholder="Detalhes adicionais..." />
             </div>
           </div>
-          <a href="admin_portal.php"><button class="btn-primary" style="margin-top:1rem; width:100%;" onclick="addHouse()">
+          <button type="button" class="btn-primary" style="margin-top:1rem; width:100%;" onclick="addHouse()">
             <i class="fa-solid fa-house-circle-check"></i> Adicionar Casa
-          </button></a>
+          </button>
         </div>
       </div>
-      </form>
+
 
       <!-- Lista de casas -->
       <div class="card">
@@ -960,22 +960,22 @@ function save() {
 // ═══════════════════════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════════════════════
-window.onload = () => {
+// Legacy localStorage init — chamado pelo novo window.onload
+function initLegacy() {
   load();
   clock();
   setInterval(clock, 1000);
 
   const now = new Date();
-  document.getElementById('dash-date').textContent = now.toLocaleDateString('pt-AO', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
-  document.getElementById('rel-mes').value = now.getMonth();
-  document.getElementById('rel-ano').value = now.getFullYear().toString();
-
-  // Hide month/year selectors initially (day mode)
-  document.getElementById('rel-mes').style.display = 'none';
-  document.getElementById('rel-ano').style.display = 'none';
+  const dashDateEl = document.getElementById('dash-date');
+  if (dashDateEl) dashDateEl.textContent = now.toLocaleDateString('pt-AO', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+  
+  const relMesEl = document.getElementById('rel-mes');
+  const relAnoEl = document.getElementById('rel-ano');
+  if (relMesEl) { relMesEl.value = now.getMonth(); relMesEl.style.display = 'none'; }
+  if (relAnoEl) { relAnoEl.value = now.getFullYear().toString(); relAnoEl.style.display = 'none'; }
 
   seedDemoData();
-  renderDashboard();
   renderPedidos();
   updateBadgePedidos();
   renderRegistos();
@@ -983,9 +983,8 @@ window.onload = () => {
   renderPays();
   renderMorPays();
   renderPayHistory();
-  buildReport();
-  initCharts();
-};
+}
+
 
 function seedDemoData() {
   if (allHouses.length === 0) {
@@ -1865,11 +1864,19 @@ function abrirModalPedido(id) {
   document.getElementById('modal-pedido').classList.add('open');
 }
 
-function switchPTab(tab) {
+function switchPTabLegacy(tab) {
   ['dados','docs','servico','casa'].forEach(t => {
     const panel = document.getElementById('ppanel-' + t);
-    if (panel) panel.style.display = 'none';
+    if (panel) panel.style.display = (t === tab) ? 'block' : 'none';
     const btn = document.getElementById('ptab-' + t);
+    if (btn) {
+      btn.style.background    = (t === tab) ? 'var(--gold)' : 'transparent';
+      btn.style.color         = (t === tab) ? '#000' : 'var(--text-muted)';
+      btn.style.fontWeight    = (t === tab) ? '600' : '400';
+    }
+  });
+}
+
 function previewCasaSelecionada() {
   const sel = document.getElementById('pd-casa-select');
   const houseId = parseInt(sel.value);
@@ -1883,15 +1890,16 @@ function previewCasaSelecionada() {
   selectedCasaId = houseId;
   geradoCodigoPedido = String(Math.floor(1000 + Math.random() * 9000));
 
-  document.getElementById('pv-bloco').textContent = house.bloco || '—';
-  document.getElementById('pv-rua').textContent = house.rua || '—';
+  document.getElementById('pv-bloco').textContent  = house.bloco  || '—';
+  document.getElementById('pv-rua').textContent    = house.rua    || '—';
   document.getElementById('pv-numero').textContent = house.numero || '—';
-  document.getElementById('pv-tipo').textContent = house.tipo || 'V3';
-  document.getElementById('pv-andar').textContent = house.andar || '—';
-  document.getElementById('pv-zona').textContent = house.zona || '—';
+  document.getElementById('pv-tipo').textContent   = house.tipo   || 'V3';
+  document.getElementById('pv-andar').textContent  = house.andar  || '—';
+  document.getElementById('pv-zona').textContent   = house.zona   || '—';
   document.getElementById('pd-novo-codigo').textContent = geradoCodigoPedido;
   document.getElementById('pd-casa-preview').style.display = 'block';
 }
+
 
 function aprovarPedidoFinal() {
   if (!selectedCasaId) {
@@ -1955,7 +1963,6 @@ function abrirNegarPedido() {
   document.getElementById('modal-negar').classList.add('open');
 }
 
-<script>
 // --- CONFIGURAÇÃO GLOBAL ---
 const API_URL = 'api/api_dashboard.php';
 let chartReceitas = null;
@@ -2003,21 +2010,25 @@ async function loadDashboard() {
             const s = data.dados;
             const updateText = (id, val) => {
                 const el = document.getElementById(id);
-                if(el) el.textContent = val;
+                if (el) el.textContent = val;
             };
-            updateText('ds-total-reg', s.total_moradores + s.total_admins);
+            // Real data from DB
+            updateText('ds-total-reg', s.total_moradores);
             updateText('ds-receitas', fmt(s.receitas_mes) + ' Kz');
             updateText('ds-pendentes', s.mensalidades_pendentes);
-            updateText('ds-casas', s.apartamentos_disponiveis);
+            updateText('ds-casas', s.apartamentos_disponiveis + ' / ' + s.total_apartamentos);
+            
+            // Casas hint
+            const hintEl = document.getElementById('ds-casas-hint');
+            if (hintEl) hintEl.textContent = s.apartamentos_ocupados + ' ocupadas · ' + s.apartamentos_disponiveis + ' livres';
             
             // Sidebar badges
-            updateText('badge-pedidos', s.total_admins);
             updateText('badge-reg', s.total_moradores);
             updateText('badge-pay', s.mensalidades_pendentes);
             
             initCharts(s);
         }
-    } catch (e) { console.error('Erro dashboard:', e); }
+    } catch (e) { console.error('Erro ao carregar dashboard:', e); }
 }
 
 function initCharts(stats) {
@@ -2236,18 +2247,62 @@ function resetMorForm() {
 }
 
 async function addHouse() {
-    // A função é chamada pelo botão em tab-casas
-    const form = document.querySelector('#tab-casas form');
-    if (!form) return;
-    const fd = new FormData(form);
-    // Nota: O HTML original usa name="bloco" que é texto. A API espera id_bloco.
-    // Vou simplificar forçando um id_bloco se o campo estiver lá.
+    const blocoLetra = (document.querySelector('#tab-casas input[name="bloco"]')?.value || '').trim().toUpperCase();
+    const numero     = (document.querySelector('#tab-casas input[name="casanum"]')?.value ||
+                        document.querySelector('#tab-casas input[name="numero"]')?.value || '').trim();
+    const tipologia  = document.querySelector('#tab-casas input[name="tipologia"]')?.value || 'V3';
+    const andar      = document.querySelector('#tab-casas input[name="andar"]')?.value || '0';
+    const estadoEl   = document.querySelector('#tab-casas select[name="estado"]');
+    const estado     = estadoEl ? estadoEl.value : 'Disponivel';
+
+    if (!blocoLetra || !numero) { showToast('Preencha o Bloco e o Número da Casa', true); return; }
+
+    // Resolve bloco ID from BLCOES_DATA (populated by PHP at page top)
+    let id_bloco = null;
+    const blocos = window.BLCOES_DATA || {};
+    for (const [bid, bdata] of Object.entries(blocos)) {
+        if ((bdata.letra || '').toUpperCase() === blocoLetra) { id_bloco = bid; break; }
+    }
+
+    if (!id_bloco) {
+        // Fallback: fetch from API
+        try {
+            const rb = await fetch(`${API_URL}?acao=blocos`);
+            const db = await rb.json();
+            if (db.sucesso) {
+                for (const b of db.dados) {
+                    if ((b.letra || '').toUpperCase() === blocoLetra) { id_bloco = b.id; break; }
+                }
+            }
+        } catch(e) {}
+    }
+
+    if (!id_bloco) {
+        showToast('Bloco "' + blocoLetra + '" não encontrado. Verifique os blocos disponíveis na BD.', true);
+        return;
+    }
+
+    const fd = new FormData();
+    fd.append('id_bloco',  id_bloco);
+    fd.append('numero',    numero);
+    fd.append('tipologia', tipologia);
+    fd.append('andar',     andar);
+    fd.append('estado',    estado.includes('pré') ? 'Disponivel' : 'Disponivel');
+
     try {
         const r = await fetch(`${API_URL}?acao=cadastrar_casa`, { method: 'POST', body: fd });
         const d = await r.json();
-        if (d.sucesso) { showToast('Casa adicionada!'); carregarCasas(); }
-        else showToast(d.erro, true);
-    } catch(e) {}
+        if (d.sucesso) {
+            showToast('Casa ' + d.codigo + ' adicionada com sucesso!');
+            carregarCasas();
+            loadDashboard();
+            // Clear form
+            ['bloco','casanum','andar','obs'].forEach(n => {
+                const el = document.querySelector('#tab-casas [name="' + n + '"]');
+                if (el) el.value = '';
+            });
+        } else { showToast(d.erro || 'Erro ao adicionar casa', true); }
+    } catch(e) { showToast('Erro de conexão ao servidor', true); }
 }
 
 function abrirModalProcessarMorador(id, nome) {
@@ -2362,9 +2417,56 @@ function openLightbox(src, label) {
     showToast('Ampliação de imagem em desenvolvimento');
 }
 
+// --- PERMISSÕES ---
+const USER_FUNCAO = '<?php echo addslashes($_SESSION["funcao"] ?? "Administrador"); ?>';
+const USER_TIPO   = '<?php echo addslashes($_SESSION["tipo"] ?? "admin"); ?>';
+
+// Tabs visíveis por função
+const PERMISSOES = {
+    'Administrador': ['dashboard','pedidos','registos','casas','pagamentos','moradores','comunicacao','relatorio'],
+    'RH':            ['dashboard','pedidos','registos','moradores'],
+    'Segurança':     ['dashboard','pedidos'],
+    'Área Técnica':  ['dashboard','casas'],
+    'Limpeza':       ['dashboard'],
+};
+
+function applyPermissions() {
+    const funcao  = (USER_TIPO === 'admin') ? 'Administrador' : USER_FUNCAO;
+    const allowed = PERMISSOES[funcao] || ['dashboard','pedidos'];
+
+    // Sidebar nav items
+    document.querySelectorAll('.nav-item').forEach(btn => {
+        const oc = btn.getAttribute('onclick') || '';
+        // Extract tab id from onclick="switchTab('XXX',this)"
+        const match = oc.match(/switchTab\(['"]([^'"]+)['"]/); 
+        if (match) {
+            const tab = match[1];
+            if (!allowed.includes(tab)) btn.style.display = 'none';
+        }
+    });
+
+    // Show role badge if not full admin
+    if (funcao !== 'Administrador') {
+        const topbar = document.querySelector('.topbar-title');
+        if (topbar) {
+            const badge = document.createElement('span');
+            badge.style.cssText = 'font-size:.68rem;background:rgba(201,168,76,.18);color:var(--gold);padding:2px 10px;border-radius:20px;margin-left:.6rem;font-weight:700;vertical-align:middle;';
+            badge.textContent = funcao;
+            topbar.appendChild(badge);
+        }
+    }
+}
+
 // --- INICIALIZAÇÃO ---
 window.onload = () => {
-    loadDashboard();
+    initLegacy();      // localStorage/legacy rendering
+    loadDashboard();   // Real API stats
+    carregarAdmins();
+    carregarMoradores();
+    carregarCasas();
+    carregarPagamentos();
+    applyPermissions();
+
     // Relógio
     setInterval(() => {
         const el = document.getElementById('clock-display');
@@ -2375,7 +2477,7 @@ window.onload = () => {
     const d = document.getElementById('dash-date');
     if (d) d.textContent = new Date().toLocaleDateString('pt-AO', {weekday:'long', day:'numeric', month:'long'});
 };
-};
 </script>
 </body>
 </html>
+

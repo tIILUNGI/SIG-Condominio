@@ -68,16 +68,16 @@ VALUES
 INSERT INTO morador (nome, email, numbi, telefone, senha_hash, nasc, nacionalidade, morada_anterior, emissao_bi, validade_bi, locale_bi, estado_conta)
 VALUES
   -- Morador 1
-  (1, 'Francisco Neves', 'francisco@email.ao', '000111222LA010', '931111222', '$2y$10$FN1B2c3d4E5f6G7h8I9j0K1L2M3N4O5P6Q7R8S9T0U1V2W3X4Y5Z6', '1980-04-12', 'Angolana', 'Viana, Luanda', '2014-06-20', '2029-06-20', 'SAE Patriota', 'Activo'),
+  ('Francisco Neves', 'francisco@email.ao', '000111222LA010', '931111222', '$2y$10$FN1B2c3d4E5f6G7h8I9j0K1L2M3N4O5P6Q7R8S9T0U1V2W3X4Y5Z6', '1980-04-12', 'Angolana', 'Viana, Luanda', '2014-06-20', '2029-06-20', 'SAE Patriota', 'Activo'),
   
   -- Morador 2
-  (1, 'Lurdes Gomes', 'lurdes@email.ao', '000222333LA011', '932222333', '$2y$10$FN1B2c3d4E5f6G7h8I9j0K1L2M3N4O5P6Q7R8S9T0U1V2W3X4Y5Z6', '1987-08-30', 'Angolana', 'Ingombota, Luanda', '2016-11-15', '2031-11-15', 'SAE Patriota', 'Activo'),
+  ('Lurdes Gomes', 'lurdes@email.ao', '000222333LA011', '932222333', '$2y$10$FN1B2c3d4E5f6G7h8I9j0K1L2M3N4O5P6Q7R8S9T0U1V2W3X4Y5Z6', '1987-08-30', 'Angolana', 'Ingombota, Luanda', '2016-11-15', '2031-11-15', 'SAE Patriota', 'Activo'),
   
   -- Morador 3
-  (1, 'Óscar Rodrigues', 'oscar@email.ao', '000333444LA012', '933333444', '$2y$10$FN1B2c3d4E5f6G7h8I9j0K1L2M3N4O5P6Q7R8S9T0U1V2W3X4Y5Z6', '1993-12-05', 'Angolana', 'Kilamba, Luanda', '2018-09-10', '2033-09-10', 'SAE Patriota', 'Activo'),
+  ('Óscar Rodrigues', 'oscar@email.ao', '000333444LA012', '933333444', '$2y$10$FN1B2c3d4E5f6G7h8I9j0K1L2M3N4O5P6Q7R8S9T0U1V2W3X4Y5Z6', '1993-12-05', 'Angolana', 'Kilamba, Luanda', '2018-09-10', '2033-09-10', 'SAE Patriota', 'Activo'),
   
   -- Morador 4
-  (1, 'Justina Ferreira', 'justina@email.ao', '000444555LA013', '934444555', '$2y$10$FN1B2c3d4E5f6G7h8I9j0K1L2M3N4O5P6Q7R8S9T0U1V2W3X4Y5Z6', '1991-01-18', 'Angolana', 'Manuelas, Luanda', '2017-04-22', '2032-04-22', 'SAE Patriota', 'Activo');
+  ('Justina Ferreira', 'justina@email.ao', '000444555LA013', '934444555', '$2y$10$FN1B2c3d4E5f6G7h8I9j0K1L2M3N4O5P6Q7R8S9T0U1V2W3X4Y5Z6', '1991-01-18', 'Angolana', 'Manuelas, Luanda', '2017-04-22', '2032-04-22', 'SAE Patriota', 'Activo');
 
 -- ─────────────────────────────────────────────────────────────────────────
 -- 6. ASSOCIAR MORADORES A APARTAMENTOS

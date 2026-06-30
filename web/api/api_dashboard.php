@@ -33,9 +33,12 @@ switch ($acao) {
         break;
 
     case 'casas':
-        $sql = "SELECT a.id, b.letra as bloco, a.numero, a.andar, a.tipologia, a.estado, a.codigo
+        $sql = "SELECT a.id, b.letra as bloco, a.numero, a.andar, a.tipologia, a.estado, a.codigo,
+                       m.nome as morador_nome
                 FROM apartamento a
                 JOIN bloco b ON b.id = a.id_bloco
+                LEFT JOIN morador_apartamento ma ON ma.id_apartamento = a.id AND ma.activo = 1
+                LEFT JOIN morador m ON m.id = ma.id_morador
                 ORDER BY b.letra, a.numero";
         $res = mysqli_query($conexao, $sql);
         $rows = [];
@@ -278,49 +281,110 @@ switch ($acao) {
         break;
 
     case 'cadastrar_admin':
-        $nome = trim($_POST['nome'] ?? '');
-        $email = trim($_POST['email'] ?? '');
-        $senha = $_POST['senha'] ?? '123456';
-        $funcao = $_POST['funcao'] ?? 'Funcionário';
-        $telefone = $_POST['telefone'] ?? '';
-        $hash = password_hash($senha, PASSWORD_DEFAULT);
-        
-        $stmt = $conexao->prepare("INSERT INTO administrador (nome, email, senha_hash, funcao, telefone, activo) VALUES (?, ?, ?, ?, ?, 1)");
-        $stmt->bind_param("sssss", $nome, $email, $hash, $funcao, $telefone);
+        // Require admin session
+        if (!isset($_SESSION['tipo']) || ($_SESSION['tipo'] !== 'admin' && $_SESSION['tipo'] !== 'funcionario')) {
+            echo json_encode(['sucesso' => false, 'erro' => 'Acesso negado']); exit;
+        }
+        $nome     = trim($_POST['nome']     ?? '');
+        $email    = trim($_POST['email']    ?? '');
+        $senha    = $_POST['senha']    ?? '123456';
+        $funcao   = $_POST['funcao']   ?? 'Funcionário';
+        $telefone = trim($_POST['telefone'] ?? '');
+        $numbi    = trim($_POST['numbi']    ?? '');
+        $hash     = password_hash($senha, PASSWORD_DEFAULT);
+        // Required NOT NULL defaults
+        $nasc     = $_POST['nasc']      ?? date('Y-m-d', strtotime('-30 years'));
+        $morada   = trim($_POST['morada'] ?? 'Luanda');
+        $emissao  = $_POST['emissao']   ?? date('Y-m-d');
+        $validade = $_POST['validade']  ?? date('Y-m-d', strtotime('+5 years'));
+        $locale   = trim($_POST['locale'] ?? 'Luanda');
+        $id_cond  = 1;
+
+        if (!$nome || !$email) {
+            echo json_encode(['sucesso' => false, 'erro' => 'Nome e email são obrigatórios']);
+            break;
+        }
+        // Check duplicate email
+        $chk = $conexao->prepare("SELECT id FROM administrador WHERE email=? LIMIT 1");
+        $chk->bind_param("s", $email); $chk->execute(); $chk->store_result();
+        if ($chk->num_rows > 0) { echo json_encode(['sucesso'=>false,'erro'=>'Email já registado']); $chk->close(); break; }
+        $chk->close();
+
+        $stmt = $conexao->prepare(
+            "INSERT INTO administrador (id_condominio, nome, telefone, email, nasc, nacionalidade, morada, numbi, emissao_bi, validade_bi, locale_bi, funcao, iban, senha_hash, activo)
+             VALUES (?, ?, ?, ?, ?, 'Angolana', ?, ?, ?, ?, 'Luanda', ?, '', ?, 1)"
+        );
+        $stmt->bind_param("isssssssssss", $id_cond, $nome, $telefone, $email, $nasc, $morada, $numbi, $emissao, $validade, $funcao, $hash);
         if ($stmt->execute()) echo json_encode(['sucesso' => true]);
         else echo json_encode(['sucesso' => false, 'erro' => $stmt->error]);
         $stmt->close();
         break;
 
     case 'cadastrar_morador':
-        $nome = trim($_POST['nome'] ?? '');
-        $email = trim($_POST['email'] ?? '');
-        $senha = $_POST['senha'] ?? '123456';
-        $telefone = $_POST['telefone'] ?? '';
-        $numbi = $_POST['numbi'] ?? '';
-        $nascimento = $_POST['nascimento'] ?? null;
-        $hash = password_hash($senha, PASSWORD_DEFAULT);
-        
-        $stmt = $conexao->prepare("INSERT INTO morador (nome, email, senha_hash, telefone, numbi, data_nasc, estado_conta) VALUES (?, ?, ?, ?, ?, ?, 'Activo')");
+        $nome       = trim($_POST['nome']      ?? '');
+        $email      = trim($_POST['email']     ?? '');
+        $senha      = $_POST['senha']      ?? '123456';
+        $telefone   = trim($_POST['telefone']  ?? '');
+        $numbi      = trim($_POST['numbi']     ?? '');
+        $nascimento = !empty($_POST['nascimento']) ? $_POST['nascimento'] : date('Y-m-d', strtotime('-25 years'));
+        $hash       = password_hash($senha, PASSWORD_DEFAULT);
+
+        if (!$nome || !$email) {
+            echo json_encode(['sucesso' => false, 'erro' => 'Nome e email são obrigatórios']);
+            break;
+        }
+        // Check duplicate email
+        $chk = $conexao->prepare("SELECT id FROM morador WHERE email=? LIMIT 1");
+        $chk->bind_param("s", $email); $chk->execute(); $chk->store_result();
+        if ($chk->num_rows > 0) { echo json_encode(['sucesso'=>false,'erro'=>'Email já registado']); $chk->close(); break; }
+        $chk->close();
+
+        $stmt = $conexao->prepare(
+            "INSERT INTO morador (nome, email, senha_hash, telefone, numbi, nasc, estado_conta) VALUES (?, ?, ?, ?, ?, ?, 'Activo')"
+        );
         $stmt->bind_param("ssssss", $nome, $email, $hash, $telefone, $numbi, $nascimento);
-        if ($stmt->execute()) echo json_encode(['sucesso' => true]);
+        if ($stmt->execute()) echo json_encode(['sucesso' => true, 'id' => $stmt->insert_id]);
         else echo json_encode(['sucesso' => false, 'erro' => $stmt->error]);
         $stmt->close();
         break;
 
     case 'cadastrar_casa':
-        $id_bloco = intval($_POST['id_bloco'] ?? 0);
-        $numero = trim($_POST['numero'] ?? '');
+        $id_bloco  = intval($_POST['id_bloco']  ?? 0);
+        $numero    = trim($_POST['numero']    ?? '');
         $tipologia = $_POST['tipologia'] ?? 'V3';
-        $andar = $_POST['andar'] ?? '';
-        $estado = $_POST['estado'] ?? 'Disponivel';
-        $codigo = "APT-" . ($numero ?: rand(100,999));
-        
+        $andar     = $_POST['andar']     ?? '0';
+        $estado    = $_POST['estado']    ?? 'Disponivel';
+
+        if (!$id_bloco || $numero === '') {
+            echo json_encode(['sucesso' => false, 'erro' => 'Bloco e número são obrigatórios']);
+            break;
+        }
+        // Get bloco letra for unique codigo
+        $bl = mysqli_fetch_assoc(mysqli_query($conexao, "SELECT letra FROM bloco WHERE id=$id_bloco"));
+        $letra = $bl['letra'] ?? 'X';
+        $codigo = strtoupper($letra) . '-' . str_pad($numero, 3, '0', STR_PAD_LEFT);
+
+        // Check duplicate
+        $chk = $conexao->prepare("SELECT id FROM apartamento WHERE codigo=? LIMIT 1");
+        $chk->bind_param("s", $codigo); $chk->execute(); $chk->store_result();
+        if ($chk->num_rows > 0) { echo json_encode(['sucesso'=>false,'erro'=>"Unidade $codigo já existe"]); $chk->close(); break; }
+        $chk->close();
+
         $stmt = $conexao->prepare("INSERT INTO apartamento (id_bloco, numero, tipologia, andar, estado, codigo) VALUES (?, ?, ?, ?, ?, ?)");
         $stmt->bind_param("isssss", $id_bloco, $numero, $tipologia, $andar, $estado, $codigo);
-        if ($stmt->execute()) echo json_encode(['sucesso' => true]);
+        if ($stmt->execute()) echo json_encode(['sucesso' => true, 'codigo' => $codigo]);
         else echo json_encode(['sucesso' => false, 'erro' => $stmt->error]);
         $stmt->close();
+        break;
+
+    case 'casas_disponiveis':
+        // For the assignment modal — returns only available apartments
+        $res = mysqli_query($conexao, "SELECT a.id, CONCAT(b.letra, '-', LPAD(a.numero,3,'0'), ' (', a.tipologia, ')') as label
+                                       FROM apartamento a JOIN bloco b ON b.id = a.id_bloco
+                                       WHERE a.estado='Disponivel' ORDER BY b.letra, a.numero");
+        $rows = [];
+        while ($r = mysqli_fetch_assoc($res)) $rows[] = $r;
+        echo json_encode(['sucesso' => true, 'dados' => $rows]);
         break;
 
     default:

@@ -121,7 +121,9 @@ if ($res->num_rows > 0) {
         // 5. LOGIN BEM-SUCEDIDO — CRIAR SESSÃO
         // ─────────────────────────────────────────────────────────────────────────
         
-        $_SESSION['tipo']   = 'admin';
+        // Administrador = acesso total; outras funções = funcionario (acesso restrito)
+        $adminRoles         = ['Administrador'];
+        $_SESSION['tipo']   = in_array($admin['funcao'], $adminRoles) ? 'admin' : 'funcionario';
         $_SESSION['id']     = $admin['id'];
         $_SESSION['nome']   = $admin['nome'];
         $_SESSION['funcao'] = $admin['funcao'];
