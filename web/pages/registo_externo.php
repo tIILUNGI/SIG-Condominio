@@ -94,11 +94,19 @@ include(__DIR__ . '/../api/csrf_protection.php');
           <label>Nome Completo</label>
           <input type="text" name="nome" required placeholder="Ex: Adão Silva" pattern="[A-Za-zÀ-ÖØ-öø-ÿ\s]+" title="O nome deve conter apenas letras e espaços.">
         </div>
-        <div class="form-group">
-          <label>Nº BI</label>
-          <input type="text" name="numbi" required placeholder="000XXXXXXLA000">
-        </div>
-        <div class="form-group">
+<div class="form-group">
+           <label>Nº BI</label>
+           <input type="text" name="numbi" required placeholder="000XXXXXXLA000">
+         </div>
+         <div class="form-group">
+           <label>Local Emissão BI</label>
+           <select name="locale">
+             <option value="Luanda">Luanda</option>
+             <option value="Porto Alegre">Porto Alegre</option>
+             <option value="Benguela">Benguela</option>
+           </select>
+         </div>
+         <div class="form-group">
           <label>Telefone</label>
           <input type="tel" name="telefone" required placeholder="9XX-XXX-XXX" pattern="9[0-9]{2}-[0-9]{3}-[0-9]{3}" title="Formato esperado: 9xx-xxx-xxx" oninput="maskPhone(this)">
         </div>

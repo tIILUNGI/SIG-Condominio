@@ -110,16 +110,28 @@ include("../api/conexao.php");
                             <label>Senha *</label>
                             <input type="password" id="f-senha" value="123456" />
                         </div>
-                        <div class="form-group">
-                            <label>Função *</label>
-                            <select id="f-funcao">
-                                <option value="Funcionário">Funcionário</option>
-                                <option value="Administrador">Administrador</option>
-                                <option value="Segurança">Segurança</option>
-                                <option value="Limpeza">Limpeza</option>
-                            </select>
-                        </div>
-                        <div class="form-group full">
+<div class="form-group">
+                             <label>Nº Bilhete (BI) *</label>
+                             <input type="text" id="f-numbi" required placeholder="000XXXXXX LA 000" />
+                         </div>
+                         <div class="form-group">
+                             <label>Função *</label>
+                             <select id="f-funcao">
+                                 <option value="Administrador">Administrador</option>
+                                 <option value="Recursos Humanos">Recursos Humanos</option>
+                                 <option value="Seguranca">Segurança</option>
+                                 <option value="Area Tecnica">Área Técnica</option>
+                             </select>
+                         </div>
+                         <div class="form-group">
+                             <label>Local Emissão BI</label>
+                             <select id="f-locale">
+                                 <option value="Luanda">Luanda</option>
+                                 <option value="Porto Alegre">Porto Alegre</option>
+                                 <option value="Benguela">Benguela</option>
+                             </select>
+                         </div>
+                         <div class="form-group full">
                            <button type="submit" class="btn-primary" style="width:100%; margin-top:1rem;">Registar Funcionário</button>
                         </div>
                     </form>
@@ -191,13 +203,15 @@ async function loadFuncs() {
 }
 
 document.getElementById('form-func').onsubmit = async (e) => {
-    e.preventDefault();
-    const fd = new FormData();
-    fd.append('nome', document.getElementById('f-nome').value);
-    fd.append('email', document.getElementById('f-email').value);
-    fd.append('senha', document.getElementById('f-senha').value);
-    fd.append('funcao', document.getElementById('f-funcao').value);
-    fd.append('telefone', document.getElementById('f-telefone').value);
+     e.preventDefault();
+     const fd = new FormData();
+     fd.append('nome', document.getElementById('f-nome').value);
+     fd.append('email', document.getElementById('f-email').value);
+     fd.append('senha', document.getElementById('f-senha').value);
+     fd.append('funcao', document.getElementById('f-funcao').value);
+     fd.append('telefone', document.getElementById('f-telefone').value);
+     fd.append('numbi', document.getElementById('f-numbi').value);
+     fd.append('locale', document.getElementById('f-locale').value);
     
     const r = await fetch(`../api/api_dashboard.php?acao=cadastrar_admin`, { method:'POST', body:fd });
     const d = await r.json();

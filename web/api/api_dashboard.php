@@ -316,7 +316,7 @@ switch ($acao) {
         $nome     = trim($_POST['nome']     ?? '');
         $email    = trim($_POST['email']    ?? '');
         $senha    = $_POST['senha']    ?? '123456';
-        $funcao   = $_POST['funcao']   ?? 'Funcionário';
+        $funcao_in = $_POST['funcao']   ?? 'Administrador';
         $telefone = trim($_POST['telefone'] ?? '');
         $numbi    = trim($_POST['numbi']    ?? '');
         $hash     = password_hash($senha, PASSWORD_DEFAULT);
@@ -328,14 +328,32 @@ switch ($acao) {
         $locale   = trim($_POST['locale'] ?? 'Luanda');
         $id_cond  = 1;
 
-        if (!$nome || !$email) {
-            echo json_encode(['sucesso' => false, 'erro' => 'Nome e email são obrigatórios']);
+        // Map frontend role input strings to the exact MySQL administrator table ENUM values
+        $funcao = 'Administrador';
+        if (stripos($funcao_in, 'rh') !== false || stripos($funcao_in, 'recurso') !== false) {
+            $funcao = 'Recursos Humanos';
+        } elseif (stripos($funcao_in, 'segur') !== false) {
+            $funcao = 'Seguranca';
+        } elseif (stripos($funcao_in, 'tecn') !== false) {
+            $funcao = 'Area Tecnica';
+        } elseif (stripos($funcao_in, 'super') !== false) {
+            $funcao = 'Super Admin';
+        }
+
+        if (!$nome || !$email || !$numbi) {
+            echo json_encode(['sucesso' => false, 'erro' => 'Nome, e-mail e BI são obrigatórios']);
             break;
         }
         // Check duplicate email
         $chk = $conexao->prepare("SELECT id FROM administrador WHERE email=? LIMIT 1");
         $chk->bind_param("s", $email); $chk->execute(); $chk->store_result();
         if ($chk->num_rows > 0) { echo json_encode(['sucesso'=>false,'erro'=>'Email já registado']); $chk->close(); break; }
+        $chk->close();
+
+        // Check duplicate BI
+        $chk = $conexao->prepare("SELECT id FROM administrador WHERE numbi=? LIMIT 1");
+        $chk->bind_param("s", $numbi); $chk->execute(); $chk->store_result();
+        if ($chk->num_rows > 0) { echo json_encode(['sucesso'=>false,'erro'=>'Nº de BI já registado']); $chk->close(); break; }
         $chk->close();
 
         $stmt = $conexao->prepare(
@@ -357,8 +375,8 @@ switch ($acao) {
         $nascimento = !empty($_POST['nascimento']) ? $_POST['nascimento'] : date('Y-m-d', strtotime('-25 years'));
         $hash       = password_hash($senha, PASSWORD_DEFAULT);
 
-        if (!$nome || !$email) {
-            echo json_encode(['sucesso' => false, 'erro' => 'Nome e email são obrigatórios']);
+        if (!$nome || !$email || !$numbi) {
+            echo json_encode(['sucesso' => false, 'erro' => 'Nome, e-mail e BI são obrigatórios']);
             break;
         }
         // Check duplicate email
@@ -367,13 +385,20 @@ switch ($acao) {
         if ($chk->num_rows > 0) { echo json_encode(['sucesso'=>false,'erro'=>'Email já registado']); $chk->close(); break; }
         $chk->close();
 
+        // Check duplicate BI
+        $chk = $conexao->prepare("SELECT id FROM morador WHERE numbi=? LIMIT 1");
+        $chk->bind_param("s", $numbi); $chk->execute(); $chk->store_result();
+        if ($chk->num_rows > 0) { echo json_encode(['sucesso'=>false,'erro'=>'Nº de BI já registado']); $chk->close(); break; }
+        $chk->close();
+
         $emissao_bi_def = date('Y-m-d');
         $validade_bi_def = date('Y-m-d', strtotime('+10 years'));
+        $locale_bi = trim($_POST['locale'] ?? 'Luanda');
         $stmt = $conexao->prepare(
-            "INSERT INTO morador (nome, email, senha_hash, telefone, numbi, nasc, emissao_bi, validade_bi, estado_conta)
-             VALUES (?, ?, ?, ?, ?, ?, ?, ?, 'Activo')"
+            "INSERT INTO morador (nome, email, senha_hash, telefone, numbi, nasc, emissao_bi, validade_bi, locale_bi, estado_conta)
+             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'Activo')"
         );
-        $stmt->bind_param("ssssssss", $nome, $email, $hash, $telefone, $numbi, $nascimento, $emissao_bi_def, $validade_bi_def);
+       $stmt->bind_param("sssssssss", $nome, $email, $hash, $telefone, $numbi, $nascimento, $emissao_bi_def, $validade_bi_def, $locale_bi);
         if ($stmt->execute()) echo json_encode(['sucesso' => true, 'id' => $stmt->insert_id]);
         else echo json_encode(['sucesso' => false, 'erro' => $stmt->error]);
         $stmt->close();

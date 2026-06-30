@@ -105,11 +105,19 @@ include("../api/conexao.php");
                             <label>Telefone *</label>
                             <input type="text" id="m-telefone" required placeholder="9XX-XXX-XXX" pattern="9[0-9]{2}-[0-9]{3}-[0-9]{3}" title="Formato esperado: 9xx-xxx-xxx" oninput="maskPhone(this)" />
                         </div>
-                        <div class="form-group">
-                            <label>Nº Bilhete (BI)</label>
-                            <input type="text" id="m-numbi" />
-                        </div>
-                        <div class="form-group">
+<div class="form-group">
+                             <label>Nº Bilhete (BI) *</label>
+                             <input type="text" id="m-numbi" required placeholder="000XXXXXX LA 000" />
+                         </div>
+                         <div class="form-group">
+                             <label>Local Emissão BI</label>
+                             <select id="m-locale">
+                                 <option value="Luanda">Luanda</option>
+                                 <option value="Porto Alegre">Porto Alegre</option>
+                                 <option value="Benguela">Benguela</option>
+                             </select>
+                         </div>
+                         <div class="form-group">
                             <label>Senha *</label>
                             <input type="password" id="m-senha" value="123456" />
                         </div>
@@ -190,14 +198,15 @@ async function loadMoradores() {
 }
 
 document.getElementById('form-mor').onsubmit = async (e) => {
-    e.preventDefault();
-    const fd = new FormData();
-    fd.append('nome', document.getElementById('m-nome').value);
-    fd.append('email', document.getElementById('m-email').value);
-    fd.append('senha', document.getElementById('m-senha').value);
-    fd.append('telefone', document.getElementById('m-telefone').value);
-    fd.append('numbi', document.getElementById('m-numbi').value);
-    fd.append('nascimento', document.getElementById('m-nascimento').value);
+     e.preventDefault();
+     const fd = new FormData();
+     fd.append('nome', document.getElementById('m-nome').value);
+     fd.append('email', document.getElementById('m-email').value);
+     fd.append('senha', document.getElementById('m-senha').value);
+     fd.append('telefone', document.getElementById('m-telefone').value);
+     fd.append('numbi', document.getElementById('m-numbi').value);
+     fd.append('nascimento', document.getElementById('m-nascimento').value);
+     fd.append('locale', document.getElementById('m-locale').value);
     
     const r = await fetch(`${API_URL}?acao=cadastrar_morador`, { method:'POST', body:fd });
     const d = await r.json();

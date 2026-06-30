@@ -137,6 +137,10 @@ window.BLCOES_DATA = <?php echo json_encode($blocos); ?>;
               <input type="text" id="f-nome" placeholder="Ex: Maria da Silva Santos" required />
             </div>
             <div class="form-group">
+              <label>Nº Bilhete (BI) *</label>
+              <input type="text" id="f-numbi" placeholder="000XXXXXX LA 000" required />
+            </div>
+            <div class="form-group">
               <label>Senha *</label>
               <input type="password" id="f-senha" placeholder="Senha de acesso" />
             </div>
@@ -152,19 +156,26 @@ window.BLCOES_DATA = <?php echo json_encode($blocos); ?>;
               <label>Data Nasc. *</label>
               <input type="date" id="f-nascimento" />
             </div>
-            <div class="form-group">
-              <label>Função *</label>
-              <select id="f-funcao">
-                <option value="">Seleccione...</option>
-                <option value="Administrador">Administrador</option>
-                <option value="RH">Recursos Humanos</option>
-                <option value="Segurança">Segurança</option>
-                <option value="Área Técnica">Área Técnica</option>
-                <option value="Limpeza">Limpeza</option>
-              </select>
-            </div>
-            <div class="form-group">
-              <label>Nacionalidade</label>
+<div class="form-group">
+               <label>Função *</label>
+               <select id="f-funcao">
+                 <option value="">Seleccione...</option>
+                 <option value="Administrador">Administrador</option>
+                 <option value="Recursos Humanos">Recursos Humanos</option>
+                 <option value="Seguranca">Segurança</option>
+                 <option value="Area Tecnica">Área Técnica</option>
+               </select>
+             </div>
+             <div class="form-group">
+               <label>Local Emissão BI</label>
+               <select id="f-locale">
+                 <option value="Luanda">Luanda</option>
+                 <option value="Porto Alegre">Porto Alegre</option>
+                 <option value="Benguela">Benguela</option>
+               </select>
+             </div>
+             <div class="form-group">
+               <label>Nacionalidade</label>
               <input type="text" id="f-nacionalidade" value="Angolana" />
             </div>
             <div class="form-group">
@@ -242,15 +253,23 @@ window.BLCOES_DATA = <?php echo json_encode($blocos); ?>;
               <label>Email</label>
               <input type="email" id="m-email" />
             </div>
-            <div class="form-group">
-              <label>Nº Bilhete (BI) *</label>
-              <input type="text" id="m-numbi" placeholder="000XXXXXX LA 000" />
-            </div>
-            <div class="form-group">
-              <label>Data Nasc. *</label>
-              <input type="date" id="m-nascimento" />
-            </div>
-            <div class="form-group">
+<div class="form-group">
+               <label>Nº Bilhete (BI) *</label>
+               <input type="text" id="m-numbi" placeholder="000XXXXXX LA 000" required />
+             </div>
+             <div class="form-group">
+               <label>Local Emissão BI</label>
+               <select id="m-locale">
+                 <option value="Luanda">Luanda</option>
+                 <option value="Porto Alegre">Porto Alegre</option>
+                 <option value="Benguela">Benguela</option>
+               </select>
+             </div>
+             <div class="form-group">
+               <label>Data Nasc. *</label>
+               <input type="date" id="m-nascimento" />
+             </div>
+             <div class="form-group">
               <label>Nacionalidade</label>
               <input type="text" id="m-nacionalidade" value="Angolana" />
             </div>
@@ -975,13 +994,13 @@ function initLegacy() {
   if (relMesEl) { relMesEl.value = now.getMonth(); relMesEl.style.display = 'none'; }
   if (relAnoEl) { relAnoEl.value = now.getFullYear().toString(); relAnoEl.style.display = 'none'; }
 
+  // Seed demo data for local fallback if any
   seedDemoData();
+  
+  // Render legacy tabs that don't conflict with main tables
   renderPedidos();
   updateBadgePedidos();
   renderRegistos();
-  renderHouses();
-  renderPays();
-  renderMorPays();
   renderPayHistory();
 }
 
@@ -1038,29 +1057,35 @@ function clock() {
 // ═══════════════════════════════════════════════════════════
 function renderDashboard() {
   load();
-  document.getElementById('ds-total-reg').textContent = allRegs.length;
+  const updateText = (id, val) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = val;
+  };
+  updateText('ds-total-reg', allRegs.length);
   const totalPay = [...allPays, ...allMorPays].reduce((s,p) => s + (p.total||p.valor||0), 0);
-  document.getElementById('ds-receitas').textContent = fmt(totalPay) + ' Kz';
-  document.getElementById('ds-pendentes').textContent = allRegs.filter(r => r.status === 'pendente').length;
+  updateText('ds-receitas', fmt(totalPay) + ' Kz');
+  updateText('ds-pendentes', allRegs.filter(r => r.status === 'pendente').length);
   const disp = allHouses.filter(h => h.estado === 'disponivel').length;
-  document.getElementById('ds-casas').textContent = disp;
-  document.getElementById('badge-reg').textContent = allRegs.filter(r=>r.status==='pendente').length;
-  document.getElementById('badge-pay').textContent = allPays.filter(p=>p.status==='pendente').length;
+  updateText('ds-casas', disp);
+  updateText('badge-reg', allRegs.filter(r=>r.status==='pendente').length);
+  updateText('badge-pay', allPays.filter(p=>p.status==='pendente').length);
   updateBadgePedidos();
 
   // Recent table
   const tbody = document.getElementById('recent-tbody');
-  const recent = allRegs.slice(-6).reverse();
-  if (!recent.length) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:2rem;">Sem registos</td></tr>'; return; }
-  tbody.innerHTML = recent.map(r => `
-    <tr>
-      <td>${r.nome}</td>
-      <td>${r.servico === 'aluguel' ? 'Arrendamento' : 'Compra'}</td>
-      <td>${fmt(r.total)} Kz</td>
-      <td>${r.data}</td>
-      <td><span class="badge ${r.status}">${r.status}</span></td>
-    </tr>
-  `).join('');
+  if (tbody) {
+    const recent = allRegs.slice(-6).reverse();
+    if (!recent.length) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:2rem;">Sem registos</td></tr>'; return; }
+    tbody.innerHTML = recent.map(r => `
+      <tr>
+        <td>${r.nome}</td>
+        <td>${r.servico === 'aluguel' ? 'Arrendamento' : 'Compra'}</td>
+        <td>${fmt(r.total)} Kz</td>
+        <td>${r.data}</td>
+        <td><span class="badge ${r.status}">${r.status}</span></td>
+      </tr>
+    `).join('');
+  }
 }
 
 // ═══════════════════════════════════════════════════════════
@@ -1232,6 +1257,7 @@ function addHouse() {
 }
 function renderHouses() {
   const tbody = document.getElementById('houses-tbody');
+  if (!tbody) return;
   if (!allHouses.length) { tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:2rem;">Sem casas</td></tr>'; return; }
   tbody.innerHTML = allHouses.map(h => `
     <tr>
@@ -1301,6 +1327,7 @@ function assignHouse() {
 // ═══════════════════════════════════════════════════════════
 function renderPays() {
   const tbody = document.getElementById('pays-tbody');
+  if (!tbody) return;
   const pays = [...allPays].reverse();
   if (!pays.length) { tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:var(--text-muted);padding:2rem;">Sem pagamentos registados</td></tr>'; return; }
   tbody.innerHTML = pays.map(p => `
@@ -1345,6 +1372,7 @@ function addMoradorPay() {
 }
 function renderMorPays() {
   const tbody = document.getElementById('mor-tbody');
+  if (!tbody) return;
   const pays = [...allMorPays].reverse();
   if (!pays.length) { tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:2rem;">Sem pagamentos de moradores</td></tr>'; return; }
   tbody.innerHTML = pays.map(p => `
@@ -2036,8 +2064,8 @@ function initCharts(stats) {
     const ctx2 = document.getElementById('chartServicos')?.getContext('2d');
 
     if (ctx1) {
-        if (chartReceitas) chartReceitas.destroy();
-        chartReceitas = new Chart(ctx1, {
+        if (window.chartReceitas) window.chartReceitas.destroy();
+        window.chartReceitas = new Chart(ctx1, {
             type: 'line',
             data: {
                 labels: stats.labels_6meses || ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
@@ -2055,8 +2083,8 @@ function initCharts(stats) {
     }
 
     if (ctx2) {
-        if (chartServicos) chartServicos.destroy();
-        chartServicos = new Chart(ctx2, {
+        if (window.chartServicos) window.chartServicos.destroy();
+        window.chartServicos = new Chart(ctx2, {
             type: 'doughnut',
             data: {
                 labels: ['Ocupados', 'Disponíveis', 'Manutenção'],
@@ -2232,12 +2260,14 @@ async function eliminarItem(tipo, id) {
 }
 
 async function salvarFuncionario() {
-    const fd = new FormData();
-    fd.append('nome', document.getElementById('f-nome').value);
-    fd.append('email', document.getElementById('f-email').value);
-    fd.append('senha', document.getElementById('f-senha').value);
-    fd.append('funcao', document.getElementById('f-funcao').value);
-    fd.append('telefone', document.getElementById('f-telefone').value);
+     const fd = new FormData();
+     fd.append('nome', document.getElementById('f-nome').value);
+     fd.append('numbi', document.getElementById('f-numbi').value);
+     fd.append('email', document.getElementById('f-email').value);
+     fd.append('senha', document.getElementById('f-senha').value);
+     fd.append('funcao', document.getElementById('f-funcao').value);
+     fd.append('telefone', document.getElementById('f-telefone').value);
+     fd.append('locale', document.getElementById('f-locale').value);
     
     try {
         const r = await fetch(`${API_URL}?acao=cadastrar_admin`, { method: 'POST', body: fd });
@@ -2252,6 +2282,7 @@ async function salvarFuncionario() {
 
 function resetFuncForm() {
     document.getElementById('f-nome').value = '';
+    document.getElementById('f-numbi').value = '';
     document.getElementById('f-email').value = '';
     document.getElementById('f-senha').value = '';
     document.getElementById('f-telefone').value = '';
@@ -2259,13 +2290,14 @@ function resetFuncForm() {
 }
 
 async function salvarMorador() {
-    const fd = new FormData();
-    fd.append('nome', document.getElementById('m-nome').value);
-    fd.append('email', document.getElementById('m-email').value);
-    fd.append('senha', document.getElementById('m-senha').value);
-    fd.append('telefone', document.getElementById('m-telefone').value);
-    fd.append('numbi', document.getElementById('m-numbi').value);
-    fd.append('nascimento', document.getElementById('m-nascimento').value);
+     const fd = new FormData();
+     fd.append('nome', document.getElementById('m-nome').value);
+     fd.append('email', document.getElementById('m-email').value);
+     fd.append('senha', document.getElementById('m-senha').value);
+     fd.append('telefone', document.getElementById('m-telefone').value);
+     fd.append('numbi', document.getElementById('m-numbi').value);
+     fd.append('nascimento', document.getElementById('m-nascimento').value);
+     fd.append('locale', document.getElementById('m-locale').value);
     
     try {
         const r = await fetch(`${API_URL}?acao=cadastrar_morador`, { method: 'POST', body: fd });
