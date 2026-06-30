@@ -1,5 +1,7 @@
 <?php
 session_start();
+error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING);
+ini_set('display_errors', '0');
 if (!isset($_SESSION['tipo']) || ($_SESSION['tipo'] !== 'admin' && $_SESSION['tipo'] !== 'funcionario')) {
     header("Location: ../login.html?erro=acesso");
     exit;
@@ -256,7 +258,8 @@ function toggleSidebar() { document.getElementById('sidebar').classList.toggle('
 function showToast(msg, isErr = false) {
     const t = document.getElementById('toast');
     t.textContent = msg;
-    t.className = 'toast show' + (isErr ? ' error' : '');
+    toggled = isErr ? ' error' : '';
+    t.className = 'toast show' + toggled;
     setTimeout(() => t.classList.remove('show'), 3500);
 }
 
@@ -272,21 +275,22 @@ function closeModal(id) { document.getElementById(id).classList.remove('open'); 
 
 function escHtml(str) {
     if (!str) return '';
-    return str.toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
 }
 
 function statusBadge(estado) {
     const map = {
-        'AguardandoValidacaoPagamento': { cls: 'badge-pending', label: 'Aguarda Pagamento' },
-        'AguardandoAtribuicaoCasa':    { cls: 'badge-validated', label: 'Pagamento OK' },
-        'Aprovado':                    { cls: 'badge-approved', label: 'Aprovado' },
-        'Pendente':                    { cls: 'badge-pending', label: 'Pendente' },
-        'Activo':                      { cls: 'badge-assigned', label: 'Activo' },
-        'Suspenso':                    { cls: 'badge-rejected', label: 'Suspenso' },
-        'Inactivo':                    { cls: 'badge-rejected', label: 'Inactivo' },
+        'AguardandoValidacaoPagamento': '<span class="badge badge-pending">Aguarda Pagamento</span>',
+        'AguardandoAtribuicaoCasa': '<span class="badge badge-validated">Pagamento OK</span>',
+        'Aprovado': '<span class="badge badge-approved">Aprovado</span>',
+        'Pendente': '<span class="badge badge-pending">Pendente</span>',
+        'Activo': '<span class="badge badge-assigned">Activo</span>',
+        'Suspenso': '<span class="badge badge-rejected">Suspenso</span>',
+        'Inactivo': '<span class="badge badge-rejected">Inactivo</span>'
     };
-    const s = map[estado] || { cls: 'badge-pending', label: estado };
-    return `<span class="badge ${s.cls}">${s.label}</span>`;
+    return map[estado] || '<span class="badge badge-pending">' + estado + '</span>';
 }
 
 function renderProspectos() {
@@ -306,28 +310,17 @@ function renderProspectos() {
         const data = p.criado_em ? new Date(p.criado_em).toLocaleDateString('pt-AO') : '—';
         let acoes = '';
         if (p.estado_conta === 'AguardandoValidacaoPagamento') {
-            acoes += `<button class="btn-sm btn-validate" onclick="openValidarModal(${p.id}, '${escHtml(p.nome)}')"><i class="fa-solid fa-check-circle"></i> Validar Pagamento</button>`;
-            acoes += `<button class="btn-sm btn-approve" onclick="openAprovarModal(${p.id}, '${escHtml(p.nome)}')"><i class="fa-solid fa-stamp"></i> Aprovar</button>`;
-            acoes += `<button class="btn-sm btn-reject" onclick="openRejeitarModal(${p.id}, '${escHtml(p.nome)}')"><i class="fa-solid fa-ban"></i></button>`;
-        } elseif (p.estado_conta === 'AguardandoAtribuicaoCasa') {
-            acoes += `<button class="btn-sm btn-assign" onclick="openAtribuirModal(${p.id}, '${escHtml(p.nome)}')"><i class="fa-solid fa-key"></i> Atribuir Casa</button>`;
-            acoes += `<button class="btn-sm btn-reject" onclick="openRejeitarModal(${p.id}, '${escHtml(p.nome)}')"><i class="fa-solid fa-ban"></i></button>`;
-        } elseif (p.estado_conta === 'Pendente') {
-            acoes += `<button class="btn-sm btn-validate" onclick="openValidarModal(${p.id}, '${escHtml(p.nome)}')"><i class="fa-solid fa-check-circle"></i> Validar</button>`;
-            acoes += `<button class="btn-sm btn-reject" onclick="openRejeitarModal(${p.id}, '${escHtml(p.nome)}')"><i class="fa-solid fa-ban"></i></button>`;
+            acoes += '<button class="btn-sm btn-validate" onclick="openValidarModal(' + p.id + ', \'' + p.nome.replace(/'/g, "\\'") + '\')"><i class="fa-solid fa-check-circle"></i> Validar Pagamento</button>';
+            acoes += '<button class="btn-sm btn-approve" onclick="openAprovarModal(' + p.id + ', \'' + p.nome.replace(/'/g, "\\'") + '\')"><i class="fa-solid fa-stamp"></i> Aprovar</button>';
+            acoes += '<button class="btn-sm btn-reject" onclick="openRejeitarModal(' + p.id + ', \'' + p.nome.replace(/'/g, "\\'") + '\')"><i class="fa-solid fa-ban"></i></button>';
+        } else if (p.estado_conta === 'AguardandoAtribuicaoCasa') {
+            acoes += '<button class="btn-sm btn-assign" onclick="openAtribuirModal(' + p.id + ', \'' + p.nome.replace(/'/g, "\\'") + '\')"><i class="fa-solid fa-key"></i> Atribuir Casa</button>';
+            acoes += '<button class="btn-sm btn-reject" onclick="openRejeitarModal(' + p.id + ', \'' + p.nome.replace(/'/g, "\\'") + '\')"><i class="fa-solid fa-ban"></i></button>';
+        } else if (p.estado_conta === 'Pendente') {
+            acoes += '<button class="btn-sm btn-validate" onclick="openValidarModal(' + p.id + ', \'' + p.nome.replace(/'/g, "\\'") + '\')"><i class="fa-solid fa-check-circle"></i> Validar</button>';
+            acoes += '<button class="btn-sm btn-reject" onclick="openRejeitarModal(' + p.id + ', \'' + p.nome.replace(/'/g, "\\'") + '\')"><i class="fa-solid fa-ban"></i></button>';
         }
-        return `<tr>
-            <td><strong>${escHtml(p.nome)}</strong></td>
-            <td>
-                <div style="font-size:.82rem;">${escHtml(p.email)}</div>
-                <div style="font-size:.75rem; color:var(--text-muted);">${escHtml(p.telefone)}</div>
-            </td>
-            <td>${escHtml(p.tipo_interesse || '—')}</td>
-            <td style="font-size:.8rem;">${escHtml(pref)}</td>
-            <td>${data}</td>
-            <td>${statusBadge(p.estado_conta)}</td>
-            <td style="text-align:right;">${acoes}</td>
-        </tr>`;
+        return '<tr><td><strong>' + p.nome + '</strong></td><td><div style="font-size:.82rem;">' + p.email + '</div><div style="font-size:.75rem; color:var(--text-muted);">' + p.telefone + '</div></td><td>' + (p.tipo_interesse || '—') + '</td><td style="font-size:.8rem;">' + pref + '</td><td>' + data + '</td><td>' + statusBadge(p.estado_conta) + '</td><td style="text-align:right;">' + acoes + '</td></tr>';
     }).join('');
 }
 
@@ -346,7 +339,7 @@ function openAprovarModal(id, nome) {
 function openAtribuirModal(id, nome) {
     document.getElementById('atribuir-id-morador').value = id;
     document.getElementById('modal-atribuir-info').textContent = 'Atribuir casa a: ' + nome;
-    document.getElementById('atribuir-apartamento').innerHTML = '<option value="">— A carregar —</option>';
+    document.getElementById('atribuir-apartamento').innerHTML = '<option value="">A carregar...</option>';
     openModal('modal-atribuir');
     carregarApartamentosDisponiveis();
 }
@@ -363,13 +356,12 @@ async function carregarApartamentosDisponiveis() {
         const data = await res.json();
         const sel = document.getElementById('atribuir-apartamento');
         if (data.sucesso && data.dados.length) {
-            sel.innerHTML = '<option value="">— Seleccione —</option>' +
-                data.dados.map(a => `<option value="${a.id}">${escHtml(a.label)}</option>`).join('');
+            sel.innerHTML = '<option value="">Seleccione</option>' + data.dados.map(a => '<option value="' + a.id + '">' + a.label + '</option>').join('');
         } else {
-            sel.innerHTML = '<option value="">— Nenhum apartamento disponível —</option>';
+            sel.innerHTML = '<option value="">Nenhum apartamento disponivel</option>';
         }
     } catch (e) {
-        document.getElementById('atribuir-apartamento').innerHTML = '<option value="">— Erro ao carregar —</option>';
+        document.getElementById('atribuir-apartamento').innerHTML = '<option value="">Erro ao carregar</option>';
     }
 }
 
@@ -401,7 +393,7 @@ async function processarProspecto(acao) {
         const res = await fetch(API + '?acao=processar_prospecto', { method: 'POST', body: fd });
         const data = await res.json();
         if (data.sucesso) {
-            showToast('Operação realizada com sucesso!');
+            showToast('Operacao realizada com sucesso!');
             closeModal('modal-validar');
             closeModal('modal-aprovar');
             closeModal('modal-atribuir');
@@ -416,19 +408,46 @@ async function processarProspecto(acao) {
 }
 
 async function loadProspectos() {
+    console.log('Carregando prospectos...');
     try {
         const res = await fetch(API + '?acao=listar_prospectos');
-        const data = await res.json();
-        if (data.sucesso) {
+        console.log('Resposta status:', res.status);
+        const text = await res.text();
+        console.log('Resposta texto (primeiros 300 chars):', text.substring(0, 300));
+
+        if (text.trim().startsWith('<!DOCTYPE') || text.trim().startsWith('<html')) {
+            throw new Error('A API retornou HTML ao inves de JSON. Provavelmente a sessao expirou. Recarregue a pagina e faca login novamente.');
+        }
+
+        const data = JSON.parse(text);
+        console.log('Dados recebidos:', data);
+        if (data.sucesso && data.dados) {
             allProspectos = data.dados;
             renderProspectos();
+            console.log('Prospectos renderizados:', allProspectos.length);
+        } else {
+            document.getElementById('prospectos-body').innerHTML = '<tr><td colspan="7" style="text-align:center; color:var(--text-muted);">Nenhum prospecto encontrado.</td></tr>';
+            document.getElementById('empty-state').style.display = 'block';
         }
     } catch (e) {
-        showToast('Erro ao carregar prospectos', true);
+        console.error('Erro ao carregar prospectos:', e);
+        document.getElementById('prospectos-body').innerHTML = '<tr><td colspan="7" style="color:red; text-align:center;">Erro ao carregar: ' + e.message + '</td></tr>';
+        showToast('Erro ao carregar prospectos: ' + e.message, true);
     }
 }
 
-window.onload = () => { loadProspectos(); };
+window.onload = function() {
+    loadProspectos();
+};
+
+window.onerror = function(msg, url, lineNo, columnNo, error) {
+    console.error('Erro JS:', msg, 'linha', lineNo, 'coluna', columnNo);
+    const tbody = document.getElementById('prospectos-body');
+    if (tbody && tbody.innerHTML.includes('Carregando')) {
+        tbody.innerHTML = '<tr><td colspan="7" style="color:red; text-align:center;">Erro JavaScript: ' + msg + ' (linha ' + lineNo + ')</td></tr>';
+    }
+    return true;
+};
 </script>
 </body>
 </html>
