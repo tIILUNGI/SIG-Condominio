@@ -443,6 +443,30 @@ switch ($acao) {
         echo json_encode(['sucesso' => true, 'dados' => $rows]);
         break;
 
+    case 'buscar_por_referencia':
+        if (!isset($_SESSION['tipo']) || ($_SESSION['tipo'] !== 'admin' && $_SESSION['tipo'] !== 'funcionario')) {
+            echo json_encode(['sucesso' => false, 'erro' => 'Acesso negado']); exit;
+        }
+        $ref = trim($_GET['ref'] ?? '');
+        if (!$ref) { echo json_encode(['sucesso' => false, 'erro' => 'Referência vazia']); exit; }
+        $sql = "SELECT mp.id, mor.nome as morador, a.codigo as apartamento,
+                       m.servico, mp.valor_pago, mp.metodo, mp.referencia,
+                       mp.data_pagamento, mp.estado
+                FROM mensalidade_pagamento mp
+                JOIN mensalidade m ON m.id = mp.id_mensalidade
+                JOIN morador mor ON mor.id = m.id_morador
+                JOIN apartamento a ON a.id = m.id_apartamento
+                WHERE mp.referencia = ? LIMIT 1";
+        $stmt = $conexao->prepare($sql);
+        $stmt->bind_param("s", $ref);
+        $stmt->execute();
+        $res = $stmt->get_result();
+        $row = $res->fetch_assoc();
+        $stmt->close();
+        if ($row) echo json_encode(['sucesso' => true, 'dados' => $row]);
+        else echo json_encode(['sucesso' => false, 'erro' => 'Não encontrado']);
+        break;
+
     case 'listar_prospectos':
         if (!isset($_SESSION['tipo']) || ($_SESSION['tipo'] !== 'admin' && $_SESSION['tipo'] !== 'funcionario')) {
             echo json_encode(['sucesso' => false, 'erro' => 'Acesso negado']); exit;

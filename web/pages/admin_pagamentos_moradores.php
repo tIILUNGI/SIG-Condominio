@@ -110,6 +110,18 @@ include("../api/conexao.php");
                 </table>
             </div>
         </div>
+
+        <div class="card" style="margin-top:1.5rem; padding:0; overflow:hidden;">
+            <div class="card-head"><p class="card-title"><i class="fa-solid fa-file-lines"></i> Validar Pagamento Presencial</p></div>
+            <div style="padding:1.5rem;">
+                <p style="font-size:.85rem; color:var(--text-muted); margin-bottom:1rem;">Insira a referência do pagamento presencial para validar e emitir recibo.</p>
+                <div style="display:flex; gap:.6rem; flex-wrap:wrap;">
+                    <input type="text" id="ref-pres-input" placeholder="Ex: PRES20240630123456" style="flex:1; min-width:260px; padding:.65rem 1rem; border-radius:10px; border:1.5px solid var(--border); background:var(--bg); color:var(--text);" />
+                    <button class="btn-primary" onclick="validarPresencial()"><i class="fa-solid fa-magnifying-glass"></i> Buscar</button>
+                </div>
+                <div id="pres-resultado" style="margin-top:1rem;"></div>
+            </div>
+        </div>
     </div>
 </main>
 
@@ -155,6 +167,7 @@ async function carregarPagamentos() {
                 <td><span class="badge ${p.estado === 'confirmado' ? 'pago' : 'pendente'}">${p.estado}</span></td>
                 <td>
                     <button class="btn-secondary btn-sm" onclick="verDetalhes(${JSON.stringify(p).replace(/"/g, '&quot;')})"><i class="fa-solid fa-eye"></i> Ver</button>
+                    ${p.estado === 'confirmado' ? `<a href="recibo.php?id=${p.id}" target="_blank" class="btn-secondary btn-sm" style="text-decoration:none;"><i class="fa-solid fa-print"></i> Recibo</a>` : ''}
                 </td>
             </tr>
         `).join('');
@@ -191,6 +204,48 @@ async function validarPay(estado) {
 
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
+
+async function validarPresencial() {
+    const ref = document.getElementById('ref-pres-input').value.trim();
+    if (!ref) { showToast('Insira a referência', true); return; }
+    const res = await fetch(`${API_URL}?acao=buscar_por_referencia&ref=${encodeURIComponent(ref)}`);
+    const data = await res.json();
+    const el = document.getElementById('pres-resultado');
+    if (!data.sucesso || !data.dados) {
+        el.innerHTML = `<p style="color:var(--danger);"><i class="fa-solid fa-circle-xmark"></i> ${data.erro || 'Não encontrado'}</p>`;
+        return;
+    }
+    const p = data.dados;
+    el.innerHTML = `
+        <div style="background:var(--bg); border-radius:14px; padding:1.25rem; border:1px solid var(--border);">
+            <div class="recibo-row"><span class="key">Referência</span><span class="val">${p.referencia}</span></div>
+            <div class="recibo-row"><span class="key">Morador</span><span class="val">${p.morador}</span></div>
+            <div class="recibo-row"><span class="key">Apartamento</span><span class="val">${p.apartamento}</span></div>
+            <div class="recibo-row"><span class="key">Serviço</span><span class="val">${p.servico}</span></div>
+            <div class="recibo-row"><span class="key">Valor</span><span class="val" style="color:#27ae60;">Kz ${parseFloat(p.valor_pago).toLocaleString('pt-AO', {minimumFractionDigits:2})}</span></div>
+            <div class="recibo-row"><span class="key">Estado</span><span class="val">${p.estado}</span></div>
+            ${p.estado !== 'confirmado' ? `<button class="btn-validate" onclick="confirmarRef(${p.id})" style="margin-top:1rem;"><i class="fa-solid fa-check-double"></i> Confirmar Pagamento</button>` : '<p style="color:#27ae60; margin-top:1rem;"><i class="fa-solid fa-check-circle"></i> Já confirmado</p>'}
+        </div>
+    `;
+}
+async function confirmarRef(idPag) {
+    if (!confirm('Confirmar este pagamento presencial?')) return;
+    const fd = new FormData();
+    fd.append('acao', 'confirmar_pagamento');
+    fd.append('id', idPag);
+    fd.append('estado', 'confirmado');
+    fd.append('notas', 'Validado presencialmente');
+    const r = await fetch(`${API_URL}?acao=confirmar_pagamento`, { method:'POST', body:fd });
+    const d = await r.json();
+    if (d.sucesso) {
+        showToast('Pagamento confirmado!');
+        document.getElementById('ref-pres-input').value = '';
+        document.getElementById('pres-resultado').innerHTML = '';
+        carregarPagamentos();
+    } else {
+        showToast(d.erro || 'Erro', true);
+    }
+}
 
 window.onload = () => {
     carregarPagamentos();

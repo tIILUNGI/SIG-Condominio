@@ -88,6 +88,18 @@ $res_logs = mysqli_query($conexao, $sql_logs);
         .chat-input { flex: 1; padding: 12px 20px; border-radius: 30px; border: 1px solid var(--border); background: var(--bg); color: var(--text); outline: none; transition: 0.2s; }
         .chat-input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px var(--gold-soft); }
 
+        /* Comunicados no portal do morador */
+        .comunicado-card {
+            background: var(--surface); border-radius: 10px; padding: 14px 16px; margin-bottom: 10px;
+            border-left: 4px solid var(--gold); transition: transform .15s;
+        }
+        .comunicado-card:hover { transform: translateX(3px); }
+        .comunicado-card.urgente { border-left-color: var(--danger); }
+        .comunicado-card.manutencao { border-left-color: #3498db; }
+        .comunicado-card h4 { margin: 0 0 6px; font-size: 0.9rem; }
+        .comunicado-card p { margin: 0 0 8px; font-size: 0.82rem; color: var(--text-muted); line-height: 1.4; }
+        .comunicado-meta { font-size: 0.72rem; color: var(--text-muted); display: flex; gap: 8px; align-items: center; }
+
         /* Ajuste Vizinhos Grid */
         .neighbor-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.25rem; }
         .neighbor-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; display: flex; align-items: center; gap: 1rem; transition: 0.3s; }
@@ -219,7 +231,7 @@ $res_logs = mysqli_query($conexao, $sql_logs);
         <div id="pag-liqui" class="sub-tab-content">
             <div class="stat-grid" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
                 <?php 
-                $all_m = mysqli_query($conexao, "SELECT * FROM mensalidade WHERE id_morador = $morador_id ORDER BY ano DESC, id DESC");
+                $all_m = mysqli_query($conexao, "SELECT m.*, mp.id as pag_id, mp.referencia, mp.data_pagamento, mp.metodo FROM mensalidade m LEFT JOIN mensalidade_pagamento mp ON mp.id_mensalidade = m.id WHERE m.id_morador = $morador_id ORDER BY ano DESC, id DESC");
                 while($m = mysqli_fetch_assoc($all_m)): 
                     $pago = ($m['estado'] === 'pago');
                 ?>
@@ -233,7 +245,12 @@ $res_logs = mysqli_query($conexao, $sql_logs);
                     <?php if(!$pago): ?>
                     <button class="btn-primary" style="width:100%; justify-content:center;" onclick="openPay(<?= $m['id'] ?>, '<?= $m['servico'] ?>', <?= $m['valor'] ?>)">Pagar Agora</button>
                     <?php else: ?>
-                    <button class="btn-secondary" style="width:100%; justify-content:center; pointer-events:none; opacity:0.7;">Comprovado</button>
+                    <div style="display:flex; gap:.5rem;">
+                        <button class="btn-secondary" style="flex:1; justify-content:center; pointer-events:none; opacity:0.7;">Comprovado</button>
+                        <?php if($m['pag_id']): ?>
+                        <a href="recibo.php?id=<?= $m['pag_id'] ?>" target="_blank" class="btn-primary" style="flex:1; justify-content:center; text-decoration:none;"><i class="fa-solid fa-print"></i> Recibo</a>
+                        <?php endif; ?>
+                    </div>
                     <?php endif; ?>
                 </div>
                 <?php endwhile; ?>
@@ -247,11 +264,11 @@ $res_logs = mysqli_query($conexao, $sql_logs);
                         <thead><tr><th>Referência</th><th>Mês/Ano</th><th>Serviço</th><th>Valor</th><th>Método</th><th>Data de Liquidação</th><th>Status</th></tr></thead>
                         <tbody>
                             <?php 
-                            $hist = mysqli_query($conexao, "SELECT m.*, mp.data_pagamento, mp.metodo FROM mensalidade m LEFT JOIN mensalidade_pagamento mp ON mp.id_mensalidade = m.id WHERE m.id_morador = $morador_id AND m.estado = 'pago' ORDER BY m.ano DESC, m.id DESC");
+                            $hist = mysqli_query($conexao, "SELECT m.*, mp.id as pag_id, mp.data_pagamento, mp.metodo, mp.valor_pago, mp.referencia FROM mensalidade m LEFT JOIN mensalidade_pagamento mp ON mp.id_mensalidade = m.id WHERE m.id_morador = $morador_id AND m.estado = 'pago' ORDER BY m.ano DESC, m.id DESC");
                             while($h = mysqli_fetch_assoc($hist)): 
                             ?>
                             <tr>
-                                <td>#<?= $h['id'] ?></td>
+                                <td><?php echo $h['pag_id'] ? '<a href="../pages/recibo.php?id=' . $h['pag_id'] . '" target="_blank" style="color:var(--primary); text-decoration:none; font-weight:700;">#Ref: ' . htmlspecialchars($h['referencia'] ?: $h['pag_id']) . '</a>' : '#' . $h['id']; ?></td>
                                 <td><strong><?= $h['mes'] ?> / <?= $h['ano'] ?></strong></td>
                                 <td><?= $h['servico'] ?></td>
                                 <td><?= number_format($h['valor'], 0) ?> Kz</td>
@@ -289,27 +306,33 @@ $res_logs = mysqli_query($conexao, $sql_logs);
 
     <!-- ── COMUNICAÇÃO ── -->
     <section class="tab-section" id="tab-comunicacao">
-        <div class="chat-app">
-            <div class="chat-sidebar">
-                <div style="padding:1.5rem; border-bottom:1px solid var(--border);"><p style="font-weight:700; margin:0;">Conversas</p></div>
-                <div class="chat-list" id="chatList">
-                    <div class="chat-user-item active" onclick="loadChat(0, 'Administração')">
-                        <div class="neighbor-avatar" style="background:var(--gold); color:#000;"><i class="fa-solid fa-building-shield"></i></div>
-                        <div><p style="font-weight:700; margin:0; font-size:0.9rem;">Administração</p><p style="font-size:0.75rem; color:var(--text-muted); margin:0;">Online para Suporte</p></div>
+        <div style="display:grid; grid-template-columns: 1fr 1.5fr; gap:22px;">
+            <!-- COLUNA ESQUERDA: COMUNICADOS -->
+            <div>
+                <div class="card">
+                    <div class="card-head">
+                        <p class="card-title"><i class="fa-solid fa-bullhorn"></i> Comunicados Oficiais</p>
+                    </div>
+                    <div id="comunicados-list-morador" style="padding:20px; max-height:460px; overflow-y:auto;">
+                        <p style="text-align:center; color:var(--text-muted);"><i class="fa-solid fa-spinner fa-spin"></i> Carregando...</p>
                     </div>
                 </div>
             </div>
-            <div class="chat-main">
-                <div class="chat-header">
-                    <div><span id="targetName">Administração</span><br><span style="font-size:0.7rem; color:var(--success); font-weight:400;"><i class="fa-solid fa-circle"></i> Respondendo</span></div>
-                    <i class="fa-solid fa-shield-halved" style="color:var(--gold);"></i>
-                </div>
-                <div class="chat-messages" id="messageBox">
-                    <div class="bubble received">Boa tarde! Seja bem-vindo ao suporte residencial do Nosso Zimbo. Como podemos ajudar hoje?</div>
-                </div>
-                <div class="chat-input-area">
-                    <input type="text" id="chatInput" class="chat-input" placeholder="Escreva sua mensagem aqui...">
-                    <button class="btn-primary" style="border-radius:50%; width:48px; height:48px; justify-content:center; padding:0;" onclick="sendMsg()"><i class="fa-solid fa-paper-plane"></i></button>
+
+            <!-- COLUNA DIREITA: CHAT -->
+            <div class="chat-app">
+                <div class="chat-main">
+                    <div class="chat-header">
+                        <div><span id="targetName">Administração</span><br><span style="font-size:0.7rem; color:var(--success); font-weight:400;"><i class="fa-solid fa-circle"></i> Online</span></div>
+                        <i class="fa-solid fa-shield-halved" style="color:var(--gold);"></i>
+                    </div>
+                    <div class="chat-messages" id="messageBox">
+                        <div class="bubble received">Olá! Como podemos ajudá-lo hoje?</div>
+                    </div>
+                    <div class="chat-input-area">
+                        <input type="text" id="chatInput" class="chat-input" placeholder="Escreva sua mensagem aqui...">
+                        <button class="btn-primary" style="border-radius:50%; width:48px; height:48px; justify-content:center; padding:0;" onclick="sendMsg()"><i class="fa-solid fa-paper-plane"></i></button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -410,21 +433,69 @@ $res_logs = mysqli_query($conexao, $sql_logs);
     });
 
     // Chat Functions
-    function startChat(id, name) {
-        switchTab('comunicacao', document.querySelector('.nav-item[onclick*="comunicacao"]'));
-        loadChat(id, name);
-    }
-    function loadChat(id, name) {
-        document.getElementById('targetName').textContent = name;
-        document.getElementById('messageBox').innerHTML = `<div class="bubble received">Iniciando conversa privada com <strong>${name}</strong>...</div>`;
+    const API_CHAT = '../api/api_comunicacao.php';
+    let lastMsgId = 0;
+    let chatPolling = false;
+    function loadMessages() {
+        if (chatPolling) return;
+        chatPolling = true;
+        fetch(API_CHAT + '?acao=listar_mensagens')
+            .then(r => r.json())
+            .then(data => {
+                if (!data.sucesso) { chatPolling = false; return; }
+                const box = document.getElementById('messageBox');
+                if (data.dados.length === 0) {
+                    box.innerHTML = '<div class="bubble received">Nenhuma mensagem ainda. Inicie a conversa!</div>';
+                    lastMsgId = 0;
+                    chatPolling = false;
+                    return;
+                }
+                const newestId = data.dados[data.dados.length - 1].id;
+                if (newestId === lastMsgId) { chatPolling = false; return; }
+                lastMsgId = newestId;
+                box.innerHTML = data.dados.map(m => {
+                    const cls = m.de_morador ? 'sent' : 'received';
+                    const time = new Date(m.enviada_em).toLocaleTimeString('pt-AO', {hour:'2-digit', minute:'2-digit'});
+                    return `<div class="bubble ${cls}">${escHtml(m.conteudo)}<div style="font-size:0.65rem; opacity:0.7; margin-top:3px;">${time}</div></div>`;
+                }).join('');
+                box.scrollTop = box.scrollHeight;
+                chatPolling = false;
+            })
+            .catch(() => { chatPolling = false; });
     }
     function sendMsg() {
         const input = document.getElementById('chatInput');
-        if(!input.value.trim()) return;
-        const box = document.getElementById('messageBox');
-        box.innerHTML += `<div class="bubble sent">${input.value}</div>`;
-        input.value = '';
-        box.scrollTop = box.scrollHeight;
+        const txt = input.value.trim();
+        if (!txt) return;
+        const fd = new FormData();
+        fd.append('conteudo', txt);
+        fetch(API_CHAT + '?acao=enviar_mensagem', { method: 'POST', body: fd })
+            .then(r => r.json())
+            .then(data => {
+                input.value = '';
+                if (data.sucesso) loadMessages();
+            });
+    }
+    function escHtml(s) { if(!s) return ''; return s.toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+    function loadComunicadosMorador() {
+        fetch(API_CHAT + '?acao=listar_comunicados')
+            .then(r => r.json())
+            .then(data => {
+                const el = document.getElementById('comunicados-list-morador');
+                if (!data.sucesso || !data.dados.length) {
+                    el.innerHTML = '<p style="text-align:center;color:var(--text-muted);">Nenhum comunicado.</p>';
+                    return;
+                }
+                el.innerHTML = data.dados.map(c => {
+                    const color = c.tipo === 'urgente' ? 'var(--danger)' : (c.tipo === 'manutencao' ? '#3498db' : 'var(--gold)');
+                    const dt = new Date(c.criado_em).toLocaleDateString('pt-AO', {day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit'});
+                    return `<div class="comunicado-card ${c.tipo}" style="margin-bottom:12px;">
+                        <h4 style="margin:0 0 6px; color:${color};">${escHtml(c.titulo)}</h4>
+                        <p style="margin:0 0 8px; font-size:0.82rem; color:var(--text-muted); line-height:1.4;">${escHtml(c.conteudo)}</p>
+                        <div style="font-size:0.7rem; color:var(--text-muted);"><i class="fa-regular fa-clock"></i> ${dt}</div>
+                    </div>`;
+                }).join('');
+            });
     }
 
     // Payment functions
@@ -453,6 +524,15 @@ $res_logs = mysqli_query($conexao, $sql_logs);
     // The theme-manager.js script already injects a button or is accessible via ThemeManager.toggle()
     // We can also add a manual trigger if needed, but we ensure it matches the attribute.
     // The theme-manager.js expects a container .topbar-right to auto-inject.
+
+    // Init chat + comunicados
+    loadMessages();
+    loadComunicadosMorador();
+    setInterval(loadMessages, 3000);
+    setInterval(loadComunicadosMorador, 60000);
+    document.getElementById('chatInput').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); }
+    });
 </script>
 
 </body>

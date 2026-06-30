@@ -30,6 +30,9 @@
         <button class="nav-item <?php echo (basename($_SERVER['PHP_SELF']) == 'admin_pagamentos_moradores.php') ? 'active' : ''; ?>" onclick="window.location.href='admin_pagamentos_moradores.php'">
             <i class="fa-solid fa-id-badge"></i><span>Pagamentos Moradores</span>
         </button>
+        <button class="nav-item <?php echo (basename($_SERVER['PHP_SELF']) == 'admin_validar_pagamento.php') ? 'active' : ''; ?>" onclick="window.location.href='admin_validar_pagamento.php'">
+            <i class="fa-solid fa-stamp"></i><span>Validar Presencial</span>
+        </button>
         <button class="nav-item <?php echo (basename($_SERVER['PHP_SELF']) == 'admin-comunicacao.php') ? 'active' : ''; ?>" onclick="window.location.href='admin-comunicacao.php'">
             <i class="fa-solid fa-comments"></i><span>Comunicação</span>
         </button>
