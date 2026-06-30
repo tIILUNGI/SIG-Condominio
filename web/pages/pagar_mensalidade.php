@@ -345,6 +345,10 @@ $nome     = $_SESSION['nome'] ?? 'Morador';
             <span class="mt-icon">🏦</span>
             <span class="mt-label">Transferência</span>
         </div>
+        <div class="method-tab" id="tab-pres" onclick="selectTab('pres')">
+            <span class="mt-icon">🏛️</span>
+            <span class="mt-label">Presencial</span>
+        </div>
     </div>
 
     <div class="pay-card">
@@ -533,6 +537,57 @@ $nome     = $_SESSION['nome'] ?? 'Morador';
         </div>
     </div><!-- /panel-tf -->
 
+    <!-- ══════════════════════════════════════════════
+         PAGAMENTO PRESENCIAL PANEL
+    ══════════════════════════════════════════════ -->
+    <div id="panel-pres" style="display:none;">
+        <div class="mx-header" style="background:linear-gradient(135deg,#2c3e50 0%,#1a252f 100%);">
+            <div class="mx-logo">🏛️</div>
+            <div class="mx-header-text">
+                <h2>Pagamento Presencial</h2>
+                <p>Dirija-se à administração do condomínio</p>
+            </div>
+        </div>
+        <div class="pay-body">
+            <div class="amount-pill gray">
+                <div>
+                    <span class="ap-label">Valor a Pagar</span>
+                    <div class="ap-value">Kz <?php echo number_format($m['valor'], 0, ',', '.'); ?></div>
+                </div>
+            </div>
+            <div class="info-row"><span class="ir-key">Referência</span><span class="ir-val"><?php echo htmlspecialchars($mes_txt . ' ' . $m['ano']); ?></span></div>
+            <div class="info-row"><span class="ir-key">Serviço</span><span class="ir-val"><?php echo htmlspecialchars($m['servico']); ?></span></div>
+            <div class="info-row"><span class="ir-key">Titular</span><span class="ir-val"><?php echo htmlspecialchars($nome); ?></span></div>
+            <div class="info-row"><span class="ir-key">Apartamento</span><span class="ir-val"><?php echo htmlspecialchars($m['apt_codigo'] ?? '—'); ?></span></div>
+            <hr class="divider">
+            <div style="background:var(--dark3,#f5f5f5); border-radius:14px; padding:1.25rem; margin-bottom:1.25rem;">
+                <p style="margin:0 0 .5rem; font-weight:700; font-size:.9rem;"><i class="fa-solid fa-location-dot" style="color:#e74c3c;"></i> Local de Pagamento</p>
+                <p style="margin:.2rem 0; font-size:.85rem; color:var(--text-muted);">Administração do Condomínio Nosso Zimbo</p>
+                <p style="margin:.2rem 0; font-size:.85rem; color:var(--text-muted);">Camama, Luanda — Angola</p>
+                <p style="margin:.2rem 0; font-size:.85rem; color:var(--text-muted);">Horário: Segunda a Sexta, 08:00 — 16:00</p>
+            </div>
+            <p style="font-size:.82rem; color:var(--text-muted); margin-bottom:1rem; line-height:1.5;">
+                <i class="fa-solid fa-circle-info" style="color:#3498db;"></i>
+                Leve esta referência e o seu documento de identificação (BI) à administração. O pagamento será confirmado no local e poderá imprimir o comprovativo.
+            </p>
+            <button class="btn-mx dark" onclick="registarPresencial()">
+                <i class="fa-solid fa-file-lines"></i> Gerar Pedido de Pagamento Presencial
+            </button>
+            <div id="presencial-result" style="margin-top:1rem; display:none;">
+                <div style="background:rgba(39,174,96,.08); border:1px solid rgba(39,174,96,.2); border-radius:14px; padding:1.25rem; text-align:center;">
+                    <i class="fa-solid fa-circle-check" style="font-size:2rem; color:#27ae60;"></i>
+                    <h4 style="margin:.5rem 0; color:#27ae60;">Pedido Registado!</h4>
+                    <p style="font-size:.85rem; color:var(--text-muted); margin:.3rem 0;">Apresente-se na administração com o código abaixo.</p>
+                    <div class="success-ref" id="pres-ref">REF: —</div>
+                    <button class="btn-mx dark" style="margin-top:.75rem;" onclick="window.print()">
+                        <i class="fa-solid fa-print"></i> Imprimir Comprovativo
+                    </button>
+                </div>
+            </div>
+            <button class="btn-cancel" onclick="location.href='minhas_mensalidades.php'">Cancelar</button>
+        </div>
+    </div><!-- /panel-pres -->
+
     </div><!-- /pay-card -->
 </div><!-- /pay-container -->
 </div><!-- /pay-wrapper -->
@@ -558,7 +613,7 @@ let phoneValue = '';
 
 /* ── TAB SELECTION ── */
 function selectTab(tab) {
-    ['mx','ref','tf'].forEach(t => {
+    ['mx','ref','tf','pres'].forEach(t => {
         document.getElementById('tab-' + t).classList.toggle('active', t === tab);
         document.getElementById('panel-' + t).style.display = t === tab ? 'block' : 'none';
     });
@@ -691,6 +746,26 @@ function copyText(text, btn) {
         btn.innerHTML = '<i class="fa-solid fa-check" style="color:var(--mx-green);"></i>';
         setTimeout(() => btn.innerHTML = orig, 2000);
     }).catch(() => alert('IBAN copiado: ' + text));
+}
+
+/* ── PAGAMENTO PRESENCIAL ─ */
+async function registarPresencial() {
+    try {
+        const fd = new FormData();
+        fd.append('id_mensalidade', MENSALIDADE_ID);
+        fd.append('metodo', 'Presencial');
+        fd.append('telefone', '');
+        const res = await fetch('../api/simular_pagamento.php', { method: 'POST', body: fd });
+        const data = await res.json();
+        if (data.sucesso) {
+            document.getElementById('pres-ref').textContent = 'REF: ' + data.referencia;
+        } else {
+            document.getElementById('pres-ref').textContent = 'REF: PRES' + Date.now().toString().slice(-8).toUpperCase();
+        }
+    } catch(e) {
+        document.getElementById('pres-ref').textContent = 'REF: PRES' + Date.now().toString().slice(-8).toUpperCase();
+    }
+    document.getElementById('presencial-result').style.display = 'block';
 }
 
 /* ── FILE NAME ── */

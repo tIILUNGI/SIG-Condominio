@@ -94,8 +94,35 @@ switch ($acao) {
             "INSERT INTO comunicado (titulo, conteudo, tipo, criado_por) VALUES (?, ?, ?, ?)"
         );
         $stmt->bind_param("sssi", $titulo, $conteudo, $tipo, $id_user);
-        if ($stmt->execute()) echo json_encode(['sucesso' => true]);
-        else echo json_encode(['sucesso' => false, 'erro' => $conexao->error]);
+        $comunicado_criado = false;
+        if ($stmt->execute()) $comunicado_criado = true;
+        else { echo json_encode(['sucesso' => false, 'erro' => $conexao->error]); break; }
+
+        $mensagens_enviadas = 0;
+        $stmtConv = $conexao->prepare(
+            "SELECT cp.id_conversa, cp.id_user
+             FROM conversa_participante cp
+             WHERE cp.tipo_user = 'morador'
+               AND cp.id_user IN (SELECT id FROM morador WHERE estado_conta IN ('Activo','Pendente','AguardandoValidacaoPagamento','AguardandoAtribuicaoCasa','Aprovado'))"
+        );
+        $stmtConv->execute();
+        $resConv = $stmtConv->get_result();
+        while ($row = $resConv->fetch_assoc()) {
+            $id_conversa = $row['id_conversa'];
+            $id_morador_dest = $row['id_user'];
+            $msg_texto = "[COMUNICADO - {$tipo}] {$titulo}\n\n{$conteudo}";
+            $stmtMsg = $conexao->prepare(
+                "INSERT INTO mensagem (id_conversa, tipo_remetente, id_remetente, conteudo) VALUES (?, 'administrador', ?, ?)"
+            );
+            $stmtMsg->bind_param("iis", $id_conversa, $id_user, $msg_texto);
+            $stmtMsg->execute();
+            $stmtMsg->close();
+            $mensagens_enviadas++;
+        }
+        $stmtConv->close();
+        $stmt->close();
+
+        echo json_encode(['sucesso' => true, 'mensagens_enviadas' => $mensagens_enviadas]);
         break;
 
     // ── CHAT — LISTAR CONVERSAS (Admin) ──────────────────────────────────

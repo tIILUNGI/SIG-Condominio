@@ -84,9 +84,9 @@ include(__DIR__ . '/../api/csrf_protection.php');
       </div>
     </section>
 
-    <!-- ECRÃ 2: DADOS PESSOAIS -->
+    <!-- ECRÃ 2: DADOS PESSOAIS + PREFERÊNCIAS DE CASA -->
     <section class="reg-step-content" id="step-2">
-      <h2 class="step-title">Conte-nos sobre si</h2>
+      <h2 class="step-title">Conte-nos sobre si e as suas preferências</h2>
       <p class="step-desc">Estes dados serão usados para o primeiro contacto da nossa equipa comercial.</p>
       
       <div class="form-grid">
@@ -107,18 +107,52 @@ include(__DIR__ . '/../api/csrf_protection.php');
            </select>
          </div>
          <div class="form-group">
-          <label>Telefone</label>
-          <input type="tel" name="telefone" required placeholder="9XX-XXX-XXX" pattern="9[0-9]{2}-[0-9]{3}-[0-9]{3}" title="Formato esperado: 9xx-xxx-xxx" oninput="maskPhone(this)">
-        </div>
-        <div class="form-group full">
-          <label>Email</label>
-          <input type="email" name="email" required placeholder="seuemail@exemplo.com">
-        </div>
-        <div class="form-group full">
-          <label>Palavra-passe (para o portal)</label>
-          <input type="password" name="senha" required minlength="6" placeholder="******">
-        </div>
-      </div>
+           <label>Telefone</label>
+           <input type="tel" name="telefone" required placeholder="9XX-XXX-XXX" pattern="9[0-9]{2}-[0-9]{3}-[0-9]{3}" title="Formato esperado: 9xx-xxx-xxx" oninput="maskPhone(this)">
+         </div>
+         <div class="form-group full">
+           <label>Email</label>
+           <input type="email" name="email" required placeholder="seuemail@exemplo.com">
+         </div>
+         <div class="form-group full">
+           <label>Palavra-passe (para o portal)</label>
+           <input type="password" name="senha" required minlength="6" placeholder="******">
+         </div>
+       </div>
+
+       <h3 style="margin:1.5rem 0 .5rem; font-size:1rem; color:var(--text);">Preferências de Moradia</h3>
+       <p style="font-size:.82rem; color:var(--text-muted); margin-bottom:1rem;">Ajude-nos a encontrar o apartamento ideal para si.</p>
+
+       <div class="form-grid">
+         <div class="form-group">
+           <label>Bloco preferido</label>
+           <select name="preferencia_bloco">
+             <option value="">— Sem preferência —</option>
+             <option value="A">Bloco A</option>
+             <option value="B">Bloco B</option>
+             <option value="C">Bloco C</option>
+           </select>
+         </div>
+         <div class="form-group">
+           <label>Tipologia</label>
+           <select name="preferencia_tipologia">
+             <option value="">— Sem preferência —</option>
+             <option value="T1">T1</option>
+             <option value="T2">T2</option>
+             <option value="T3">T3</option>
+             <option value="V3">V3</option>
+             <option value="V4">V4</option>
+           </select>
+         </div>
+         <div class="form-group">
+           <label>Andar preferido</label>
+           <input type="text" name="preferencia_andar" placeholder="Ex: R/C, 1º, 2º, 3º">
+         </div>
+         <div class="form-group full">
+           <label>Observações adicionais</label>
+           <textarea name="observacoes" rows="3" placeholder="Ex:necessidade de vaga de garagem, preferência por varanda, etc."></textarea>
+         </div>
+       </div>
 
       <div class="step-nav">
         <button type="button" class="btn-secondary" onclick="nextStep(1)"><i class="fa-solid fa-arrow-left"></i> Voltar</button>
@@ -129,7 +163,7 @@ include(__DIR__ . '/../api/csrf_protection.php');
     <!-- ECRÃ 3: CONFIRMAÇÃO -->
     <section class="reg-step-content" id="step-3">
       <h2 class="step-title">Quase lá!</h2>
-      <p class="step-desc">Ao submeter, os seus dados serão analisados e enviaremos um convite para visita guiada.</p>
+      <p class="step-desc">Ao submeter, os seus dados serão analisados. Deverá comparecer à administração para validar o pagamento presencial e receber a atribuição da casa.</p>
       
       <div class="bank-card">
         <div class="svc-detail">
@@ -137,6 +171,9 @@ include(__DIR__ . '/../api/csrf_protection.php');
           <div class="svc-detail-row"><span>Interesse:</span> <strong id="res-tipo">Arrendamento</strong></div>
           <div class="svc-detail-row"><span>Nome:</span> <strong id="res-nome">-</strong></div>
           <div class="svc-detail-row"><span>Email:</span> <strong id="res-email">-</strong></div>
+          <div class="svc-detail-row"><span>Bloco preferido:</span> <strong id="res-bloco">—</strong></div>
+          <div class="svc-detail-row"><span>Tipologia:</span> <strong id="res-tipologia">—</strong></div>
+          <div class="svc-detail-row"><span>Andar preferido:</span> <strong id="res-andar">—</strong></div>
         </div>
       </div>
 
@@ -183,6 +220,9 @@ include(__DIR__ . '/../api/csrf_protection.php');
       }
       document.getElementById('res-nome').textContent = nome;
       document.getElementById('res-email').textContent = email;
+      document.getElementById('res-bloco').textContent = document.querySelector('select[name="preferencia_bloco"]').value || '—';
+      document.getElementById('res-tipologia').textContent = document.querySelector('select[name="preferencia_tipologia"]').value || '—';
+      document.getElementById('res-andar').textContent = document.querySelector('input[name="preferencia_andar"]').value || '—';
     }
 
     document.querySelectorAll('.reg-step-content').forEach(s => s.classList.remove('active'));

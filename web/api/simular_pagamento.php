@@ -26,11 +26,11 @@ if (!$conexao) {
     exit;
 }
 
-// Verify ownership + that mensalidade exists and is pending
+// Verify ownership + that mensalidade exists and is pending or rejected
 $stmt = $conexao->prepare(
     "SELECT m.id, m.id_morador, m.valor, m.mes, m.ano, m.estado
      FROM mensalidade m
-     WHERE m.id = ? AND m.id_morador = ? AND m.estado IN ('pendente','vencida')"
+     WHERE m.id = ? AND m.id_morador = ? AND m.estado IN ('pendente','vencida','rejeitada','rejeitado')"
 );
 $stmt->bind_param("ii", $id_mensalidade, $_SESSION['id']);
 $stmt->execute();
@@ -45,7 +45,7 @@ if (!$men) {
 
 // Check if already has pending payment
 $chk = $conexao->prepare(
-    "SELECT id FROM mensalidade_pagamento WHERE id_mensalidade=? AND estado IN ('pendente','pendente_confirmacao')"
+    "SELECT id, estado FROM mensalidade_pagamento WHERE id_mensalidade=? AND estado IN ('pendente') ORDER BY data_pagamento DESC LIMIT 1"
 );
 $chk->bind_param("i", $id_mensalidade);
 $chk->execute();

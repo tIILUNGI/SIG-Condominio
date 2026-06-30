@@ -17,6 +17,9 @@
         <button class="nav-item <?php echo (basename($_SERVER['PHP_SELF']) == 'admin_moradores.php') ? 'active' : ''; ?>" onclick="window.location.href='admin_moradores.php'">
             <i class="fa-solid fa-users"></i><span>Cadastro de Moradores</span>
         </button>
+        <button class="nav-item <?php echo (basename($_SERVER['PHP_SELF']) == 'admin_prospectos.php') ? 'active' : ''; ?>" onclick="window.location.href='admin_prospectos.php'">
+            <i class="fa-solid fa-user-plus"></i><span>Prospectos / Presencial</span>
+        </button>
         <button class="nav-item <?php echo (basename($_SERVER['PHP_SELF']) == 'admin_casas.php') ? 'active' : ''; ?>" onclick="window.location.href='admin_casas.php'">
             <i class="fa-solid fa-house-chimney"></i><span>Gestão de Casas</span>
         </button>

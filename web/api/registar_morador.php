@@ -47,6 +47,12 @@ $emissao       = trim($_POST['emissao'] ?? '');
 $validade      = trim($_POST['validade'] ?? '');
 $locale        = trim($_POST['locale'] ?? 'Luanda');
 
+$tipo_interesse     = trim($_POST['tipo_interesse'] ?? '');
+$preferencia_bloco  = trim($_POST['preferencia_bloco'] ?? '');
+$preferencia_andar  = trim($_POST['preferencia_andar'] ?? '');
+$preferencia_tipologia = trim($_POST['preferencia_tipologia'] ?? '');
+$observacoes         = trim($_POST['observacoes'] ?? '');
+
 // ─────────────────────────────────────────────────────────────────────────
 // 3. DEFINIR VALORES PADRÃO PARA CAMPOS OPCIONAIS
 // ─────────────────────────────────────────────────────────────────────────
@@ -116,15 +122,15 @@ if ($chk->num_rows > 0) {
 // 9. INSERIR NOVO MORADOR NA BASE DE DADOS
 // ─────────────────────────────────────────────────────────────────────────
 
-$estado_conta = 'Pendente';
+$estado_conta = 'AguardandoValidacaoPagamento';
 
 $stmt = $conexao->prepare(
     "INSERT INTO morador 
-     (nome, email, numbi, telefone, senha_hash, nasc, nacionalidade, morada_anterior, emissao_bi, validade_bi, locale_bi, estado_conta)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+     (nome, email, numbi, telefone, senha_hash, nasc, nacionalidade, morada_anterior, emissao_bi, validade_bi, locale_bi, estado_conta, tipo_interesse, preferencia_bloco, preferencia_andar, preferencia_tipologia, observacoes)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 );
 $stmt->bind_param(
-    "ssssssssssss",
+    "sssssssssssssssss",
     $nome,
     $email,
     $numbi,
@@ -136,7 +142,12 @@ $stmt->bind_param(
     $emissao,
     $validade,
     $locale,
-    $estado_conta
+    $estado_conta,
+    $tipo_interesse,
+    $preferencia_bloco,
+    $preferencia_andar,
+    $preferencia_tipologia,
+    $observacoes
 );
 
 // ─────────────────────────────────────────────────────────────────────────
@@ -144,8 +155,8 @@ $stmt->bind_param(
 // ─────────────────────────────────────────────────────────────────────────
 
 if ($stmt->execute()) {
-    // Sucesso — redirecionar para login com mensagem positiva
-    header("Location: ../login.html?ok=registado");
+    $novo_id = $stmt->insert_id;
+    header("Location: ../pages/registo_pendente.php?registado=1&id=" . $novo_id);
 } else {
     // Erro ao guardar — retornar com mensagem de erro
     header("Location: ../login.html?erro=bd");

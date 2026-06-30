@@ -443,6 +443,161 @@ switch ($acao) {
         echo json_encode(['sucesso' => true, 'dados' => $rows]);
         break;
 
+    case 'listar_prospectos':
+        if (!isset($_SESSION['tipo']) || ($_SESSION['tipo'] !== 'admin' && $_SESSION['tipo'] !== 'funcionario')) {
+            echo json_encode(['sucesso' => false, 'erro' => 'Acesso negado']); exit;
+        }
+        $sql = "SELECT m.id, m.nome, m.email, m.telefone, m.numbi,
+                       m.estado_conta, m.tipo_interesse,
+                       m.preferencia_bloco, m.preferencia_tipologia, m.preferencia_andar,
+                       m.observacoes, m.criado_em,
+                       COALESCE(rp.estado, 'PendenteValidacao') as estado_processo,
+                       rp.notas_admin, rp.validado_em, rp.id_apartamento_atribuido
+                FROM morador m
+                LEFT JOIN registo_prospecto rp ON rp.id_morador = m.id
+                WHERE m.estado_conta IN ('AguardandoValidacaoPagamento','AguardandoAtribuicaoCasa','Aprovado','Pendente')
+                ORDER BY m.criado_em DESC";
+        $res = mysqli_query($conexao, $sql);
+        $rows = [];
+        while ($r = mysqli_fetch_assoc($res)) $rows[] = $r;
+        echo json_encode(['sucesso' => true, 'dados' => $rows]);
+        break;
+
+    case 'processar_prospecto':
+        if (!isset($_SESSION['tipo']) || ($_SESSION['tipo'] !== 'admin' && $_SESSION['tipo'] !== 'funcionario')) {
+            echo json_encode(['sucesso' => false, 'erro' => 'Acesso negado']); exit;
+        }
+        $id_morador = intval($_POST['id_morador'] ?? 0);
+        $acao = $_POST['acao'] ?? ''; // 'validar_pagamento', 'atribuir_casa', 'rejeitar', 'aprovar'
+        $notas = trim($_POST['notas'] ?? '');
+        $id_apartamento = intval($_POST['id_apartamento'] ?? 0);
+
+        if (!$id_morador) { echo json_encode(['sucesso'=>false,'erro'=>'ID Morador inválido']); exit; }
+
+        mysqli_begin_transaction($conexao);
+        try {
+            if ($acao === 'validar_pagamento') {
+                $id_admin = intval($_SESSION['id'] ?? 0);
+                $stmt = $conexao->prepare("UPDATE morador SET estado_conta = 'AguardandoAtribuicaoCasa' WHERE id = ?");
+                $stmt->bind_param("i", $id_morador);
+                $stmt->execute();
+                $stmt->close();
+
+                $stmt = $conexao->prepare("
+                    INSERT INTO registo_prospecto (id_morador, estado, validado_por, validado_em, notas_admin)
+                    VALUES (?, 'Validado', ?, NOW(), ?)
+                    ON DUPLICATE KEY UPDATE estado='Validado', validado_por=?, validado_em=NOW(), notas_admin=?
+                ");
+                $stmt->bind_param("iissi", $id_morador, $id_admin, $notas, $id_admin, $notas);
+                $stmt->execute();
+                $stmt->close();
+
+                $stmt = $conexao->prepare("
+                    SELECT mp.id FROM mensalidade_pagamento mp
+                    JOIN mensalidade m ON m.id = mp.id_mensalidade
+                    WHERE m.id_morador = ? AND mp.estado = 'pendente'
+                    ORDER BY mp.data_pagamento DESC LIMIT 1
+                ");
+                $stmt->bind_param("i", $id_morador);
+                $stmt->execute();
+                $res = $stmt->get_result();
+                $pag = $res->fetch_assoc();
+                $stmt->close();
+                if ($pag) {
+                    $stmt2 = $conexao->prepare("UPDATE mensalidade_pagamento SET estado='confirmado', confirmado_por=?, notas_admin=? WHERE id=?");
+                    $stmt2->bind_param("isi", $id_admin, $notas, $pag['id']);
+                    $stmt2->execute();
+                    $stmt2->close();
+                    $mp_id = $pag['id'];
+                    $men_id = mysqli_fetch_row(mysqli_query($conexao, "SELECT id_mensalidade FROM mensalidade_pagamento WHERE id=$mp_id"))[0] ?? 0;
+                    if ($men_id) {
+                        mysqli_query($conexao, "UPDATE mensalidade SET estado='pago' WHERE id=$men_id");
+                    }
+                }
+            }
+            elseif ($acao === 'atribuir_casa') {
+                if (!$id_apartamento) throw new Exception('Apartamento não seleccionado');
+
+                $stmt = $conexao->prepare("UPDATE morador SET estado_conta = 'Aprovado' WHERE id = ?");
+                $stmt->bind_param("i", $id_morador);
+                $stmt->execute();
+                $stmt->close();
+
+                $stmt = $conexao->prepare("UPDATE morador_apartamento SET activo = 0 WHERE id_morador = ?");
+                $stmt->bind_param("i", $id_morador);
+                $stmt->execute();
+                $stmt->close();
+
+                $stmt = $conexao->prepare("INSERT INTO morador_apartamento (id_morador, id_apartamento, data_entrada, activo) VALUES (?, ?, NOW(), 1)");
+                $stmt->bind_param("ii", $id_morador, $id_apartamento);
+                $stmt->execute();
+                $stmt->close();
+
+                $stmt = $conexao->prepare("UPDATE apartamento SET estado = 'Ocupado' WHERE id = ?");
+                $stmt->bind_param("i", $id_apartamento);
+                $stmt->execute();
+                $stmt->close();
+
+                $stmt = $conexao->prepare("UPDATE registo_prospecto SET estado='Atribuido', id_apartamento_atribuido=? WHERE id_morador=?");
+                $stmt->bind_param("ii", $id_apartamento, $id_morador);
+                $stmt->execute();
+                $stmt->close();
+
+                $mensalidade_base = 140000;
+                $data_atual = new DateTime();
+                for ($i = 0; $i < 12; $i++) {
+                    $mes = $data_atual->format('n');
+                    $ano = $data_atual->format('Y');
+                    $vencimento = $data_atual->format('Y-m-t');
+                    $stmt = $conexao->prepare(
+                        "INSERT INTO mensalidade (id_morador, id_apartamento, servico, mes, ano, valor, vencimento, estado) 
+                         VALUES (?, ?, 'Quota Condominal', ?, ?, ?, ?, 'pendente')"
+                    );
+                    $stmt->bind_param("iiiisd", $id_morador, $id_apartamento, $mes, $ano, $mensalidade_base, $vencimento);
+                    $stmt->execute();
+                    $stmt->close();
+                    $data_atual->modify('+1 month');
+                }
+            }
+            elseif ($acao === 'rejeitar') {
+                $stmt = $conexao->prepare("UPDATE morador SET estado_conta = 'Inactivo' WHERE id = ?");
+                $stmt->bind_param("i", $id_morador);
+                $stmt->execute();
+                $stmt->close();
+
+                $stmt = $conexao->prepare("
+                    INSERT INTO registo_prospecto (id_morador, estado, notas_admin)
+                    VALUES (?, 'Rejeitado', ?)
+                    ON DUPLICATE KEY UPDATE estado='Rejeitado', notas_admin=?
+                ");
+                $stmt->bind_param("isi", $id_morador, $notas, $notas);
+                $stmt->execute();
+                $stmt->close();
+            }
+            elseif ($acao === 'aprovar') {
+                $stmt = $conexao->prepare("UPDATE morador SET estado_conta = 'AguardandoAtribuicaoCasa' WHERE id = ?");
+                $stmt->bind_param("i", $id_morador);
+                $stmt->execute();
+                $stmt->close();
+
+                $stmt = $conexao->prepare("
+                    INSERT INTO registo_prospecto (id_morador, estado, notas_admin)
+                    VALUES (?, 'Validado', ?)
+                    ON DUPLICATE KEY UPDATE estado='Validado', notas_admin=?
+                ");
+                $stmt->bind_param("isi", $id_morador, $notas, $notas);
+                $stmt->execute();
+                $stmt->close();
+            }
+
+            mysqli_commit($conexao);
+            echo json_encode(['sucesso' => true]);
+        } catch (Exception $e) {
+            mysqli_rollback($conexao);
+            echo json_encode(['sucesso' => false, 'erro' => $e->getMessage()]);
+        }
+        break;
+
     default:
         echo json_encode(['sucesso' => false, 'erro' => 'Acção desconhecida']);
 }
