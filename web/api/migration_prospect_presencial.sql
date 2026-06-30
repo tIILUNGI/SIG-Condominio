@@ -4,28 +4,48 @@
 
 USE `condominio_nz`;
 
--- 1. Expandir estado_conta para incluir fluxo de registo pendente
-ALTER TABLE `morador` 
-  MODIFY COLUMN `estado_conta` 
-  ENUM('Activo','Suspenso','Inactivo','Pendente','AguardandoValidacaoPagamento','AguardandoAtribuicaoCasa','Aprovado') 
-  NOT NULL DEFAULT 'Activo';
+-- 1. Verificar se a coluna tipo_interesse já existe, se não, adicionar os novos estados e colunas
+SET @col_exists := (SELECT COUNT(*) FROM information_schema.columns 
+                    WHERE table_schema = 'condominio_nz' 
+                    AND table_name = 'morador' 
+                    AND column_name = 'tipo_interesse');
 
--- 2. Campos de preferência e intenção de prospecto
-ALTER TABLE `morador`
-  ADD COLUMN IF NOT EXISTS `tipo_interesse` ENUM('Arrendamento','Compra') NULL AFTER `nacionalidade`,
-  ADD COLUMN IF NOT EXISTS `preferencia_bloco` VARCHAR(5) NULL AFTER `tipo_interesse`,
-  ADD COLUMN IF NOT EXISTS `preferencia_andar` VARCHAR(10) NULL AFTER `preferencia_bloco`,
-  ADD COLUMN IF NOT EXISTS `preferencia_tipologia` VARCHAR(10) NULL AFTER `preferencia_andar`,
-  ADD COLUMN IF NOT EXISTS `observacoes` TEXT NULL AFTER `preferencia_tipologia`;
+SET @sql1 := 'ALTER TABLE `morador` 
+  MODIFY COLUMN `estado_conta` 
+  ENUM(''Activo'',''Suspenso'',''Inactivo'',''Pendente'',''AguardandoValidacaoPagamento'',''AguardandoAtribuicaoCasa'',''Aprovado'') 
+  NOT NULL DEFAULT ''Activo''';
+
+SET @sql2 := 'ALTER TABLE `morador`
+  ADD COLUMN `tipo_interesse` ENUM(''Arrendamento'',''Compra'') NULL AFTER `nacionalidade`,
+  ADD COLUMN `preferencia_bloco` VARCHAR(5) NULL AFTER `tipo_interesse`,
+  ADD COLUMN `preferencia_andar` VARCHAR(10) NULL AFTER `preferencia_bloco`,
+  ADD COLUMN `preferencia_tipologia` VARCHAR(10) NULL AFTER `preferencia_andar`,
+  ADD COLUMN `observacoes` TEXT NULL AFTER `preferencia_tipologia`';
+
+PREPARE stmt1 FROM @sql1;
+EXECUTE stmt1;
+DEALLOCATE PREPARE stmt1;
+
+PREPARE stmt2 FROM @sql2;
+EXECUTE stmt2;
+DEALLOCATE PREPARE stmt2;
 
 -- 3. Adicionar método Presencial aos pagamentos
-ALTER TABLE `mensalidade_pagamento`
+SET @sql3 := 'ALTER TABLE `mensalidade_pagamento`
   MODIFY COLUMN `metodo`
-  ENUM('Transferência','Multicaixa','Dinheiro','TPA','Outro','Presencial') 
-  NOT NULL DEFAULT 'Transferência';
+  ENUM(''Transferência'',''Multicaixa'',''Dinheiro'',''TPA'',''Outro'',''Presencial'') 
+  NOT NULL DEFAULT ''Transferência''';
+
+PREPARE stmt3 FROM @sql3;
+EXECUTE stmt3;
+DEALLOCATE PREPARE stmt3;
 
 -- 4. Índice para acelerar consulta de prospectos pendentes
-ALTER TABLE `morador` ADD INDEX IF NOT EXISTS `idx_estado_conta` (`estado_conta`);
+SET @sql4 := 'ALTER TABLE `morador` ADD INDEX IF NOT EXISTS `idx_estado_conta` (`estado_conta`)';
+-- Nota: ADD INDEX IF NOT EXISTS não existe no MySQL 5.7, então ignoramos erro se já existir
+PREPARE stmt4 FROM @sql4;
+EXECUTE stmt4;
+DEALLOCATE PREPARE stmt4;
 
 -- 5. Tabela para rastrear processo de registo de prospectos
 CREATE TABLE IF NOT EXISTS `registo_prospecto` (

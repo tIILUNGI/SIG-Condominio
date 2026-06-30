@@ -76,9 +76,10 @@ include("../api/conexao.php");
 <main class="main-content">
     <header class="topbar">
         <button class="menu-toggle" onclick="toggleSidebar()"><i class="fa-solid fa-bars"></i></button>
-        <span class="topbar-title">💰 Controlo de Pagamentos</span>
+        <span class="topbar-title"><i class="fa-solid fa-id-badge"></i> Pagamentos Moradores</span>
         <div class="topbar-right">
             <div class="clock-display" id="clock-display"></div>
+            <a href="relatorio_pagamentos.php" target="_blank" class="btn-secondary" style="font-size:.8rem; text-decoration:none; padding:.4rem .8rem; border-radius:8px; display:inline-flex; align-items:center; gap:.4rem;"><i class="fa-solid fa-file-lines"></i> Relatório</a>
         </div>
     </header>
 

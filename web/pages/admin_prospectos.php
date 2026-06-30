@@ -129,6 +129,10 @@ $admin_id   = $_SESSION['id']  ?? 0;
                 <h1 class="page-title">Gestão de Prospectos</h1>
                 <p class="page-sub">Valide pagamentos presenciais e atribua casas a novos moradores.</p>
             </div>
+            <div style="display:flex; gap:.6rem;">
+                <a href="relatorio_prospectos.php" target="_blank" class="btn-secondary" style="font-size:.8rem; text-decoration:none; padding:.5rem 1rem; border-radius:8px; display:inline-flex; align-items:center; gap:.4rem;"><i class="fa-solid fa-file-lines"></i> Relatório PDF</a>
+                <button class="btn-secondary" onclick="window.print()" style="font-size:.8rem;"><i class="fa-solid fa-print"></i> Imprimir</button>
+            </div>
         </div>
 
         <div class="filters-bar">
