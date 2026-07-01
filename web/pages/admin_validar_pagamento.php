@@ -93,7 +93,7 @@ include(__DIR__ . '/../api/conexao.php');
         </div>
 
         <div class="search-bar">
-            <input type="text" id="ref-input" placeholder="Ex: PRES20240630123456 ou MX20240630ABCDEF" />
+            <input type="text" id="ref-input" placeholder="Ex: PRES260701A1B2C3D3 ou MX260701E4F5G6" />
             <button class="btn-primary" onclick="buscarPorReferencia()"><i class="fa-solid fa-magnifying-glass"></i> Buscar</button>
         </div>
 

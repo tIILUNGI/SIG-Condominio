@@ -26,11 +26,11 @@ if (!$conexao) {
     exit;
 }
 
-// Verify ownership + that mensalidade exists and is pending or rejected
+// Verify ownership + that mensalidade exists and is pending or overdue
 $stmt = $conexao->prepare(
     "SELECT m.id, m.id_morador, m.valor, m.mes, m.ano, m.estado
      FROM mensalidade m
-     WHERE m.id = ? AND m.id_morador = ? AND m.estado IN ('pendente','vencida','rejeitada','rejeitado')"
+     WHERE m.id = ? AND m.id_morador = ? AND m.estado IN ('pendente','atrasado')"
 );
 $stmt->bind_param("ii", $id_mensalidade, $_SESSION['id']);
 $stmt->execute();
@@ -57,8 +57,22 @@ if ($chk->num_rows > 0) {
 }
 $chk->close();
 
-// Generate unique reference
-$referencia = strtoupper(substr($metodo, 0, 2)) . date('ymd') . strtoupper(substr(md5(uniqid()), 0, 6));
+$metodos_validos = ['Multicaixa Express', 'ATM/Referência Multicaixa', 'Transferência Bancária', 'Presencial', 'Dinheiro', 'TPA', 'Outro'];
+if (!in_array($metodo, $metodos_validos)) {
+    echo json_encode(['sucesso' => false, 'erro' => 'Método de pagamento inválido']);
+    exit;
+}
+
+$prefixo_ref = 'PAY';
+if ($metodo === 'Multicaixa Express') $prefixo_ref = 'MX';
+elseif ($metodo === 'ATM/Referência Multicaixa') $prefixo_ref = 'ATM';
+elseif ($metodo === 'Transferência Bancária') $prefixo_ref = 'TFR';
+elseif ($metodo === 'Presencial') $prefixo_ref = 'PRES';
+elseif ($metodo === 'Dinheiro') $prefixo_ref = 'CASH';
+elseif ($metodo === 'TPA') $prefixo_ref = 'TPA';
+elseif ($metodo === 'Outro') $prefixo_ref = 'OTR';
+
+$referencia = $prefixo_ref . date('ymd') . strtoupper(substr(md5(uniqid()), 0, 8));
 $valor      = floatval($men['valor']);
 $notas      = "Pagamento simulado via portal · Método: $metodo" . ($telefone ? " · Tel: +244 $telefone" : '');
 

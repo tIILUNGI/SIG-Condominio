@@ -117,7 +117,7 @@ include("../api/conexao.php");
             <div style="padding:1.5rem;">
                 <p style="font-size:.85rem; color:var(--text-muted); margin-bottom:1rem;">Insira a referência do pagamento presencial para validar e emitir recibo.</p>
                 <div style="display:flex; gap:.6rem; flex-wrap:wrap;">
-                    <input type="text" id="ref-pres-input" placeholder="Ex: PRES20240630123456" style="flex:1; min-width:260px; padding:.65rem 1rem; border-radius:10px; border:1.5px solid var(--border); background:var(--bg); color:var(--text);" />
+                    <input type="text" id="ref-pres-input" placeholder="Ex: PRES260701A1B2C3D3" style="flex:1; min-width:260px; padding:.65rem 1rem; border-radius:10px; border:1.5px solid var(--border); background:var(--bg); color:var(--text);" />
                     <button class="btn-primary" onclick="validarPresencial()"><i class="fa-solid fa-magnifying-glass"></i> Buscar</button>
                 </div>
                 <div id="pres-resultado" style="margin-top:1rem;"></div>

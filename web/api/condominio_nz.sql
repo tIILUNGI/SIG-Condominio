@@ -185,7 +185,7 @@ CREATE TABLE IF NOT EXISTS `mensalidade_pagamento` (
   `id`               INT UNSIGNED    NOT NULL AUTO_INCREMENT,
   `id_mensalidade`   INT UNSIGNED    NOT NULL,
   `valor_pago`       DECIMAL(12,2)   NOT NULL,
-  `metodo`           ENUM('Transferência','Multicaixa','Dinheiro','TPA','Outro') NOT NULL DEFAULT 'Transferência',
+  `metodo`           ENUM('Transferência','Multicaixa Express','ATM/Referência Multicaixa','Transferência Bancária','Presencial','Dinheiro','TPA','Outro') NOT NULL DEFAULT 'Transferência',
   `referencia`       VARCHAR(80)     NULL COMMENT 'Número de referência bancária',
   `comprovativo_url` VARCHAR(255)    NULL COMMENT 'Caminho para o ficheiro',
   `data_pagamento`   DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP,

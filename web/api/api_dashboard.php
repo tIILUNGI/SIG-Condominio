@@ -25,8 +25,8 @@ switch ($acao) {
         $r['apartamentos_ocupados']    = (int)(mysqli_fetch_row(mysqli_query($conexao, "SELECT COUNT(*) FROM apartamento WHERE estado IN ('Ocupado','ocupada','Ocupada')"))[0] ?? 0);
         $r['apartamentos_manutencao']  = (int)(mysqli_fetch_row(mysqli_query($conexao, "SELECT COUNT(*) FROM apartamento WHERE estado IN ('Manutencao','Em Manutenção','manutencao')"))[0] ?? 0);
         $r['mensalidades_pendentes']   = (int)(mysqli_fetch_row(mysqli_query($conexao, "SELECT COUNT(*) FROM mensalidade WHERE estado='pendente'"))[0] ?? 0);
-        $r['mensalidades_pagas']       = (int)(mysqli_fetch_row(mysqli_query($conexao, "SELECT COUNT(*) FROM mensalidade WHERE estado='paga'"))[0] ?? 0);
-        $r['mensalidades_vencidas']    = (int)(mysqli_fetch_row(mysqli_query($conexao, "SELECT COUNT(*) FROM mensalidade WHERE estado='vencida'"))[0] ?? 0);
+        $r['mensalidades_pagas']       = (int)(mysqli_fetch_row(mysqli_query($conexao, "SELECT COUNT(*) FROM mensalidade WHERE estado='pago'"))[0] ?? 0);
+        $r['mensalidades_vencidas']    = (int)(mysqli_fetch_row(mysqli_query($conexao, "SELECT COUNT(*) FROM mensalidade WHERE estado='atrasado'"))[0] ?? 0);
         $r['receitas_mes']             = (float)(mysqli_fetch_row(mysqli_query($conexao, "SELECT COALESCE(SUM(valor_pago),0) FROM mensalidade_pagamento WHERE MONTH(data_pagamento)=MONTH(NOW()) AND YEAR(data_pagamento)=YEAR(NOW()) AND estado='confirmado'"))[0] ?? 0);
         $r['total_receitas']           = (float)(mysqli_fetch_row(mysqli_query($conexao, "SELECT COALESCE(SUM(valor_pago),0) FROM mensalidade_pagamento WHERE estado='confirmado'"))[0] ?? 0);
 
@@ -139,9 +139,17 @@ switch ($acao) {
         if ($stmt->execute()) {
             // Se confirmado, actualiza a mensalidade para "pago"
             if ($estado === 'confirmado') {
-                $mens_id = mysqli_fetch_row(mysqli_query($conexao, "SELECT id_mensalidade FROM mensalidade_pagamento WHERE id=$id_pay"))[0] ?? 0;
-                if ($mens_id) {
-                    mysqli_query($conexao, "UPDATE mensalidade SET estado='pago' WHERE id=$mens_id");
+                $stmt2 = $conexao->prepare("SELECT id_mensalidade FROM mensalidade_pagamento WHERE id=?");
+                $stmt2->bind_param("i", $id_pay);
+                $stmt2->execute();
+                $res2 = $stmt2->get_result();
+                $row2 = $res2->fetch_assoc();
+                $stmt2->close();
+                if ($row2 && !empty($row2['id_mensalidade'])) {
+                    $upd = $conexao->prepare("UPDATE mensalidade SET estado='pago' WHERE id=?");
+                    $upd->bind_param("i", $row2['id_mensalidade']);
+                    $upd->execute();
+                    $upd->close();
                 }
             }
             echo json_encode(['sucesso' => true]);
